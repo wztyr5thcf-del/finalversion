@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Create complete AWS infrastructure-as-code in infra/ directory: CloudFormation template, Dockerfiles, Docker Compose, Nginx config, deploy scripts, and Portuguese README",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create infra/ directory at the root of the repository",
     "Create infra/cloudformation.yaml - CloudFormation template that provisions: VPC with public/private subnets, EC2 instance (t3.medium) with Docker in user-data, RDS PostgreSQL (db.t3.micro) in private subnet, ALB with HTTPS listeners using ACM certificates, ACM certificate for creatools.co + *.creatools.co + creatools.stream + *.creatools.stream + creatools.live + *.creatools.live, Route 53 hosted zone records (A/AAAA alias to ALB) for all 3 domains, Security Groups: ALB allows 80/443 inbound, EC2 allows traffic from ALB + SSH, RDS allows 5432 from EC2 only",
@@ -29,5 +29,5 @@
     "Run: docker run --rm -v $(pwd)/infra/nginx:/etc/nginx/conf.d nginx:alpine nginx -t to validate nginx config syntax"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Docker build succeeded with pnpm v9 (matches lockfileVersion 9.0). pnpm install required --no-frozen-lockfile to succeed due to lockfile format differences. The esbuild overrides in pnpm-workspace.yaml exclude all non-linux-x64 platforms which is perfect for Docker builds. The monorepo builds the frontend with PORT=5173 and BASE_PATH=/ at build time. Frontend static files are shared between the api container and nginx via a named Docker volume. Nginx config validated successfully with --add-host workaround (upstream resolution only works in compose network)."
 }
