@@ -1,0 +1,29 @@
+{
+  "project_type": "pnpm monorepo: React+Vite frontend + Express 5 API + PostgreSQL",
+  "language": "TypeScript",
+  "build_system": "pnpm workspaces, esbuild for API, vite for frontend",
+  "test_framework": "No test files found - no test suite exists",
+  "build_command": "pnpm run build",
+  "test_command": "N/A - no tests exist",
+  "verification_instructions": "Validate CloudFormation template syntax, validate Docker build, verify nginx config syntax",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "pnpm install && pnpm run build",
+  "environment_constraints": "OPEN_INTERNET - full network access. No DATABASE_URL available for build-time DB access. Object Storage uses Replit sidecar which won't exist in AWS - media storage will need adaptation in production.",
+  "contribution_requirements": "No CONTRIBUTING.md found. Standard project conventions apply.",
+  "key_patterns": "API server: Express 5 on PORT env var, builds to dist/index.mjs via esbuild. Frontend: Vite, needs PORT and BASE_PATH env vars, builds to dist/public/. DB: Drizzle ORM with node-postgres, uses DATABASE_URL env var. Auth: JWT with JWT_SECRET env var. Frontend API client uses relative paths (no base URL needed when same-origin or reverse-proxied). Stripe integration for payments. GCS/Replit Object Storage for media (needs adaptation for AWS S3 in production).",
+  "relevant_files": [
+    "package.json",
+    "pnpm-workspace.yaml",
+    "artifacts/api-server/package.json",
+    "artifacts/api-server/build.mjs",
+    "artifacts/api-server/src/index.ts",
+    "artifacts/api-server/src/app.ts",
+    "artifacts/api-server/src/startup.ts",
+    "artifacts/creatools/package.json",
+    "artifacts/creatools/vite.config.ts",
+    "lib/db/drizzle.config.ts",
+    "lib/db/src/index.ts",
+    "lib/api-client-react/src/custom-fetch.ts"
+  ],
+  "directory_structure": "Root: pnpm monorepo. artifacts/api-server/ - Express API built with esbuild to dist/index.mjs. artifacts/creatools/ - React frontend built with Vite to dist/public/. lib/db/ - Drizzle ORM schemas and DB connection. lib/api-spec/ - OpenAPI spec. lib/api-client-react/ - Generated React Query API client. lib/api-zod/ - Generated Zod schemas."
+}

@@ -1,0 +1,7 @@
+{
+  "task_id": "task-aws-infra-deploy",
+  "task_description": "Create complete AWS infrastructure-as-code in infra/ directory with CloudFormation template, Docker setup, Nginx configuration for 3 domains with SSL, and deployment guide in Portuguese",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}
