@@ -43,4 +43,9 @@ import("./routes/media").then(({ runLegacyMediaMigration }) => runLegacyMediaMig
   logger.error({ err }, "Legacy media migration failed");
 });
 
+// Start live monitoring service (non-blocking)
+import("./lib/live-monitor").then(({ startLiveMonitor }) => startLiveMonitor()).catch((err) => {
+  logger.error({ err }, "Failed to start live monitor service");
+});
+
 export default app;

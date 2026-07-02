@@ -104,6 +104,13 @@ router.post("/auth/register", async (req, res): Promise<void> => {
   const token = signToken(user.id);
   req.log.info({ userId: user.id, isAdmin: user.isAdmin }, "User registered");
   res.status(201).json({ token, user: publicUser(user) });
+
+  // After responding, fetch TikTok profile data in background (non-blocking)
+  if (handle) {
+    void import("../lib/live-monitor").then(({ fetchAndUpdateTiktokProfile }) => {
+      return fetchAndUpdateTiktokProfile(user.id, handle);
+    }).catch(() => { /* best-effort */ });
+  }
 });
 
 // ── Login ─────────────────────────────────────────────────────────────────────

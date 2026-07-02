@@ -69,6 +69,7 @@ import MinigamesSentido from "./pages/minigames-sentido";
 import MinigamesDefender from "./pages/minigames-defender";
 import MinigamesBau from "./pages/minigames-bau";
 import AlertOverlaysLibrary from "./pages/alert-overlays-library";
+import Analytics from "./pages/analytics";
 import AppLayout from "./components/layout/app-layout";
 import { AuthProvider, useAuth } from "./context/auth-context";
 import { UIConfigProvider } from "./context/ui-config-context";
@@ -183,6 +184,7 @@ function Router() {
             <Route path="/live-captions" component={() => <ProtectedRoute component={LiveCaptions} />} />
             <Route path="/live-captions/:username" component={() => <ProtectedRoute component={LiveCaptions} />} />
             <Route path="/live-analytics" component={() => <ProtectedRoute component={LiveAnalytics} />} />
+            <Route path="/analytics" component={() => <ProtectedRoute component={Analytics} />} />
 
             {/* Webhooks */}
             <Route path="/webhooks" component={() => <ProtectedRoute component={Webhooks} />} />

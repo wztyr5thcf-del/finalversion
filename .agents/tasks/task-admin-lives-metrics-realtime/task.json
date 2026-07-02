@@ -1,0 +1,7 @@
+{
+  "task_id": "task-admin-lives-metrics-realtime",
+  "task_description": "Implement admin controls for disabling/enabling model live monitoring and choosing featured profiles. Fix TikTok API profile data fetching (photo, name, followers). Build background live session metrics recording system that works even when the user hasn't opened the app. Add real-time UI updates (no page reloads). Enforce TikTok username as mandatory primary profile identifier.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}

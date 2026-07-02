@@ -1,0 +1,29 @@
+{
+  "project_type": "pnpm monorepo - Node.js TypeScript fullstack app (React SPA + Express API + PostgreSQL)",
+  "language": "TypeScript",
+  "build_system": "pnpm workspaces with esbuild (api-server) and vite (creatools frontend)",
+  "test_framework": "No test framework present - validation via typecheck and build",
+  "build_command": "pnpm run build",
+  "test_command": "pnpm run typecheck",
+  "verification_instructions": "Run pnpm run build to typecheck all libs then build all packages. The project has no unit tests but typechecking is strict.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "pnpm install --no-frozen-lockfile && ensure DATABASE_URL env var is set",
+  "environment_constraints": "OPEN_INTERNET - full network access. PostgreSQL database required (drizzle ORM with drizzle-kit push for migrations). No Docker verification needed - just typecheck + build.",
+  "contribution_requirements": "Use existing patterns: drizzle schema in lib/db/src/schema/, routes in artifacts/api-server/src/routes/, pages in artifacts/creatools/src/pages/, shadcn/ui components, authFetch helper, requireAuth/requireAdminMiddleware for auth",
+  "key_patterns": "Backend: Express 5 router pattern with typed req/res, JSON file storage for config (data/ dir), tik.tools API proxy pattern. Frontend: React with wouter router, shadcn/ui components, authFetch for API calls, useAuth context. Database: Drizzle ORM with pgTable, schema exports from lib/db/src/schema/index.ts. Admin panel: Single admin.tsx with section-based architecture (sections rendered conditionally). WebSocket: Client connects directly to wss://api.tik.tools with JWT from /api/tiktok/jwt endpoint.",
+  "relevant_files": [
+    "lib/db/src/schema/index.ts",
+    "lib/db/src/schema/users.ts",
+    "artifacts/api-server/src/routes/tiktok.ts",
+    "artifacts/api-server/src/routes/landing.ts",
+    "artifacts/api-server/src/routes/admin-tools.ts",
+    "artifacts/api-server/src/routes/auth.ts",
+    "artifacts/api-server/src/routes/index.ts",
+    "artifacts/api-server/src/lib/users-store.ts",
+    "artifacts/api-server/src/app.ts",
+    "artifacts/creatools/src/pages/admin.tsx",
+    "artifacts/creatools/src/pages/monitor.tsx",
+    "artifacts/creatools/src/context/auth-context.tsx"
+  ],
+  "directory_structure": "Root: pnpm workspace with lib/ (shared packages) and artifacts/ (deployable apps). lib/db/ = Drizzle ORM schema + pool. artifacts/api-server/ = Express 5 API. artifacts/creatools/ = React SPA (Vite + Tailwind v4 + shadcn/ui). artifacts/api-server/data/ = JSON config files (persisted settings)."
+}

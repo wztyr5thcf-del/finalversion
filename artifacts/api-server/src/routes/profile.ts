@@ -87,7 +87,12 @@ router.get("/profile", requireAuth, async (req: Request, res: ExpressResponse): 
   const userId = (req as Request & { userId: string }).userId;
   const user = await getUserById(userId);
   if (!user) { res.status(404).json({ error: "Usuário não encontrado" }); return; }
-  res.json(publicProfileData(user));
+  res.json({
+    ...publicProfileData(user),
+    // The TikTok username is always the primary profile identifier
+    primaryHandle: user.tiktokUsername ?? null,
+    displayName: user.tiktokDisplayName ?? user.tiktokUsername ?? user.name,
+  });
 });
 
 // PATCH /profile — update public profile settings (auth required)
@@ -245,7 +250,8 @@ router.get("/profile/public/:username", async (req: Request, res: ExpressRespons
 
   res.json({
     username: user.tiktokUsername,
-    displayName: user.tiktokDisplayName ?? user.tiktokUsername ?? username,
+    // TikTok username (@) is the mandatory primary profile identifier
+    displayName: user.tiktokUsername ?? user.tiktokDisplayName ?? username,
     avatar: user.tiktokProfilePicture ?? null,
     followerCount: sections.showStats ? (user.tiktokFollowerCount ?? null) : null,
     totalLiveSessions: sections.showStats ? (user.totalLiveSessions ?? 0) : null,

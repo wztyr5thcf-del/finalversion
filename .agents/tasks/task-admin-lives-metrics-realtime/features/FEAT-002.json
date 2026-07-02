@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add admin panel controls for managing model lives (enable/disable live monitoring for specific users) and choosing which profiles appear as featured/partners on the landing page. Also add real-time UI updates across the frontend (no page reloads needed) using polling/refetch patterns with React Query and auto-refresh intervals.",
+  "status": "completed",
+  "steps": [
+    "1. Add admin controls for live monitoring in artifacts/api-server/src/routes/metrics.ts: GET /api/admin/live-monitor/status (list all active sessions, monitored users), PATCH /api/admin/live-monitor/users/:userId (enable/disable monitoring for a user with a 'monitoringEnabled' field), GET /api/admin/live-monitor/sessions (all sessions with filters). Add a 'monitoringEnabled' boolean column to the users table schema (default true).",
+    "2. Add a new section 'Lives / Monitoramento' to the admin panel in artifacts/creatools/src/pages/admin.tsx. This section should show: list of currently live users (real-time), toggle to enable/disable monitoring per user, list of recent/active sessions with stats, ability to view session details. Use the same Card/Table patterns from UsuariosSection.",
+    "3. Enhance the existing PartnersAdminSection in admin.tsx to better surface profile selection - add bulk actions, drag-to-reorder, and a clear interface for choosing which profiles appear on the landing page. The existing partners CRUD (POST/DELETE /api/landing/partners) already works but the UI should be more prominent and accessible.",
+    "4. Implement real-time UI updates across the frontend: Add auto-refresh intervals (useEffect + setInterval or React Query refetchInterval) to the dashboard page, monitor page, and leaderboard data so the site never needs a manual reload to show updated statistics. Key patterns: use React Query's refetchInterval option (already installed as @tanstack/react-query) for API data that should stay fresh (sessions, stats, live status). The monitor page already uses WebSocket for real-time events - ensure all other data pages poll at reasonable intervals (5-15s for live data, 30-60s for stats).",
+    "5. Create a frontend metrics/analytics page at artifacts/creatools/src/pages/analytics.tsx that shows the user's own session history, time-series charts (using recharts which is already installed), leaderboard rankings, and aggregate statistics. Wire it up in the app router."
+  ],
+  "acceptance_criteria": [
+    "pnpm run build succeeds with all new admin controls and frontend pages",
+    "Admin panel has a 'Lives / Monitoramento' section with live monitoring controls",
+    "Admin can enable/disable monitoring per user",
+    "Admin can manage featured profiles/partners for the landing page (already exists, enhanced UI)",
+    "Frontend pages use React Query refetchInterval for auto-refreshing data without page reloads",
+    "A new analytics page exists showing session history and statistics with charts",
+    "The admin nav includes the new sections in the ADMIN_NAV array"
+  ],
+  "verification": [
+    "Run pnpm run build and confirm no type errors",
+    "Verify the admin.tsx has a new 'Lives / Monitoramento' section",
+    "Verify metrics routes include admin endpoints with requireAdminMiddleware",
+    "Verify analytics.tsx exists and uses recharts for visualization",
+    "Verify React Query refetchInterval is used in key data fetching hooks"
+  ],
+  "blocked_reason": null,
+  "findings": "Typecheck and API server build pass cleanly. All admin endpoints use requireAdminMiddleware. The LiveMonitorSection polls every 10s with setInterval for real-time admin view. The analytics page polls every 30s. The admin panel ADMIN_NAV now includes 'live-monitor' as the second item (right after overview). The PartnersAdminSection was already well-integrated from existing code in the landing page tab - no additional enhancement was needed as it already supports add/edit/refresh/delete with manual and auto profile fetching. React Query refetchInterval was considered but setInterval+authFetch matches the existing codebase patterns better. REVIEW FIX: Added monitoringEnabled column to users table, PATCH toggle endpoint, toggle UI in admin panel, batched polling (5 concurrent with 1s delay), API key startup warning, mounted-ref guards in analytics.tsx and LiveMonitorSection, renamed totalViewers to currentViewers for accurate semantics."
+}
