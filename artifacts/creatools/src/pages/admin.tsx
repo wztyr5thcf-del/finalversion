@@ -4465,12 +4465,347 @@ function VersoesSection() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: LIVES / MONITORAMENTO
+// ════════════════════════════════════════════════════════════════════════════
+interface LiveSession {
+  id: string;
+  userId: string;
+  tiktokUsername: string;
+  roomId: string | null;
+  startedAt: string;
+  endedAt: string | null;
+  peakViewers: number;
+  totalViewers: number;
+  totalGifts: number;
+  totalDiamonds: number;
+  totalLikes: number;
+  totalComments: number;
+  totalShares: number;
+  totalFollows: number;
+  totalNewSubscribers: number;
+  durationSeconds: number;
+  status: string;
+  userName?: string;
+  userProfilePicture?: string | null;
+  userDisplayName?: string;
+}
+
+interface MonitorStatus {
+  activeSessions: LiveSession[];
+  monitorableUsers: Array<{
+    id: string;
+    name: string;
+    email: string;
+    tiktokUsername: string | null;
+    tiktokProfilePicture: string | null;
+    tiktokDisplayName: string | null;
+    tiktokFollowerCount: number | null;
+    plan: string;
+  }>;
+  totalMonitorable: number;
+  totalActive: number;
+}
+
+interface MonitorStats {
+  totalSessions: number;
+  totalDiamonds: number;
+  totalLikes: number;
+  totalGifts: number;
+  peakViewers: number;
+  totalDurationSeconds: number;
+  avgDurationSeconds: number;
+  currentlyLive: number;
+  totalHoursLive: number;
+  avgSessionMinutes: number;
+}
+
+function LiveMonitorSection() {
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [status, setStatus] = useState<MonitorStatus | null>(null);
+  const [stats, setStats] = useState<MonitorStats | null>(null);
+  const [sessions, setSessions] = useState<LiveSession[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sessionsFilter, setSessionsFilter] = useState<"all" | "active" | "ended">("all");
+  const [sessionsPage, setSessionsPage] = useState(1);
+  const [totalSessions, setTotalSessions] = useState(0);
+
+  const fetchAll = useCallback(async () => {
+    try {
+      const [statusData, statsData, sessionsData] = await Promise.all([
+        authFetch("/admin/live-monitor/status", token!) as Promise<MonitorStatus>,
+        authFetch("/admin/live-monitor/stats", token!) as Promise<MonitorStats>,
+        authFetch(`/admin/live-monitor/sessions?page=${sessionsPage}&limit=20${sessionsFilter !== "all" ? `&status=${sessionsFilter}` : ""}`, token!) as Promise<{ sessions: LiveSession[]; pagination: { total: number } }>,
+      ]);
+      setStatus(statusData);
+      setStats(statsData);
+      setSessions(sessionsData.sessions ?? []);
+      setTotalSessions(sessionsData.pagination?.total ?? 0);
+    } catch { /* ignore */ }
+    setLoading(false);
+  }, [token, sessionsPage, sessionsFilter]);
+
+  useEffect(() => { void fetchAll(); }, [fetchAll]);
+
+  // Auto-refresh every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => { void fetchAll(); }, 10_000);
+    return () => clearInterval(interval);
+  }, [fetchAll]);
+
+  function fmtDuration(seconds: number): string {
+    if (!seconds) return "0m";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
+            <Radio className="w-5 h-5 text-red-400" />
+            Lives / Monitoramento
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Controle o monitoramento de lives, veja sessoes ativas e historico.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs" style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-green-400 font-medium">Auto-refresh 10s</span>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => { setLoading(true); void fetchAll(); }}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />Atualizar
+          </Button>
+        </div>
+      </div>
+
+      {loading && !status ? (
+        <div className="py-16 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-400" /></div>
+      ) : (
+        <>
+          {/* Stats cards */}
+          {stats && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[
+                { label: "Ao Vivo Agora", value: stats.currentlyLive, color: "#ef4444", icon: Radio },
+                { label: "Total Sessoes", value: stats.totalSessions, color: "#a78bfa", icon: Activity },
+                { label: "Horas de Live", value: stats.totalHoursLive.toFixed(1), color: "#22d3ee", icon: Clock },
+                { label: "Pico Viewers", value: stats.peakViewers, color: "#f59e0b", icon: Users2 },
+                { label: "Total Diamonds", value: stats.totalDiamonds.toLocaleString(), color: "#ec4899", icon: Diamond },
+                { label: "Total Likes", value: stats.totalLikes.toLocaleString(), color: "#f97316", icon: Heart },
+                { label: "Total Gifts", value: stats.totalGifts.toLocaleString(), color: "#8b5cf6", icon: Award },
+                { label: "Media/Sessao", value: `${stats.avgSessionMinutes}m`, color: "#06b6d4", icon: BarChart2 },
+              ].map((s) => (
+                <div key={s.label} className="rounded-2xl border border-white/8 p-4" style={{ background: "rgba(255,255,255,0.03)" }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <s.icon className="w-4 h-4" style={{ color: s.color }} />
+                    <p className="text-xs text-muted-foreground">{s.label}</p>
+                  </div>
+                  <p className="text-2xl font-bold text-white">{s.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Currently live */}
+          <Card className={status && status.totalActive > 0 ? "border-red-500/30" : ""}>
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+                <CardTitle className="text-sm">Ao Vivo Agora ({status?.totalActive ?? 0})</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {status && status.activeSessions.length > 0 ? (
+                <div className="space-y-3">
+                  {status.activeSessions.map((session) => (
+                    <div key={session.id} className="flex items-center gap-3 p-3 rounded-xl"
+                      style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
+                      <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border-2 border-red-500/30">
+                        {session.userProfilePicture ? (
+                          <img src={session.userProfilePicture} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-red-500/20 text-red-400 text-sm font-bold">
+                            {(session.userDisplayName ?? session.tiktokUsername)[0]?.toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-white">{session.userDisplayName ?? session.tiktokUsername}</span>
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                            <span className="w-1 h-1 rounded-full bg-red-400 animate-pulse" /> AO VIVO
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">@{session.tiktokUsername}</p>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="text-center">
+                          <p className="font-bold text-white">{session.peakViewers}</p>
+                          <p>viewers</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-white">{session.totalLikes}</p>
+                          <p>likes</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-white">{session.totalDiamonds}</p>
+                          <p>diamonds</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-white">{fmtDuration(Math.floor((Date.now() - new Date(session.startedAt).getTime()) / 1000))}</p>
+                          <p>duracao</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  <Radio className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                  Nenhum usuario ao vivo neste momento.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Monitorable users */}
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Users2 className="w-4 h-4 text-purple-400" />
+                  Usuarios Monitorados ({status?.totalMonitorable ?? 0})
+                </CardTitle>
+              </div>
+              <CardDescription>Todos os usuarios com TikTok vinculado sao monitorados automaticamente em segundo plano.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {status && status.monitorableUsers.length > 0 ? (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {status.monitorableUsers.map((user) => {
+                    const isLive = status.activeSessions.some((s) => s.userId === user.id);
+                    return (
+                      <div key={user.id} className="flex items-center gap-3 p-2 rounded-lg"
+                        style={{ background: isLive ? "rgba(239,68,68,0.05)" : "rgba(255,255,255,0.02)", border: `1px solid ${isLive ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.05)"}` }}>
+                        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0"
+                          style={{ border: isLive ? "2px solid #ef4444" : "2px solid rgba(255,255,255,0.1)" }}>
+                          {user.tiktokProfilePicture ? (
+                            <img src={user.tiktokProfilePicture} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-purple-500/20 text-purple-400 text-xs font-bold">
+                              {user.name[0]?.toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-medium text-white truncate">{user.tiktokDisplayName ?? user.name}</span>
+                            {isLive && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">@{user.tiktokUsername}</p>
+                        </div>
+                        <Badge variant="outline" className="text-xs shrink-0">
+                          {user.plan}
+                        </Badge>
+                        <div className="w-2 h-2 rounded-full bg-green-400 shrink-0" title="Monitoramento ativo" />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-6">Nenhum usuario com TikTok vinculado.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Session history */}
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">Historico de Sessoes</CardTitle>
+                <div className="flex gap-1">
+                  {(["all", "active", "ended"] as const).map((f) => (
+                    <Button key={f} size="sm" variant={sessionsFilter === f ? "default" : "outline"} className="h-7 text-xs"
+                      onClick={() => { setSessionsFilter(f); setSessionsPage(1); }}>
+                      {f === "all" ? "Todas" : f === "active" ? "Ativas" : "Encerradas"}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Streamer</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Inicio</TableHead>
+                    <TableHead>Duracao</TableHead>
+                    <TableHead className="text-right">Viewers</TableHead>
+                    <TableHead className="text-right">Diamonds</TableHead>
+                    <TableHead className="text-right">Likes</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sessions.length === 0 ? (
+                    <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhuma sessao encontrada</TableCell></TableRow>
+                  ) : sessions.map((session) => (
+                    <TableRow key={session.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {session.userProfilePicture && <img src={session.userProfilePicture} alt="" className="w-6 h-6 rounded-full object-cover" />}
+                          <div>
+                            <p className="text-sm font-medium">{session.userDisplayName ?? session.tiktokUsername}</p>
+                            <p className="text-xs text-muted-foreground">@{session.tiktokUsername}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`text-xs ${session.status === "active" ? "bg-red-500/15 text-red-400 border-red-500/20" : "bg-muted/30 text-muted-foreground"}`}>
+                          {session.status === "active" ? "Ao Vivo" : "Encerrada"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {new Date(session.startedAt).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                      </TableCell>
+                      <TableCell className="text-xs font-mono">{fmtDuration(session.durationSeconds)}</TableCell>
+                      <TableCell className="text-right font-mono text-sm">{session.peakViewers}</TableCell>
+                      <TableCell className="text-right font-mono text-sm text-pink-400">{session.totalDiamonds}</TableCell>
+                      <TableCell className="text-right font-mono text-sm">{session.totalLikes}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {totalSessions > 20 && (
+                <div className="flex items-center justify-center gap-2 p-3 border-t border-white/5">
+                  <Button size="sm" variant="ghost" disabled={sessionsPage <= 1} onClick={() => setSessionsPage((p) => p - 1)}>Anterior</Button>
+                  <span className="text-xs text-muted-foreground">Pagina {sessionsPage} de {Math.ceil(totalSessions / 20)}</span>
+                  <Button size="sm" variant="ghost" disabled={sessionsPage >= Math.ceil(totalSessions / 20)} onClick={() => setSessionsPage((p) => p + 1)}>Proxima</Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // MAIN ADMIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
-type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions";
+type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions" | "live-monitor";
 
 const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentType<{ className?: string }>; badge?: string }> = [
   { id: "overview",      label: "Visao Geral",       icon: LayoutDashboard },
+  { id: "live-monitor",  label: "Lives / Monitoramento", icon: Radio },
   { id: "users",         label: "Usuarios",           icon: Users2 },
   { id: "roles",         label: "Funcoes",            icon: Star },
   { id: "plans",         label: "Planos",             icon: CreditCard },
@@ -4573,6 +4908,7 @@ export default function Admin() {
       {/* Content */}
       <div className="flex-1 min-w-0 p-6 overflow-y-auto">
         {activeSection === "overview"      && <VisaoGeralSection />}
+        {activeSection === "live-monitor"   && <LiveMonitorSection />}
         {activeSection === "users"         && <UsuariosSection roles={roles} />}
         {activeSection === "roles"         && <FuncoesSection roles={roles} permissions={permissions} onRefresh={fetchRoles} />}
         {activeSection === "plans"         && <PlanosSection plans={plans} permissions={permissions} onRefresh={fetchPlans} />}

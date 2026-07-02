@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Add admin panel controls for managing model lives (enable/disable live monitoring for specific users) and choosing which profiles appear as featured/partners on the landing page. Also add real-time UI updates across the frontend (no page reloads needed) using polling/refetch patterns with React Query and auto-refresh intervals.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "1. Add admin controls for live monitoring in artifacts/api-server/src/routes/metrics.ts: GET /api/admin/live-monitor/status (list all active sessions, monitored users), PATCH /api/admin/live-monitor/users/:userId (enable/disable monitoring for a user with a 'monitoringEnabled' field), GET /api/admin/live-monitor/sessions (all sessions with filters). Add a 'monitoringEnabled' boolean column to the users table schema (default true).",
     "2. Add a new section 'Lives / Monitoramento' to the admin panel in artifacts/creatools/src/pages/admin.tsx. This section should show: list of currently live users (real-time), toggle to enable/disable monitoring per user, list of recent/active sessions with stats, ability to view session details. Use the same Card/Table patterns from UsuariosSection.",

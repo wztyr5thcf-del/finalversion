@@ -2,7 +2,7 @@ import { Router, type Request } from "express";
 import { db } from "@workspace/db";
 import { liveSessionsTable, liveSessionEventsTable, usersTable } from "@workspace/db/schema";
 import { eq, desc, sql, and } from "drizzle-orm";
-import { requireAuth } from "./auth";
+import { requireAuth, requireAdminMiddleware } from "./auth";
 
 const router = Router();
 
@@ -184,3 +184,140 @@ router.get("/metrics/stats", requireAuth, async (req, res): Promise<void> => {
 });
 
 export default router;
+
+// ══════════════════════════════════════════════════════════════════════
+// ADMIN ENDPOINTS - Live Monitor Management
+// ══════════════════════════════════════════════════════════════════════
+
+const adminRouter = Router();
+
+// GET /admin/live-monitor/status - list all active sessions and monitored users
+adminRouter.get("/admin/live-monitor/status", requireAdminMiddleware, async (req, res): Promise<void> => {
+  try {
+    const [activeSessions, users] = await Promise.all([
+      db.select().from(liveSessionsTable)
+        .where(eq(liveSessionsTable.status, "active"))
+        .orderBy(desc(liveSessionsTable.startedAt)),
+      db.select({
+        id: usersTable.id,
+        name: usersTable.name,
+        email: usersTable.email,
+        tiktokUsername: usersTable.tiktokUsername,
+        tiktokProfilePicture: usersTable.tiktokProfilePicture,
+        tiktokDisplayName: usersTable.tiktokDisplayName,
+        tiktokFollowerCount: usersTable.tiktokFollowerCount,
+        plan: usersTable.plan,
+      }).from(usersTable),
+    ]);
+
+    // Enrich active sessions with user data
+    const enrichedSessions = activeSessions.map((session) => {
+      const user = users.find((u) => u.id === session.userId);
+      return {
+        ...session,
+        userName: user?.name ?? "Unknown",
+        userProfilePicture: user?.tiktokProfilePicture ?? null,
+        userDisplayName: user?.tiktokDisplayName ?? session.tiktokUsername,
+      };
+    });
+
+    // Users with tiktok (monitorable)
+    const monitorableUsers = users.filter((u) => u.tiktokUsername && u.tiktokUsername.trim().length > 0);
+
+    res.json({
+      activeSessions: enrichedSessions,
+      monitorableUsers,
+      totalMonitorable: monitorableUsers.length,
+      totalActive: activeSessions.length,
+    });
+  } catch (err) {
+    req.log.error({ err }, "Failed to fetch live monitor status");
+    res.status(500).json({ error: "Failed to fetch live monitor status" });
+  }
+});
+
+// GET /admin/live-monitor/sessions - all sessions with optional filters
+adminRouter.get("/admin/live-monitor/sessions", requireAdminMiddleware, async (req, res): Promise<void> => {
+  const { page = "1", limit = "50", status: statusFilter } = req.query as { page?: string; limit?: string; status?: string };
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const limitNum = Math.min(200, Math.max(1, parseInt(limit, 10) || 50));
+  const offset = (pageNum - 1) * limitNum;
+
+  try {
+    const conditions = statusFilter && (statusFilter === "active" || statusFilter === "ended")
+      ? eq(liveSessionsTable.status, statusFilter)
+      : undefined;
+
+    const [sessions, countResult] = await Promise.all([
+      conditions
+        ? db.select().from(liveSessionsTable).where(conditions).orderBy(desc(liveSessionsTable.startedAt)).limit(limitNum).offset(offset)
+        : db.select().from(liveSessionsTable).orderBy(desc(liveSessionsTable.startedAt)).limit(limitNum).offset(offset),
+      conditions
+        ? db.select({ count: sql<string>`count(*)` }).from(liveSessionsTable).where(conditions)
+        : db.select({ count: sql<string>`count(*)` }).from(liveSessionsTable),
+    ]);
+
+    const total = parseInt(countResult[0]?.count ?? "0", 10);
+
+    // Enrich with user data
+    const userIds = [...new Set(sessions.map((s) => s.userId))];
+    const users = userIds.length > 0
+      ? await db.select({
+          id: usersTable.id,
+          name: usersTable.name,
+          tiktokProfilePicture: usersTable.tiktokProfilePicture,
+          tiktokDisplayName: usersTable.tiktokDisplayName,
+        }).from(usersTable)
+      : [];
+
+    const enriched = sessions.map((session) => {
+      const user = users.find((u) => u.id === session.userId);
+      return {
+        ...session,
+        userName: user?.name ?? "Unknown",
+        userProfilePicture: user?.tiktokProfilePicture ?? null,
+        userDisplayName: user?.tiktokDisplayName ?? session.tiktokUsername,
+      };
+    });
+
+    res.json({
+      sessions: enriched,
+      pagination: { page: pageNum, limit: limitNum, total, totalPages: Math.ceil(total / limitNum) },
+    });
+  } catch (err) {
+    req.log.error({ err }, "Failed to fetch admin sessions");
+    res.status(500).json({ error: "Failed to fetch sessions" });
+  }
+});
+
+// GET /admin/live-monitor/stats - aggregate platform stats for admin
+adminRouter.get("/admin/live-monitor/stats", requireAdminMiddleware, async (req, res): Promise<void> => {
+  try {
+    const [totalStats, activeCount] = await Promise.all([
+      db.select({
+        totalSessions: sql<number>`count(*)::int`,
+        totalDiamonds: sql<number>`coalesce(sum(${liveSessionsTable.totalDiamonds}), 0)::int`,
+        totalLikes: sql<number>`coalesce(sum(${liveSessionsTable.totalLikes}), 0)::int`,
+        totalGifts: sql<number>`coalesce(sum(${liveSessionsTable.totalGifts}), 0)::int`,
+        peakViewers: sql<number>`coalesce(max(${liveSessionsTable.peakViewers}), 0)::int`,
+        totalDurationSeconds: sql<number>`coalesce(sum(${liveSessionsTable.durationSeconds}), 0)::int`,
+        avgDurationSeconds: sql<number>`coalesce(avg(${liveSessionsTable.durationSeconds}), 0)::int`,
+      }).from(liveSessionsTable).where(eq(liveSessionsTable.status, "ended")),
+      db.select({ count: sql<number>`count(*)::int` }).from(liveSessionsTable).where(eq(liveSessionsTable.status, "active")),
+    ]);
+
+    const stats = totalStats[0] ?? { totalSessions: 0, totalDiamonds: 0, totalLikes: 0, totalGifts: 0, peakViewers: 0, totalDurationSeconds: 0, avgDurationSeconds: 0 };
+
+    res.json({
+      ...stats,
+      currentlyLive: activeCount[0]?.count ?? 0,
+      totalHoursLive: Math.round(stats.totalDurationSeconds / 3600 * 100) / 100,
+      avgSessionMinutes: Math.round(stats.avgDurationSeconds / 60),
+    });
+  } catch (err) {
+    req.log.error({ err }, "Failed to fetch admin stats");
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
+});
+
+export { adminRouter as metricsAdminRouter };
