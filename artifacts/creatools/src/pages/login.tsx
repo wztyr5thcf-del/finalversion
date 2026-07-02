@@ -435,7 +435,7 @@ export default function Login() {
               disabled={loading || !tiktokHandle.trim() || isHandleNotFound || tikLooking}
               className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-40 transition-all"
               style={{ background: "linear-gradient(90deg, #06b6d4, #22c55e)" }}>
-              {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Criando conta...</> : <><UserPlus className="w-4 h-4" />Criar conta</>}
+              {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Criando conta…</> : <><UserPlus className="w-4 h-4" />Criar conta</>}
             </button>
             <p className="text-center text-xs text-cyan-300/30">O @ do TikTok é obrigatório e ficará vinculado à sua conta.</p>
           </div>

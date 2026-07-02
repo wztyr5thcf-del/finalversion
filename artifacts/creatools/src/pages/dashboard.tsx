@@ -173,7 +173,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Monitor className="w-4 h-4 text-cyan-400" />
-                <p className="text-sm font-semibold text-white">Sobreposicoes (Overlays)</p>
+                <p className="text-sm font-semibold text-white">Sobreposições (Overlays)</p>
               </div>
               <button
                 onClick={() => setLocation("/overlays")}
@@ -263,7 +263,7 @@ export default function Dashboard() {
 
           {/* Stats rápidas */}
           <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/50 mb-4">Acesso Rapido</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/50 mb-4">Acesso Rápido</p>
             <div className="space-y-2">
               {[
                 { label: "Monitor Live",   icon: Wifi,     href: handle ? `/monitor/${handle}` : "/monitor/example", color: "#22d3ee" },

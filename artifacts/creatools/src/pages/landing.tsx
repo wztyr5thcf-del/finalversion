@@ -108,7 +108,7 @@ function Nav({ logo, logoUrl, onLogin, onSignup }: { logo: string; logoUrl: stri
         <div className="hidden sm:flex items-center gap-2">
           <Button variant="ghost" onClick={onLogin} className="text-white/50 hover:text-white hover:bg-white/5 text-sm h-9">Entrar</Button>
           <Button onClick={onSignup} className="h-9 px-5 text-sm border-0 text-white font-semibold" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }}>
-            Criar Conta Gratis
+            Criar Conta Grátis
           </Button>
         </div>
         <button className="sm:hidden p-1.5 text-white/50" onClick={() => setOpen(o => !o)}>
@@ -118,7 +118,7 @@ function Nav({ logo, logoUrl, onLogin, onSignup }: { logo: string; logoUrl: stri
       {open && (
         <div className="sm:hidden px-5 pb-4 flex flex-col gap-2 border-t border-white/5">
           <Button variant="ghost" className="w-full text-white/50" onClick={() => { setOpen(false); onLogin(); }}>Entrar</Button>
-          <Button className="w-full border-0 text-white" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }} onClick={() => { setOpen(false); onSignup(); }}>Criar Conta Gratis</Button>
+          <Button className="w-full border-0 text-white" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }} onClick={() => { setOpen(false); onSignup(); }}>Criar Conta Grátis</Button>
         </div>
       )}
     </nav>
@@ -368,7 +368,7 @@ function Features({ features }: { features: LandingFeature[] }) {
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
             Tudo que sua live precisa
           </h2>
-          <p className="text-white/35 text-lg max-w-lg mx-auto">Do overlay ao analytics — uma plataforma completa construida para streamers do TikTok LIVE.</p>
+          <p className="text-white/35 text-lg max-w-lg mx-auto">Do overlay ao analytics — uma plataforma completa construída para streamers do TikTok LIVE.</p>
         </Reveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -409,9 +409,9 @@ function StatsBand() {
         </Reveal>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
           <Reveal delay={0}><StatNum target={10} suffix="+" label="Ferramentas integradas" color="#06b6d4" /></Reveal>
-          <Reveal delay={80}><StatNum target={0} suffix="ms" label="Latencia WebSocket" color="#22c55e" /></Reveal>
+          <Reveal delay={80}><StatNum target={0} suffix="ms" label="Latência WebSocket" color="#22c55e" /></Reveal>
           <Reveal delay={160}><StatNum target={100} suffix="%" label="Dados em tempo real" color="#06b6d4" /></Reveal>
-          <Reveal delay={240}><StatNum target={0} prefix="" suffix="" label="Cartao de credito necessario" color="#22c55e" /></Reveal>
+          <Reveal delay={240}><StatNum target={0} prefix="" suffix="" label="Cartão de crédito necessário" color="#22c55e" /></Reveal>
         </div>
       </div>
     </section>
@@ -420,9 +420,9 @@ function StatsBand() {
 
 // ── Testimonials ──────────────────────────────────────────────────────────────
 const TESTIMONIALS = [
-  { name: "Eros Prado", handle: "erosprado", quote: "O Creatools mudou completamente minha live. Os overlays sao profissionais e o monitor em tempo real e indispensavel.", stars: 5, color: "#06b6d4" },
-  { name: "Ana Cherry", handle: "raq.sousaa", quote: "Finalmente uma ferramenta feita para streamers brasileiros. Os rankings de gifters engajam muito mais o publico!", stars: 5, color: "#22c55e" },
-  { name: "Ribeiro", handle: "__ribeiroisa_", quote: "O dashboard de analytics me ajudou a entender meu publico e crescer muito mais rapido. Recomendo muito!", stars: 5, color: "#06b6d4" },
+  { name: "Eros Prado", handle: "erosprado", quote: "O Creatools mudou completamente minha live. Os overlays são profissionais e o monitor em tempo real é indispensável.", stars: 5, color: "#06b6d4" },
+  { name: "Ana Cherry", handle: "raq.sousaa", quote: "Finalmente uma ferramenta feita para streamers brasileiros. Os rankings de gifters engajam muito mais o público!", stars: 5, color: "#22c55e" },
+  { name: "Ribeiro", handle: "__ribeiroisa_", quote: "O dashboard de analytics me ajudou a entender meu público e crescer muito mais rápido. Recomendo muito!", stars: 5, color: "#06b6d4" },
 ];
 function Testimonials() {
   return (
@@ -555,7 +555,7 @@ function Pricing({ plans, recommended, onSelect }: { plans: PricingPlan[]; recom
             style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", color: "#06b6d4" }}>
             <Zap className="w-3 h-3" /> Planos
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">Comece gratis, cresca sem limites</h2>
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">Comece grátis, cresça sem limites</h2>
           <p className="text-white/35 text-lg max-w-md mx-auto">Escale conforme sua live cresce. Cancele quando quiser.</p>
         </Reveal>
         <Reveal delay={80}><PricingTable plans={plans} recommendedPlanId={recommended} onSelect={onSelect} /></Reveal>
@@ -586,10 +586,10 @@ function CTA({ cta, onCTA }: { cta: LandingContent["cta"]; onCTA: () => void }) 
               {cta.buttonLabel} <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             <Button size="lg" variant="ghost" onClick={onCTA} className="h-14 px-8 text-base text-white/40 hover:text-white border border-white/10 hover:border-cyan-500/30 hover:bg-white/5 w-full sm:w-auto">
-              Ver planos e precos
+              Ver planos e preços
             </Button>
           </div>
-          <p className="text-white/20 text-sm mt-6">Gratis para comecar - Sem cartao de credito - Cancele quando quiser</p>
+          <p className="text-white/20 text-sm mt-6">Grátis para começar · Sem cartão de crédito · Cancele quando quiser</p>
         </div>
       </Reveal>
     </section>
@@ -765,8 +765,8 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
             </h2>
             <p className="text-xs text-cyan-300/45">
               {mode === "login" ? "Entre para acessar seus overlays e ferramentas"
-               : regStep === "account" ? "Preencha seus dados para comecar"
-               : "Obrigatorio — seu @ do TikTok fica vinculado a conta"}
+               : regStep === "account" ? "Preencha seus dados para começar"
+               : "Obrigatório — seu @ do TikTok fica vinculado à conta"}
             </p>
           </div>
 
@@ -793,9 +793,9 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Entrando...</> : <><ArrowRight className="w-4 h-4" />Entrar</>}
               </button>
               <p className="text-center text-xs text-cyan-300/30">
-                Nao tem conta?{" "}
+                Não tem conta?{" "}
                 <button type="button" onClick={() => switchMode("register")} className="font-semibold hover:underline" style={{ color: "#06b6d4" }}>
-                  Criar conta gratis
+                  Criar conta grátis
                 </button>
               </p>
             </form>
@@ -824,10 +824,10 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
               <button type="submit"
                 className="w-full py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 hover:opacity-90 transition-all"
                 style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e)" }}>
-                Proximo — vincular TikTok <ArrowRight className="w-4 h-4" />
+                Próximo — vincular TikTok <ArrowRight className="w-4 h-4" />
               </button>
               <p className="text-center text-xs text-cyan-300/30">
-                Ja tem conta?{" "}
+                Já tem conta?{" "}
                 <button type="button" onClick={() => switchMode("login")} className="font-semibold hover:underline" style={{ color: "#06b6d4" }}>
                   Entrar
                 </button>
@@ -889,7 +889,7 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
               <button onClick={() => void handleRegisterFinish()} disabled={loading || !canFinish}
                 className="w-full py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-all hover:opacity-90"
                 style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e)" }}>
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Criando conta...</> : <><UserPlus className="w-4 h-4" />Criar conta</>}
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Criando conta…</> : <><UserPlus className="w-4 h-4" />Criar conta</>}
               </button>
               <button type="button" onClick={() => setRegStep("account")}
                 className="w-full text-center text-xs text-cyan-300/30 hover:text-cyan-300/50 transition-colors">
