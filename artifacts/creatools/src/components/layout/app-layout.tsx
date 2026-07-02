@@ -85,6 +85,7 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
       { id: "troll-gift",    label: "Troll Gift",     href: "/troll-gift",    icon: "Zap",     matchPrefix: "/troll-gift",    visible: true, badge: "APP", badgeColor: "#22d3ee" },
       { id: "album",         label: "Album",          href: "/album",         icon: "Layers",  matchPrefix: "/album",         visible: true },
       { id: "alert-overlays", label: "Alertas Overlay", href: "/alert-overlays", icon: "Sparkles", matchPrefix: "/alert-overlays", visible: true },
+      { id: "battle-ai", label: "Battle AI", href: "/battle-ai", icon: "Sparkles", matchPrefix: "/battle-ai", visible: true, badge: "BETA", badgeColor: "#ef4444" },
     ],
   },
   {

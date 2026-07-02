@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Add Battle AI feature - database schema, backend API routes, and frontend page. This is a new BETA feature that allows users to configure an AI avatar (via HeyGen Streaming Avatar API) to join their TikTok live. Includes session management table, admin configuration for available avatars/pricing/plan restrictions, and user-facing page with avatar configuration and 'Join Live' button.",
+  "status": "in_progress",
+  "steps": [
+    "1. Create lib/db/src/schema/battle-ai.ts with battle_ai_sessions table (id, userId, status [idle/streaming/error], avatarConfig JSON [appearance, voice, gender, personality], tiktokUsername, rtmpUrl, heygenSessionId, startedAt, endedAt, createdAt, updatedAt) and battle_ai_config table (id, availableAvatars JSON array, pricePerSession, planRestrictions JSON, maxSessionDuration, enabled boolean, updatedAt). Export types.",
+    "2. Add export * from './battle-ai' to lib/db/src/schema/index.ts",
+    "3. Create artifacts/api-server/src/lib/battle-ai-store.ts with CRUD functions: getBattleAiConfig, upsertBattleAiConfig, createSession, getSessionsByUser, getSessionById, updateSession, getAllSessions (admin). Use in-memory store pattern like other stores in the project.",
+    "4. Create artifacts/api-server/src/routes/battle-ai.ts with routes: GET /battle-ai/config (public config for users), POST /battle-ai/sessions (create session - requireAuth), GET /battle-ai/sessions (user's sessions - requireAuth), POST /battle-ai/sessions/:id/start (activate avatar streaming - requireAuth), POST /battle-ai/sessions/:id/stop (stop streaming - requireAuth), GET /battle-ai/admin/config (admin get full config - requireAdmin), PUT /battle-ai/admin/config (admin update config - requireAdmin), GET /battle-ai/admin/sessions (admin list all sessions - requireAdmin). The /start endpoint should mock the HeyGen API call (placeholder with HEYGEN_API_KEY env check) and return a streaming status.",
+    "5. Register battle-ai router in artifacts/api-server/src/routes/index.ts",
+    "6. Create artifacts/creatools/src/pages/battle-ai.tsx - a full page with: hero section showing BETA badge, avatar configuration panel (select appearance/voice/gender from available options loaded from API), personality text input, TikTok username input (pre-filled from user context), RTMP URL input, 'Entrar na Live' button that calls the start endpoint, session history list, status indicators (idle/streaming/error). Use the project's glassmorphism design (glass-card, neon-glow-cyan, stat-card classes). Include animated elements.",
+    "7. Add Battle AI route to artifacts/creatools/src/App.tsx - import the page and add route /battle-ai with ProtectedRoute wrapper",
+    "8. Add Battle AI nav item to the DEFAULT_SECTIONS in artifacts/creatools/src/components/layout/app-layout.tsx - add to 'ferramentas' section with icon 'Sparkles', badge 'BETA' with color '#ef4444', href '/battle-ai'"
+  ],
+  "acceptance_criteria": [
+    "lib/db/src/schema/battle-ai.ts exports battle_ai_sessions and battle_ai_config table definitions",
+    "Backend routes for battle-ai are registered and handle all specified endpoints",
+    "Frontend page renders with avatar configuration, session controls, and BETA badge",
+    "Navigation sidebar includes Battle AI link with BETA badge",
+    "pnpm run build succeeds without type errors"
+  ],
+  "verification": [
+    "Run pnpm run typecheck from workspace root and confirm no errors",
+    "Run pnpm run build from workspace root and confirm successful build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

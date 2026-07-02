@@ -22,6 +22,11 @@ import alertOverlaysRouter from "./alert-overlays";
 import versionsRouter from "./versions";
 import metricsRouter from "./metrics";
 import aiChatRouter from "./ai-chat";
+import analyticsRouter from "./analytics";
+import webhooksAdminRouter from "./webhooks-admin";
+import devToolsRouter from "./dev-tools";
+import rateLimitsRouter from "./rate-limits";
+import battleAiRouter from "./battle-ai";
 import { metricsAdminRouter } from "./metrics";
 
 const router: IRouter = Router();
@@ -50,5 +55,10 @@ router.use(versionsRouter);
 router.use(metricsRouter);
 router.use(metricsAdminRouter);
 router.use(aiChatRouter);
+router.use(analyticsRouter);
+router.use(webhooksAdminRouter);
+router.use(devToolsRouter);
+router.use(rateLimitsRouter);
+router.use(battleAiRouter);
 
 export default router;
