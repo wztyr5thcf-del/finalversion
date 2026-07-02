@@ -28,6 +28,7 @@ Parameters:
     Type: String
     NoEcho: true
     MinLength: 8
+    Default: 79iFL4WYuznuJ4P
     MaxLength: 128
     Description: Password for the RDS PostgreSQL database
 
@@ -40,6 +41,7 @@ Parameters:
     Type: String
     NoEcho: true
     MinLength: 16
+    Default: odsjg8sr98hg9s8rj08j0esrg48me
     Description: Secret key for JWT token signing
 
   DomainName:
@@ -53,7 +55,7 @@ Parameters:
 
   GitRepoURL:
     Type: String
-    Default: https://github.com/your-org/creatools.git
+    Default: https://github.com/wztyr5thcf-del/finalversion.git
     Description: Git repository URL for the application code
 
 Resources:
