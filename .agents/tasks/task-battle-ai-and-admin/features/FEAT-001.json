@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Add Battle AI feature - database schema, backend API routes, and frontend page. This is a new BETA feature that allows users to configure an AI avatar (via HeyGen Streaming Avatar API) to join their TikTok live. Includes session management table, admin configuration for available avatars/pricing/plan restrictions, and user-facing page with avatar configuration and 'Join Live' button.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. Create lib/db/src/schema/battle-ai.ts with battle_ai_sessions table (id, userId, status [idle/streaming/error], avatarConfig JSON [appearance, voice, gender, personality], tiktokUsername, rtmpUrl, heygenSessionId, startedAt, endedAt, createdAt, updatedAt) and battle_ai_config table (id, availableAvatars JSON array, pricePerSession, planRestrictions JSON, maxSessionDuration, enabled boolean, updatedAt). Export types.",
     "2. Add export * from './battle-ai' to lib/db/src/schema/index.ts",
@@ -25,5 +25,5 @@
     "Run pnpm run build from workspace root and confirm successful build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Pre-existing typecheck errors in admin.tsx (AnalyticsSection, WebhooksSection, RateLimitsSection, DevToolsSection not found) - not introduced by this feature. Build requires PORT and BASE_PATH env vars (PORT=3000 BASE_PATH=/). Node setup required libatomic1 and mise trust. The routes/index.ts already had uncommitted changes adding analytics, webhooks-admin, dev-tools, and rate-limits routers."
 }
