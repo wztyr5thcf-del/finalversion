@@ -4475,7 +4475,7 @@ interface LiveSession {
   startedAt: string;
   endedAt: string | null;
   peakViewers: number;
-  totalViewers: number;
+  currentViewers: number;
   totalGifts: number;
   totalDiamonds: number;
   totalLikes: number;
@@ -4501,6 +4501,7 @@ interface MonitorStatus {
     tiktokDisplayName: string | null;
     tiktokFollowerCount: number | null;
     plan: string;
+    monitoringEnabled: boolean;
   }>;
   totalMonitorable: number;
   totalActive: number;
@@ -4529,6 +4530,13 @@ function LiveMonitorSection() {
   const [sessionsFilter, setSessionsFilter] = useState<"all" | "active" | "ended">("all");
   const [sessionsPage, setSessionsPage] = useState(1);
   const [totalSessions, setTotalSessions] = useState(0);
+  const [togglingUser, setTogglingUser] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   const fetchAll = useCallback(async () => {
     try {
@@ -4537,12 +4545,13 @@ function LiveMonitorSection() {
         authFetch("/admin/live-monitor/stats", token!) as Promise<MonitorStats>,
         authFetch(`/admin/live-monitor/sessions?page=${sessionsPage}&limit=20${sessionsFilter !== "all" ? `&status=${sessionsFilter}` : ""}`, token!) as Promise<{ sessions: LiveSession[]; pagination: { total: number } }>,
       ]);
+      if (!mountedRef.current) return;
       setStatus(statusData);
       setStats(statsData);
       setSessions(sessionsData.sessions ?? []);
       setTotalSessions(sessionsData.pagination?.total ?? 0);
     } catch { /* ignore */ }
-    setLoading(false);
+    if (mountedRef.current) setLoading(false);
   }, [token, sessionsPage, sessionsFilter]);
 
   useEffect(() => { void fetchAll(); }, [fetchAll]);
@@ -4552,6 +4561,26 @@ function LiveMonitorSection() {
     const interval = setInterval(() => { void fetchAll(); }, 10_000);
     return () => clearInterval(interval);
   }, [fetchAll]);
+
+  async function toggleMonitoring(userId: string, currentValue: boolean) {
+    setTogglingUser(userId);
+    try {
+      const res = await fetch(`/api/admin/live-monitor/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ monitoringEnabled: !currentValue }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      if (!mountedRef.current) return;
+      toast({ title: !currentValue ? "Monitoramento ativado" : "Monitoramento desativado" });
+      void fetchAll();
+    } catch {
+      if (mountedRef.current) {
+        toast({ title: "Erro ao alterar monitoramento", variant: "destructive" });
+      }
+    }
+    if (mountedRef.current) setTogglingUser(null);
+  }
 
   function fmtDuration(seconds: number): string {
     if (!seconds) return "0m";
@@ -4682,7 +4711,7 @@ function LiveMonitorSection() {
                   Usuarios Monitorados ({status?.totalMonitorable ?? 0})
                 </CardTitle>
               </div>
-              <CardDescription>Todos os usuarios com TikTok vinculado sao monitorados automaticamente em segundo plano.</CardDescription>
+              <CardDescription>Usuarios com TikTok vinculado. Ative ou desative o monitoramento individual.</CardDescription>
             </CardHeader>
             <CardContent>
               {status && status.monitorableUsers.length > 0 ? (
@@ -4714,7 +4743,23 @@ function LiveMonitorSection() {
                         <Badge variant="outline" className="text-xs shrink-0">
                           {user.plan}
                         </Badge>
-                        <div className="w-2 h-2 rounded-full bg-green-400 shrink-0" title="Monitoramento ativo" />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2"
+                          disabled={togglingUser === user.id}
+                          onClick={() => toggleMonitoring(user.id, user.monitoringEnabled)}
+                          title={user.monitoringEnabled ? "Desativar monitoramento" : "Ativar monitoramento"}
+                        >
+                          {togglingUser === user.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : user.monitoringEnabled ? (
+                            <ToggleRight className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <ToggleLeft className="w-5 h-5 text-muted-foreground" />
+                          )}
+                        </Button>
+                        <div className={`w-2 h-2 rounded-full shrink-0 ${user.monitoringEnabled ? "bg-green-400" : "bg-red-400"}`} title={user.monitoringEnabled ? "Monitoramento ativo" : "Monitoramento desativado"} />
                       </div>
                     );
                   })}

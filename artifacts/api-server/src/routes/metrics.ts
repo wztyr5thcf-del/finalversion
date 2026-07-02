@@ -94,7 +94,7 @@ router.get("/metrics/leaderboard", requireAuth, async (req, res): Promise<void> 
         userId: liveSessionsTable.userId,
         tiktokUsername: liveSessionsTable.tiktokUsername,
         totalDiamonds: sql<number>`coalesce(sum(${liveSessionsTable.totalDiamonds}), 0)::int`,
-        totalViewers: sql<number>`coalesce(max(${liveSessionsTable.peakViewers}), 0)::int`,
+        peakViewersRecord: sql<number>`coalesce(max(${liveSessionsTable.peakViewers}), 0)::int`,
         totalHoursLive: sql<number>`coalesce(sum(${liveSessionsTable.durationSeconds}), 0)::int`,
         totalSessions: sql<number>`count(*)::int`,
         totalLikes: sql<number>`coalesce(sum(${liveSessionsTable.totalLikes}), 0)::int`,
@@ -207,6 +207,7 @@ adminRouter.get("/admin/live-monitor/status", requireAdminMiddleware, async (req
         tiktokDisplayName: usersTable.tiktokDisplayName,
         tiktokFollowerCount: usersTable.tiktokFollowerCount,
         plan: usersTable.plan,
+        monitoringEnabled: usersTable.monitoringEnabled,
       }).from(usersTable),
     ]);
 
@@ -321,3 +322,29 @@ adminRouter.get("/admin/live-monitor/stats", requireAdminMiddleware, async (req,
 });
 
 export { adminRouter as metricsAdminRouter };
+
+// PATCH /admin/live-monitor/users/:userId - toggle monitoring for a user
+adminRouter.patch("/admin/live-monitor/users/:userId", requireAdminMiddleware, async (req, res): Promise<void> => {
+  const userId = String(req.params.userId);
+  const { monitoringEnabled } = req.body as { monitoringEnabled?: boolean };
+
+  if (typeof monitoringEnabled !== "boolean") {
+    res.status(400).json({ error: "monitoringEnabled must be a boolean" });
+    return;
+  }
+
+  try {
+    const userRows = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.id, userId));
+    if (userRows.length === 0) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    await db.update(usersTable).set({ monitoringEnabled }).where(eq(usersTable.id, userId));
+
+    res.json({ success: true, userId, monitoringEnabled });
+  } catch (err) {
+    req.log.error({ err }, "Failed to toggle monitoring for user");
+    res.status(500).json({ error: "Failed to update monitoring status" });
+  }
+});

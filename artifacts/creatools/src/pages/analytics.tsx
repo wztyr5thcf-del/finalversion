@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   BarChart2, Clock, Diamond, Heart, Users2, Activity, Trophy, TrendingUp,
   Loader2, Radio, Award, RefreshCw,
@@ -35,7 +35,7 @@ interface Session {
   startedAt: string;
   endedAt: string | null;
   peakViewers: number;
-  totalViewers: number;
+  currentViewers: number;
   totalDiamonds: number;
   totalLikes: number;
   totalGifts: number;
@@ -48,7 +48,7 @@ interface LeaderboardEntry {
   userId: string;
   tiktokUsername: string;
   totalDiamonds: number;
-  totalViewers: number;
+  peakViewersRecord: number;
   totalHoursLive: number;
   totalSessions: number;
   totalLikes: number;
@@ -64,6 +64,12 @@ export default function Analytics() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   const fetchData = useCallback(async () => {
     if (!token) return;
@@ -73,11 +79,12 @@ export default function Analytics() {
         authFetch("/metrics/sessions?limit=50", token) as Promise<{ sessions: Session[] }>,
         authFetch("/metrics/leaderboard?sortBy=diamonds&limit=10", token) as Promise<{ leaderboard: LeaderboardEntry[] }>,
       ]);
+      if (!mountedRef.current) return;
       setStats(statsData);
       setSessions(sessionsData.sessions ?? []);
       setLeaderboard(leaderboardData.leaderboard ?? []);
     } catch { /* ignore */ }
-    setLoading(false);
+    if (mountedRef.current) setLoading(false);
   }, [token]);
 
   useEffect(() => { void fetchData(); }, [fetchData]);

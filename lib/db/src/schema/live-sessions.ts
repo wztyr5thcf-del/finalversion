@@ -8,7 +8,7 @@ export const liveSessionsTable = pgTable("live_sessions", {
   startedAt:            text("started_at").notNull(),
   endedAt:              text("ended_at"),
   peakViewers:          integer("peak_viewers").notNull().default(0),
-  totalViewers:         integer("total_viewers").notNull().default(0),
+  currentViewers:       integer("current_viewers").notNull().default(0),
   totalGifts:           integer("total_gifts").notNull().default(0),
   totalDiamonds:        integer("total_diamonds").notNull().default(0),
   totalLikes:           integer("total_likes").notNull().default(0),

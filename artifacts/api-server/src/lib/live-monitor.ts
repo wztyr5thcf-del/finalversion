@@ -46,7 +46,7 @@ interface ActiveSession {
   startedAt: string;
   lastSnapshot: number;
   peakViewers: number;
-  totalViewers: number;
+  currentViewers: number;
   totalGifts: number;
   totalDiamonds: number;
   totalLikes: number;
@@ -131,7 +131,7 @@ async function startSession(userId: string, tiktokUsername: string, roomId: stri
     startedAt: now,
     lastSnapshot: Date.now(),
     peakViewers: 0,
-    totalViewers: 0,
+    currentViewers: 0,
     totalGifts: 0,
     totalDiamonds: 0,
     totalLikes: 0,
@@ -160,7 +160,7 @@ async function endSession(tiktokUsername: string): Promise<void> {
     .set({
       endedAt: now,
       peakViewers: session.peakViewers,
-      totalViewers: session.totalViewers,
+      currentViewers: session.currentViewers,
       totalGifts: session.totalGifts,
       totalDiamonds: session.totalDiamonds,
       totalLikes: session.totalLikes,
@@ -201,7 +201,7 @@ async function recordSnapshot(apiKey: string, session: ActiveSession): Promise<v
   if (metrics.viewerCount > session.peakViewers) {
     session.peakViewers = metrics.viewerCount;
   }
-  session.totalViewers = metrics.viewerCount; // current viewers (latest snapshot)
+  session.currentViewers = metrics.viewerCount; // current viewers at last snapshot
   session.totalLikes = metrics.likeCount;
 
   // Save snapshot event
@@ -220,7 +220,7 @@ async function recordSnapshot(apiKey: string, session: ActiveSession): Promise<v
   await db.update(liveSessionsTable)
     .set({
       peakViewers: session.peakViewers,
-      totalViewers: session.totalViewers,
+      currentViewers: session.currentViewers,
       totalLikes: session.totalLikes,
     })
     .where(eq(liveSessionsTable.id, session.sessionId));
@@ -229,45 +229,68 @@ async function recordSnapshot(apiKey: string, session: ActiveSession): Promise<v
 }
 
 /**
+ * Process a batch of users concurrently for live status checks.
+ */
+async function processBatch(apiKey: string, users: Array<{ id: string; tiktokUsername: string | null }>): Promise<void> {
+  await Promise.all(users.map(async (user) => {
+    const handle = user.tiktokUsername!;
+    const key = handle.toLowerCase();
+
+    try {
+      const { isLive, roomId } = await checkLiveStatus(apiKey, handle);
+
+      if (isLive && roomId && !activeSessions.has(key)) {
+        // User just went live - start tracking
+        await startSession(user.id, handle, roomId);
+      } else if (isLive && activeSessions.has(key)) {
+        // Already tracking - record snapshot
+        const session = activeSessions.get(key)!;
+        await recordSnapshot(apiKey, session);
+      } else if (!isLive && activeSessions.has(key)) {
+        // User ended their stream
+        await endSession(handle);
+      }
+    } catch (err) {
+      logger.warn({ err, tiktokUsername: handle }, "Error checking live status for user");
+    }
+  }));
+}
+
+// Concurrency batch size for polling
+const BATCH_SIZE = 5;
+// Delay between batches (ms)
+const BATCH_DELAY_MS = 1000;
+
+/**
  * Main polling cycle: check all registered users for live status.
+ * Filters by monitoringEnabled and uses batched concurrency to avoid rate-limiting.
  */
 async function pollLiveStatus(): Promise<void> {
   const apiKey = getApiKey();
   if (!apiKey) return;
 
   try {
-    // Get all users with a tiktokUsername
+    // Get all users with a tiktokUsername AND monitoringEnabled = true
     const users = await db.select({
       id: usersTable.id,
       tiktokUsername: usersTable.tiktokUsername,
     }).from(usersTable).where(
       and(
         isNotNull(usersTable.tiktokUsername),
+        eq(usersTable.monitoringEnabled, true),
       )
     );
 
     const usersWithTiktok = users.filter((u) => u.tiktokUsername && u.tiktokUsername.trim().length > 0);
 
-    for (const user of usersWithTiktok) {
-      const handle = user.tiktokUsername!;
-      const key = handle.toLowerCase();
+    // Process in batches of BATCH_SIZE with a delay between batches
+    for (let i = 0; i < usersWithTiktok.length; i += BATCH_SIZE) {
+      const batch = usersWithTiktok.slice(i, i + BATCH_SIZE);
+      await processBatch(apiKey, batch);
 
-      try {
-        const { isLive, roomId } = await checkLiveStatus(apiKey, handle);
-
-        if (isLive && roomId && !activeSessions.has(key)) {
-          // User just went live - start tracking
-          await startSession(user.id, handle, roomId);
-        } else if (isLive && activeSessions.has(key)) {
-          // Already tracking - record snapshot
-          const session = activeSessions.get(key)!;
-          await recordSnapshot(apiKey, session);
-        } else if (!isLive && activeSessions.has(key)) {
-          // User ended their stream
-          await endSession(handle);
-        }
-      } catch (err) {
-        logger.warn({ err, tiktokUsername: handle }, "Error checking live status for user");
+      // Add delay between batches to avoid rate-limiting (skip delay after last batch)
+      if (i + BATCH_SIZE < usersWithTiktok.length) {
+        await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS));
       }
     }
   } catch (err) {
@@ -373,6 +396,12 @@ async function recoverOrphanedSessions(): Promise<void> {
  */
 export async function startLiveMonitor(): Promise<void> {
   logger.info("Starting live monitor service");
+
+  // Warn if API key is not configured
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    logger.warn("TIKTOOLS_API_KEY is not set and no config.json API key found. Live monitoring will be inert until an API key is configured.");
+  }
 
   // Recover any orphaned sessions from previous server instance
   await recoverOrphanedSessions();
