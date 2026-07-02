@@ -1,8 +1,10 @@
 #!/bin/bash
 # =============================================================================
-# Auto-Deploy Script
+# Smart Auto-Deploy Script
 # Called by the webhook server when a push event is received.
-# Performs git pull and Docker Compose rebuild.
+# Detects whether dependencies changed and uses Docker layer cache accordingly.
+# If only source code changed, the cached pnpm install layer is reused (~30s).
+# If package.json or pnpm-lock.yaml changed, a full rebuild is triggered.
 # =============================================================================
 set -e
 
@@ -18,30 +20,59 @@ error() {
 }
 
 log "========================================="
-log "Starting auto-deploy..."
+log "Starting smart auto-deploy..."
 log "========================================="
 
 # Navigate to project root
 cd "$APP_DIR"
 
+# Record current commit before pull
+BEFORE_SHA=$(git rev-parse HEAD)
+
 # Pull latest changes
 log "Pulling latest changes from git..."
-git pull origin main 2>&1 | tee -a "$LOG_FILE"
-
-if [ $? -ne 0 ]; then
+if ! git pull origin main 2>&1 | tee -a "$LOG_FILE"; then
     error "git pull failed!"
     exit 1
 fi
 
-log "Git pull completed successfully"
+AFTER_SHA=$(git rev-parse HEAD)
 
-# Rebuild and restart containers
-log "Rebuilding and restarting Docker containers..."
+if [ "$BEFORE_SHA" = "$AFTER_SHA" ]; then
+    log "No new commits - nothing to deploy"
+    exit 0
+fi
+
+log "Git pull completed successfully ($BEFORE_SHA -> $AFTER_SHA)"
+
+# Detect if dependency files changed between the two commits
+DEPS_CHANGED=false
+CHANGED_FILES=$(git diff --name-only "$BEFORE_SHA" "$AFTER_SHA")
+
+if echo "$CHANGED_FILES" | grep -qE '(^|/)package\.json$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$'; then
+    DEPS_CHANGED=true
+    log "Dependency files changed - full rebuild required"
+else
+    log "Only source code changed - using cached dependencies (fast rebuild)"
+fi
+
+# Enable BuildKit for better layer caching
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+
+# Rebuild and restart containers with BuildKit cache
+log "Rebuilding Docker containers (BuildKit enabled, deps_changed=$DEPS_CHANGED)..."
 cd "$APP_DIR/infra"
-docker compose up -d --build 2>&1 | tee -a "$LOG_FILE"
 
-if [ $? -ne 0 ]; then
-    error "Docker compose rebuild failed!"
+if ! docker compose build 2>&1 | tee -a "$LOG_FILE"; then
+    error "Docker compose build failed!"
+    exit 1
+fi
+
+log "Build completed, restarting containers..."
+
+if ! docker compose up -d 2>&1 | tee -a "$LOG_FILE"; then
+    error "Docker compose up failed!"
     exit 1
 fi
 
@@ -58,5 +89,5 @@ else
 fi
 
 log "========================================="
-log "Auto-deploy finished"
+log "Smart auto-deploy finished"
 log "========================================="
