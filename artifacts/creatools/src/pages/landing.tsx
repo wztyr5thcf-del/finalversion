@@ -97,18 +97,18 @@ function Nav({ logo, logoUrl, onLogin, onSignup }: { logo: string; logoUrl: stri
   }, []);
   return (
     <nav className="fixed top-0 inset-x-0 z-50 transition-all duration-300"
-      style={{ background: scrolled ? "rgba(6,4,16,0.92)" : "rgba(6,4,16,0.5)", backdropFilter: "blur(20px)", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.07)" : "1px solid transparent" }}>
+      style={{ background: scrolled ? "rgba(10,10,12,0.95)" : "rgba(10,10,12,0.5)", backdropFilter: "blur(20px)", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent" }}>
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2.5 cursor-pointer" onClick={onLogin}>
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#7c3aed)" }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }}>
             {logoUrl ? <img src={logoUrl} alt={logo} className="h-5 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
           </div>
           <span className="text-white font-bold tracking-tight">{logo}</span>
         </div>
         <div className="hidden sm:flex items-center gap-2">
           <Button variant="ghost" onClick={onLogin} className="text-white/50 hover:text-white hover:bg-white/5 text-sm h-9">Entrar</Button>
-          <Button onClick={onSignup} className="h-9 px-5 text-sm border-0 text-white font-semibold" style={{ background: "linear-gradient(135deg,#7c3aed,#06b6d4)" }}>
-            Criar Conta Grátis
+          <Button onClick={onSignup} className="h-9 px-5 text-sm border-0 text-white font-semibold" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }}>
+            Criar Conta Gratis
           </Button>
         </div>
         <button className="sm:hidden p-1.5 text-white/50" onClick={() => setOpen(o => !o)}>
@@ -118,7 +118,7 @@ function Nav({ logo, logoUrl, onLogin, onSignup }: { logo: string; logoUrl: stri
       {open && (
         <div className="sm:hidden px-5 pb-4 flex flex-col gap-2 border-t border-white/5">
           <Button variant="ghost" className="w-full text-white/50" onClick={() => { setOpen(false); onLogin(); }}>Entrar</Button>
-          <Button className="w-full border-0 text-white" style={{ background: "linear-gradient(135deg,#7c3aed,#06b6d4)" }} onClick={() => { setOpen(false); onSignup(); }}>Criar Conta Grátis</Button>
+          <Button className="w-full border-0 text-white" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }} onClick={() => { setOpen(false); onSignup(); }}>Criar Conta Gratis</Button>
         </div>
       )}
     </nav>
@@ -156,7 +156,7 @@ function MockMonitorUI() {
   return (
     <div className="relative w-full max-w-[340px] mx-auto select-none">
       {/* Ambient glow */}
-      <div className="absolute inset-0 rounded-3xl blur-3xl opacity-40 pointer-events-none" style={{ background: "linear-gradient(135deg,#7c3aed,#06b6d4)", transform: "scale(1.15) translateY(8%)" }} />
+      <div className="absolute inset-0 rounded-3xl blur-3xl opacity-40 pointer-events-none" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", transform: "scale(1.15) translateY(8%)" }} />
 
       {/* Main card */}
       <div className="relative rounded-2xl overflow-hidden" style={{ background: "rgba(12,8,30,0.97)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 40px 80px rgba(0,0,0,0.6)", transform: "perspective(1000px) rotateY(-6deg) rotateX(2deg)" }}>
@@ -216,17 +216,17 @@ function MockMonitorUI() {
 // ── Hero ──────────────────────────────────────────────────────────────────────
 function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void }) {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-16" style={{ background: "#060410" }}>
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-16" style={{ background: "#0a0a0c" }}>
       {/* Animated mesh gradient */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 25% 55%, rgba(124,58,237,0.22) 0%, transparent 50%)" }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 78% 25%, rgba(6,182,212,0.14) 0%, transparent 48%)" }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 85%, rgba(245,158,11,0.08) 0%, transparent 40%)" }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 10% 10%, rgba(236,72,153,0.08) 0%, transparent 40%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 25% 55%, rgba(6,182,212,0.15) 0%, transparent 50%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 78% 25%, rgba(34,197,94,0.1) 0%, transparent 48%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 85%, rgba(6,182,212,0.06) 0%, transparent 40%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 10% 10%, rgba(34,197,94,0.05) 0%, transparent 40%)" }} />
       {/* Animated orb */}
-      <div className="absolute w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(124,58,237,0.12)", top: "20%", left: "5%", animation: "lp-orb 8s ease-in-out infinite" }} />
-      <div className="absolute w-80 h-80 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(6,182,212,0.08)", top: "10%", right: "10%", animation: "lp-orb 10s ease-in-out infinite reverse", animationDelay: "3s" }} />
+      <div className="absolute w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(6,182,212,0.1)", top: "20%", left: "5%", animation: "lp-orb 8s ease-in-out infinite" }} />
+      <div className="absolute w-80 h-80 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(34,197,94,0.06)", top: "10%", right: "10%", animation: "lp-orb 10s ease-in-out infinite reverse", animationDelay: "3s" }} />
       {/* Grid */}
-      <div className="absolute inset-0 opacity-[0.022] pointer-events-none"
+      <div className="absolute inset-0 opacity-[0.018] pointer-events-none"
         style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "64px 64px" }} />
 
       <div className="relative max-w-6xl mx-auto px-5 w-full py-20">
@@ -234,14 +234,14 @@ function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void
           {/* Left */}
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-6"
-              style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.28)", color: "#c4b5fd" }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.28)", color: "#67e8f9" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
               Plataforma #1 para TikTok LIVE
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-extrabold leading-[1.06] tracking-tight mb-6">
               <span className="text-white block">{hero.headline.split(" ").slice(0, 3).join(" ")}</span>
-              <span className="block" style={{ background: "linear-gradient(90deg,#a78bfa,#22d3ee 50%,#f59e0b)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundSize: "200% 100%", animation: "lp-gradient-shift 5s linear infinite" }}>
+              <span className="block" style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e 50%,#06b6d4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundSize: "200% 100%", animation: "lp-gradient-shift 5s linear infinite" }}>
                 {hero.headline.split(" ").slice(3).join(" ")}
               </span>
             </h1>
@@ -251,11 +251,11 @@ function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void
             <div className="flex flex-wrap items-center gap-3 mb-10">
               <Button size="lg" onClick={onCTA}
                 className="h-12 px-8 text-base font-bold border-0 text-white"
-                style={{ background: "linear-gradient(135deg,#7c3aed,#06b6d4)", boxShadow: "0 0 0 0 rgba(124,58,237,0.5)", animation: "lp-btn-pulse 2.5s ease-in-out infinite" }}>
+                style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", boxShadow: "0 0 0 0 rgba(6,182,212,0.5)", animation: "lp-btn-pulse 2.5s ease-in-out infinite" }}>
                 {hero.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <Button size="lg" variant="ghost" onClick={onCTA}
-                className="h-12 px-6 text-base text-white/45 hover:text-white border border-white/10 hover:border-white/20 hover:bg-white/5">
+                className="h-12 px-6 text-base text-white/45 hover:text-white border border-white/10 hover:border-cyan-500/30 hover:bg-white/5">
                 <Play className="w-4 h-4 mr-2 fill-current" />Ver demo
               </Button>
             </div>
@@ -277,7 +277,7 @@ function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void
         </div>
       </div>
 
-      <div className="absolute bottom-0 inset-x-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to top,#060410,transparent)" }} />
+      <div className="absolute bottom-0 inset-x-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to top,#0a0a0c,transparent)" }} />
     </section>
   );
 }
@@ -294,26 +294,26 @@ const TOOLS = [
 function ToolTicker() {
   const doubled = [...TOOLS, ...TOOLS];
   return (
-    <div className="py-7 overflow-hidden" style={{ background: "#08051c", borderTop: "1px solid rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+    <div className="py-7 overflow-hidden" style={{ background: "#0a0a0c", borderTop: "1px solid rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
       <div className="relative">
         <div className="flex gap-3" style={{ animation: "ticker 30s linear infinite" }}>
           {doubled.map(({ icon: Icon, label }, i) => (
             <div key={i} className="flex items-center gap-2 shrink-0 px-4 py-2 rounded-xl"
               style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.055)" }}>
-              <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: i % 3 === 0 ? "#f59e0b" : i % 3 === 1 ? "#22d3ee" : "#a78bfa" }} />
+              <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: i % 3 === 0 ? "#06b6d4" : i % 3 === 1 ? "#22c55e" : "#7c3aed" }} />
               <span className="text-sm text-white/45 whitespace-nowrap font-medium">{label}</span>
             </div>
           ))}
         </div>
-        <div className="absolute inset-y-0 left-0 w-24 pointer-events-none" style={{ background: "linear-gradient(to right,#08051c,transparent)" }} />
-        <div className="absolute inset-y-0 right-0 w-24 pointer-events-none" style={{ background: "linear-gradient(to left,#08051c,transparent)" }} />
+        <div className="absolute inset-y-0 left-0 w-24 pointer-events-none" style={{ background: "linear-gradient(to right,#0a0a0c,transparent)" }} />
+        <div className="absolute inset-y-0 right-0 w-24 pointer-events-none" style={{ background: "linear-gradient(to left,#0a0a0c,transparent)" }} />
       </div>
     </div>
   );
 }
 
 // ── Feature card ──────────────────────────────────────────────────────────────
-const FEAT_COLORS = ["#f59e0b", "#22d3ee", "#a78bfa", "#f87171", "#34d399", "#fb923c", "#e879f9", "#38bdf8", "#4ade80"];
+const FEAT_COLORS = ["#06b6d4", "#22c55e", "#7c3aed", "#f87171", "#34d399", "#06b6d4", "#22c55e", "#7c3aed", "#34d399"];
 function FeatureCard({ feat, i, big = false }: { feat: LandingFeature; i: number; big?: boolean }) {
   const [hov, setHov] = useState(false);
   const c = FEAT_COLORS[i % FEAT_COLORS.length];
@@ -357,18 +357,18 @@ function Features({ features }: { features: LandingFeature[] }) {
   const sorted = [...features].sort((a, b) => a.order - b.order);
   if (!sorted.length) return null;
   return (
-    <section className="py-28 px-5 relative" style={{ background: "#060410" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.07) 0%, transparent 50%)" }} />
+    <section className="py-28 px-5 relative" style={{ background: "#0a0a0c" }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.06) 0%, transparent 50%)" }} />
       <div className="max-w-6xl mx-auto">
         <Reveal className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4"
-            style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}>
+            style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", color: "#06b6d4" }}>
             <Sparkles className="w-3 h-3" /> Ferramentas
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
             Tudo que sua live precisa
           </h2>
-          <p className="text-white/35 text-lg max-w-lg mx-auto">Do overlay ao analytics — uma plataforma completa construída para streamers do TikTok LIVE.</p>
+          <p className="text-white/35 text-lg max-w-lg mx-auto">Do overlay ao analytics — uma plataforma completa construida para streamers do TikTok LIVE.</p>
         </Reveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -399,19 +399,19 @@ function StatNum({ target, prefix = "", suffix = "", label, color }: { target: n
 // ── Stats band ────────────────────────────────────────────────────────────────
 function StatsBand() {
   return (
-    <section className="py-20 px-5 relative overflow-hidden" style={{ background: "#08051c" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(124,58,237,0.1) 0%, transparent 60%)" }} />
-      <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(124,58,237,0.4),rgba(6,182,212,0.4),transparent)" }} />
-      <div className="absolute bottom-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(245,158,11,0.3),transparent)" }} />
+    <section className="py-20 px-5 relative overflow-hidden" style={{ background: "#0a0a0c" }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.06) 0%, transparent 60%)" }} />
+      <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(6,182,212,0.4),rgba(34,197,94,0.4),transparent)" }} />
+      <div className="absolute bottom-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(34,197,94,0.3),transparent)" }} />
       <div className="max-w-5xl mx-auto">
         <Reveal className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-widest text-white/30">Por que o Creatools?</p>
         </Reveal>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
-          <Reveal delay={0}><StatNum target={10} suffix="+" label="Ferramentas integradas" color="#a78bfa" /></Reveal>
-          <Reveal delay={80}><StatNum target={0} suffix="ms" label="Latência WebSocket" color="#22d3ee" /></Reveal>
-          <Reveal delay={160}><StatNum target={100} suffix="%" label="Dados em tempo real" color="#f59e0b" /></Reveal>
-          <Reveal delay={240}><StatNum target={0} prefix="" suffix="" label="Cartão de crédito necessário" color="#34d399" /></Reveal>
+          <Reveal delay={0}><StatNum target={10} suffix="+" label="Ferramentas integradas" color="#06b6d4" /></Reveal>
+          <Reveal delay={80}><StatNum target={0} suffix="ms" label="Latencia WebSocket" color="#22c55e" /></Reveal>
+          <Reveal delay={160}><StatNum target={100} suffix="%" label="Dados em tempo real" color="#06b6d4" /></Reveal>
+          <Reveal delay={240}><StatNum target={0} prefix="" suffix="" label="Cartao de credito necessario" color="#22c55e" /></Reveal>
         </div>
       </div>
     </section>
@@ -420,21 +420,21 @@ function StatsBand() {
 
 // ── Testimonials ──────────────────────────────────────────────────────────────
 const TESTIMONIALS = [
-  { name: "Eros Prado", handle: "erosprado", quote: "O Creatools mudou completamente minha live. Os overlays são profissionais e o monitor em tempo real é indispensável.", stars: 5, color: "#f59e0b" },
-  { name: "Ana Cherry", handle: "raq.sousaa", quote: "Finalmente uma ferramenta feita para streamers brasileiros. Os rankings de gifters engajam muito mais o público!", stars: 5, color: "#a78bfa" },
-  { name: "Ribeiro", handle: "__ribeiroisa_", quote: "O dashboard de analytics me ajudou a entender meu público e crescer muito mais rápido. Recomendo muito!", stars: 5, color: "#22d3ee" },
+  { name: "Eros Prado", handle: "erosprado", quote: "O Creatools mudou completamente minha live. Os overlays sao profissionais e o monitor em tempo real e indispensavel.", stars: 5, color: "#06b6d4" },
+  { name: "Ana Cherry", handle: "raq.sousaa", quote: "Finalmente uma ferramenta feita para streamers brasileiros. Os rankings de gifters engajam muito mais o publico!", stars: 5, color: "#22c55e" },
+  { name: "Ribeiro", handle: "__ribeiroisa_", quote: "O dashboard de analytics me ajudou a entender meu publico e crescer muito mais rapido. Recomendo muito!", stars: 5, color: "#06b6d4" },
 ];
 function Testimonials() {
   return (
-    <section className="py-24 px-5 relative" style={{ background: "#060410" }}>
+    <section className="py-24 px-5 relative" style={{ background: "#0a0a0c" }}>
       <div className="max-w-6xl mx-auto">
         <Reveal className="text-center mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4"
-            style={{ background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.25)", color: "#f59e0b" }}>
+            style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", color: "#22c55e" }}>
             <Star className="w-3 h-3 fill-current" /> Depoimentos
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">
-            Criadores que <span style={{ background: "linear-gradient(90deg,#f59e0b,#ef4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>amam</span> a plataforma
+            Criadores que <span style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>amam</span> a plataforma
           </h2>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -511,15 +511,15 @@ function Partners({ partners }: { partners: LandingPartner[] }) {
   const speed = Math.max(25, items.length * 6);
   const isFew = partners.length < 4;
   return (
-    <section className="py-24 relative overflow-hidden" style={{ background: "#08051c" }}>
-      <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(245,158,11,0.5),rgba(124,58,237,0.5),transparent)" }} />
+    <section className="py-24 relative overflow-hidden" style={{ background: "#0a0a0c" }}>
+      <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(6,182,212,0.5),rgba(34,197,94,0.5),transparent)" }} />
       <Reveal className="text-center mb-14 px-5">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4"
-          style={{ background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.28)", color: "#f59e0b" }}>
+          style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.28)", color: "#06b6d4" }}>
           <Star className="w-3 h-3 fill-current" /> Streamers Parceiros
         </div>
         <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-3 tracking-tight">
-          Criadores que <span style={{ background: "linear-gradient(90deg,#f59e0b,#ef4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>confiam</span> no Creatools
+          Criadores que <span style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>confiam</span> no Creatools
         </h2>
         <p className="text-white/35 max-w-md mx-auto">Streamers profissionais turbinando suas lives com nossas ferramentas.</p>
       </Reveal>
@@ -534,12 +534,12 @@ function Partners({ partners }: { partners: LandingPartner[] }) {
               style={{ animation: `partnersScroll ${speed}s linear infinite`, paddingLeft: "32px" }}>
               {doubled.map((p, i) => <PartnerCard key={`${p.id}-${i}`} partner={p} index={i} />)}
             </div>
-            <div className="absolute inset-y-0 left-0 w-28 pointer-events-none z-10" style={{ background: "linear-gradient(to right,#08051c,transparent)" }} />
-            <div className="absolute inset-y-0 right-0 w-28 pointer-events-none z-10" style={{ background: "linear-gradient(to left,#08051c,transparent)" }} />
+            <div className="absolute inset-y-0 left-0 w-28 pointer-events-none z-10" style={{ background: "linear-gradient(to right,#0a0a0c,transparent)" }} />
+            <div className="absolute inset-y-0 right-0 w-28 pointer-events-none z-10" style={{ background: "linear-gradient(to left,#0a0a0c,transparent)" }} />
           </div>
         )}
       </div>
-      <div className="absolute bottom-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(124,58,237,0.35),transparent)" }} />
+      <div className="absolute bottom-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(6,182,212,0.35),transparent)" }} />
     </section>
   );
 }
@@ -547,15 +547,15 @@ function Partners({ partners }: { partners: LandingPartner[] }) {
 // ── Pricing ───────────────────────────────────────────────────────────────────
 function Pricing({ plans, recommended, onSelect }: { plans: PricingPlan[]; recommended: string; onSelect: () => void }) {
   return (
-    <section className="py-28 px-5 relative" style={{ background: "#060410" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(6,182,212,0.07) 0%, transparent 50%)" }} />
+    <section className="py-28 px-5 relative" style={{ background: "#0a0a0c" }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(6,182,212,0.06) 0%, transparent 50%)" }} />
       <div className="max-w-6xl mx-auto">
         <Reveal className="text-center mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4"
-            style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", color: "#22d3ee" }}>
+            style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", color: "#06b6d4" }}>
             <Zap className="w-3 h-3" /> Planos
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">Comece grátis, cresça sem limites</h2>
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">Comece gratis, cresca sem limites</h2>
           <p className="text-white/35 text-lg max-w-md mx-auto">Escale conforme sua live cresce. Cancele quando quiser.</p>
         </Reveal>
         <Reveal delay={80}><PricingTable plans={plans} recommendedPlanId={recommended} onSelect={onSelect} /></Reveal>
@@ -567,12 +567,12 @@ function Pricing({ plans, recommended, onSelect }: { plans: PricingPlan[]; recom
 // ── CTA ───────────────────────────────────────────────────────────────────────
 function CTA({ cta, onCTA }: { cta: LandingContent["cta"]; onCTA: () => void }) {
   return (
-    <section className="py-32 px-5 relative overflow-hidden" style={{ background: "#08051c" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(124,58,237,0.18) 0%, transparent 55%)" }} />
-      <div className="absolute inset-0 pointer-events-none opacity-[0.015]"
+    <section className="py-32 px-5 relative overflow-hidden" style={{ background: "#0a0a0c" }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.12) 0%, transparent 55%)" }} />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.012]"
         style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "48px 48px" }} />
       {/* Decorative glowing orb behind text */}
-      <div className="absolute w-[600px] h-[600px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(124,58,237,0.08)", top: "50%", left: "50%", transform: "translate(-50%,-50%)" }} />
+      <div className="absolute w-[600px] h-[600px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(6,182,212,0.06)", top: "50%", left: "50%", transform: "translate(-50%,-50%)" }} />
 
       <Reveal>
         <div className="max-w-3xl mx-auto text-center relative">
@@ -582,14 +582,14 @@ function CTA({ cta, onCTA }: { cta: LandingContent["cta"]; onCTA: () => void }) 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" onClick={onCTA}
               className="h-14 px-12 text-lg font-black border-0 text-white w-full sm:w-auto"
-              style={{ background: "linear-gradient(135deg,#f59e0b,#ef4444,#ec4899)", boxShadow: "0 0 60px rgba(245,158,11,0.3)" }}>
+              style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", boxShadow: "0 0 60px rgba(6,182,212,0.3)" }}>
               {cta.buttonLabel} <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button size="lg" variant="ghost" onClick={onCTA} className="h-14 px-8 text-base text-white/40 hover:text-white border border-white/10 hover:border-white/20 hover:bg-white/5 w-full sm:w-auto">
-              Ver planos e preços
+            <Button size="lg" variant="ghost" onClick={onCTA} className="h-14 px-8 text-base text-white/40 hover:text-white border border-white/10 hover:border-cyan-500/30 hover:bg-white/5 w-full sm:w-auto">
+              Ver planos e precos
             </Button>
           </div>
-          <p className="text-white/20 text-sm mt-6">Grátis para começar · Sem cartão de crédito · Cancele quando quiser</p>
+          <p className="text-white/20 text-sm mt-6">Gratis para comecar - Sem cartao de credito - Cancele quando quiser</p>
         </div>
       </Reveal>
     </section>
@@ -599,10 +599,10 @@ function CTA({ cta, onCTA }: { cta: LandingContent["cta"]; onCTA: () => void }) 
 // ── Footer ────────────────────────────────────────────────────────────────────
 function Footer({ logo }: { logo: string }) {
   return (
-    <footer className="py-10 px-5" style={{ background: "#060410", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+    <footer className="py-10 px-5" style={{ background: "#0a0a0c", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#7c3aed)" }}>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }}>
             <SiTiktok className="w-3.5 h-3.5 text-white" />
           </div>
           <span className="font-bold text-white/60">{logo}</span>
@@ -610,7 +610,7 @@ function Footer({ logo }: { logo: string }) {
         <div className="flex items-center gap-6 text-xs text-white/20">
           <span>Termos de Uso</span><span>Privacidade</span><span>Suporte</span>
         </div>
-        <p className="text-xs text-white/15">© {new Date().getFullYear()} {logo} · Plataforma para streamers TikTok LIVE</p>
+        <p className="text-xs text-white/15">&copy; {new Date().getFullYear()} {logo} - Plataforma para streamers TikTok LIVE</p>
       </div>
     </footer>
   );
@@ -732,12 +732,12 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#7c3aed)" }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }}>
               <SiTiktok className="w-4 h-4 text-white" />
             </div>
             <div>
               <div className="font-bold text-sm text-white leading-none">Creatools</div>
-              <div className="text-[9px] text-purple-400/60 uppercase tracking-widest">TikTok Live Studio</div>
+              <div className="text-[9px] text-cyan-400/60 uppercase tracking-widest">TikTok Live Studio</div>
             </div>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg text-white/30 hover:text-white transition-colors"
@@ -752,7 +752,7 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
             {(["login", "register"] as const).map((m) => (
               <button key={m} onClick={() => switchMode(m)}
                 className="py-2 rounded-lg text-sm font-semibold transition-all"
-                style={{ background: mode === m ? "#7c3aed" : "transparent", color: mode === m ? "white" : "rgba(255,255,255,0.35)" }}>
+                style={{ background: mode === m ? "#06b6d4" : "transparent", color: mode === m ? "white" : "rgba(255,255,255,0.35)" }}>
                 {m === "login" ? "Entrar" : "Criar conta"}
               </button>
             ))}
@@ -763,10 +763,10 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
             <h2 className="text-lg font-bold text-white mb-0.5">
               {mode === "login" ? "Bem-vindo de volta" : regStep === "account" ? "Criar sua conta" : "Vincular TikTok"}
             </h2>
-            <p className="text-xs text-purple-300/45">
+            <p className="text-xs text-cyan-300/45">
               {mode === "login" ? "Entre para acessar seus overlays e ferramentas"
-               : regStep === "account" ? "Preencha seus dados para começar"
-               : "Obrigatório — seu @ do TikTok fica vinculado à conta"}
+               : regStep === "account" ? "Preencha seus dados para comecar"
+               : "Obrigatorio — seu @ do TikTok fica vinculado a conta"}
             </p>
           </div>
 
@@ -775,27 +775,27 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
             <form onSubmit={handleLogin} className="space-y-3">
               <input type="email" placeholder="Seu email" value={email} onChange={(e) => setEmail(e.target.value)}
                 required autoComplete="email" style={inputStyle}
-                className="placeholder:text-purple-400/30 focus:border-purple-500/40" />
+                className="placeholder:text-cyan-400/30 focus:border-cyan-500/40" />
               <div className="relative">
                 <input type={showPw ? "text" : "password"} placeholder="Sua senha" value={password}
                   onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password"
                   style={{ ...inputStyle, paddingRight: "40px" }}
-                  className="placeholder:text-purple-400/30 focus:border-purple-500/40" />
+                  className="placeholder:text-cyan-400/30 focus:border-cyan-500/40" />
                 <button type="button" onClick={() => setShowPw(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-400/40 hover:text-purple-300 transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400/40 hover:text-cyan-300 transition-colors">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {error && <AuthErrorBox msg={error} />}
               <button type="submit" disabled={loading}
                 className="w-full py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 disabled:opacity-60 transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(90deg,#ec4899,#8b5cf6,#06b6d4)", backgroundSize: "200% 100%" }}>
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Entrando…</> : <><ArrowRight className="w-4 h-4" />Entrar</>}
+                style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e)", backgroundSize: "200% 100%" }}>
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Entrando...</> : <><ArrowRight className="w-4 h-4" />Entrar</>}
               </button>
-              <p className="text-center text-xs text-purple-300/30">
-                Não tem conta?{" "}
-                <button type="button" onClick={() => switchMode("register")} className="font-semibold hover:underline" style={{ color: "#a78bfa" }}>
-                  Criar conta grátis
+              <p className="text-center text-xs text-cyan-300/30">
+                Nao tem conta?{" "}
+                <button type="button" onClick={() => switchMode("register")} className="font-semibold hover:underline" style={{ color: "#06b6d4" }}>
+                  Criar conta gratis
                 </button>
               </p>
             </form>
@@ -806,29 +806,29 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
             <form onSubmit={handleRegisterStep1} className="space-y-3">
               <input type="text" placeholder="Seu nome completo" value={name}
                 onChange={(e) => setName(e.target.value)} required autoComplete="name"
-                style={inputStyle} className="placeholder:text-purple-400/30 focus:border-purple-500/40" />
+                style={inputStyle} className="placeholder:text-cyan-400/30 focus:border-cyan-500/40" />
               <input type="email" placeholder="Seu email" value={email}
                 onChange={(e) => setEmail(e.target.value)} required autoComplete="email"
-                style={inputStyle} className="placeholder:text-purple-400/30 focus:border-purple-500/40" />
+                style={inputStyle} className="placeholder:text-cyan-400/30 focus:border-cyan-500/40" />
               <div className="relative">
                 <input type={showPw ? "text" : "password"} placeholder="Senha (mínimo 6 caracteres)"
                   value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="new-password"
                   style={{ ...inputStyle, paddingRight: "40px" }}
-                  className="placeholder:text-purple-400/30 focus:border-purple-500/40" />
+                  className="placeholder:text-cyan-400/30 focus:border-cyan-500/40" />
                 <button type="button" onClick={() => setShowPw(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-400/40 hover:text-purple-300 transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400/40 hover:text-cyan-300 transition-colors">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {error && <AuthErrorBox msg={error} />}
               <button type="submit"
                 className="w-full py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 hover:opacity-90 transition-all"
-                style={{ background: "linear-gradient(90deg,#ec4899,#8b5cf6)" }}>
-                Próximo — vincular TikTok <ArrowRight className="w-4 h-4" />
+                style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e)" }}>
+                Proximo — vincular TikTok <ArrowRight className="w-4 h-4" />
               </button>
-              <p className="text-center text-xs text-purple-300/30">
-                Já tem conta?{" "}
-                <button type="button" onClick={() => switchMode("login")} className="font-semibold hover:underline" style={{ color: "#a78bfa" }}>
+              <p className="text-center text-xs text-cyan-300/30">
+                Ja tem conta?{" "}
+                <button type="button" onClick={() => switchMode("login")} className="font-semibold hover:underline" style={{ color: "#06b6d4" }}>
                   Entrar
                 </button>
               </p>
@@ -839,18 +839,18 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
           {mode === "register" && regStep === "tiktok" && (
             <div className="space-y-3">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400/60 text-sm font-mono">@</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400/60 text-sm font-mono">@</span>
                 <input type="text" placeholder="seuusuario" value={tiktokHandle}
                   onChange={(e) => setTiktokHandle(e.target.value.replace(/^@/, ""))}
                   autoComplete="off" autoFocus
                   style={{ ...inputStyle, paddingLeft: "32px", paddingRight: "40px",
                     borderColor: isHandleValid ? "rgba(34,197,94,0.45)" : isHandleNotFound ? "rgba(245,158,11,0.35)" : "rgba(255,255,255,0.08)" }}
-                  className="placeholder:text-purple-400/30" />
+                  className="placeholder:text-cyan-400/30" />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  {tikLooking && <Loader2 className="w-4 h-4 animate-spin text-purple-400" />}
+                  {tikLooking && <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />}
                   {!tikLooking && isHandleValid && <CheckCircle2 className="w-4 h-4 text-green-400" />}
                   {!tikLooking && isHandleNotFound && <XCircle className="w-4 h-4 text-orange-400" />}
-                  {!tikLooking && !tikProfile && handle.length < 2 && <Search className="w-4 h-4 text-purple-400/30" />}
+                  {!tikLooking && !tikProfile && handle.length < 2 && <Search className="w-4 h-4 text-cyan-400/30" />}
                 </div>
               </div>
 
@@ -860,8 +860,8 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
                   {tikProfile.profilePictureUrl ? (
                     <img src={tikProfile.profilePictureUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
                   ) : (
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(124,58,237,0.3)" }}>
-                      <SiTiktok className="w-4 h-4 text-purple-400" />
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(6,182,212,0.2)" }}>
+                      <SiTiktok className="w-4 h-4 text-cyan-400" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
@@ -882,17 +882,17 @@ function AuthModal({ open, initialMode, onClose }: { open: boolean; initialMode:
               )}
 
               {error && <AuthErrorBox msg={error} />}
-              <p className="text-[11px] text-purple-300/30 leading-relaxed">
+              <p className="text-[11px] text-cyan-300/30 leading-relaxed">
                 O @ do TikTok é obrigatório e ficará permanentemente vinculado à sua conta. Não poderá ser alterado nas páginas de análise — apenas no perfil.
               </p>
 
               <button onClick={() => void handleRegisterFinish()} disabled={loading || !canFinish}
                 className="w-full py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 disabled:opacity-40 transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(90deg,#ec4899,#8b5cf6)" }}>
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Criando conta…</> : <><UserPlus className="w-4 h-4" />Criar conta</>}
+                style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e)" }}>
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Criando conta...</> : <><UserPlus className="w-4 h-4" />Criar conta</>}
               </button>
               <button type="button" onClick={() => setRegStep("account")}
-                className="w-full text-center text-xs text-purple-300/30 hover:text-purple-300/50 transition-colors">
+                className="w-full text-center text-xs text-cyan-300/30 hover:text-cyan-300/50 transition-colors">
                 ← Voltar
               </button>
             </div>
@@ -939,12 +939,12 @@ export default function LandingPage({ isPreview = false }: { isPreview?: boolean
   function openAuth(mode: AuthMode) { setAuthMode(mode); setShowAuth(true); }
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "#060410" }}>
-      <div className="w-6 h-6 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#0a0a0c" }}>
+      <div className="w-6 h-6 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin" />
     </div>
   );
   if (!landing) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "#060410" }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#0a0a0c" }}>
       <Button variant="ghost" className="text-white/40" onClick={() => setLocation("/login")}>Ir para o login</Button>
     </div>
   );
@@ -955,7 +955,7 @@ export default function LandingPage({ isPreview = false }: { isPreview?: boolean
     .sort((a, b) => a.order - b.order);
 
   return (
-    <div className="min-h-screen" style={{ background: "#060410" }}>
+    <div className="min-h-screen" style={{ background: "#0a0a0c" }}>
       <style>{`
         @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
         @keyframes partnersScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
@@ -963,7 +963,7 @@ export default function LandingPage({ isPreview = false }: { isPreview?: boolean
         @keyframes lp-orb { 0%,100%{transform:scale(1);opacity:0.7} 50%{transform:scale(1.15);opacity:1} }
         @keyframes lp-chat-in { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
         @keyframes lp-gradient-shift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-        @keyframes lp-btn-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,0.5),0 0 40px rgba(124,58,237,0.3)} 50%{box-shadow:0 0 0 8px rgba(124,58,237,0),0 0 60px rgba(124,58,237,0.45)} }
+        @keyframes lp-btn-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(6,182,212,0.5),0 0 40px rgba(6,182,212,0.3)} 50%{box-shadow:0 0 0 8px rgba(6,182,212,0),0 0 60px rgba(6,182,212,0.45)} }
       `}</style>
 
       <AuthModal open={showAuth} initialMode={authMode} onClose={() => setShowAuth(false)} />

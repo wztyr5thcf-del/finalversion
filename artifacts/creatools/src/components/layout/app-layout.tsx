@@ -44,8 +44,8 @@ function NavIcon({ name, className = "w-4 h-4" }: { name: string; className?: st
 
 const PLAN_CONFIG: Record<PlanLevel, { label: string; color: string; bg: string; badgeBg: string }> = {
   free:  { label: "Free",  color: "#9ca3af", bg: "rgba(156,163,175,0.1)", badgeBg: "rgba(156,163,175,0.15)" },
-  basic: { label: "Basic", color: "#22d3ee", bg: "rgba(34,211,238,0.1)",  badgeBg: "rgba(34,211,238,0.15)" },
-  pro:   { label: "PRO",   color: "#f97316", bg: "rgba(249,115,22,0.1)",  badgeBg: "rgba(249,115,22,0.2)" },
+  basic: { label: "Basic", color: "#06b6d4", bg: "rgba(6,182,212,0.1)",  badgeBg: "rgba(6,182,212,0.15)" },
+  pro:   { label: "PRO",   color: "#22c55e", bg: "rgba(34,197,94,0.1)",  badgeBg: "rgba(34,197,94,0.2)" },
 };
 
 const DEFAULT_SECTIONS: NavSectionConfig[] = [
@@ -230,7 +230,7 @@ function AnnouncementBell() {
         ref={btnRef}
         onClick={handleOpen}
         className="relative p-2 rounded-lg transition-colors hover:bg-white/5"
-        style={{ color: open ? "#a78bfa" : "rgba(255,255,255,0.4)" }}
+        style={{ color: open ? "#06b6d4" : "rgba(255,255,255,0.4)" }}
         aria-label="Novidades"
       >
         <Bell className="w-[18px] h-[18px]" />
@@ -249,21 +249,21 @@ function AnnouncementBell() {
           style={{
             width: 340,
             maxHeight: 480,
-            background: "#120d22",
-            border: "1px solid rgba(124,58,237,0.3)",
+            background: "#0d0f12",
+            border: "1px solid rgba(6,182,212,0.3)",
             borderRadius: 14,
-            boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,58,237,0.1)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(6,182,212,0.1)",
           }}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 shrink-0"
             style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
             <div className="flex items-center gap-2">
-              <Megaphone className="w-4 h-4" style={{ color: "#a78bfa" }} />
+              <Megaphone className="w-4 h-4" style={{ color: "#06b6d4" }} />
               <span className="font-semibold text-sm text-white">Novidades</span>
               {announcements.length > 0 && (
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold"
-                  style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa" }}>
+                  style={{ background: "rgba(6,182,212,0.2)", color: "#06b6d4" }}>
                   {announcements.length}
                 </span>
               )}
@@ -329,7 +329,7 @@ function AnnouncementBell() {
             </span>
             <Link href="/notifications" onClick={() => setOpen(false)}
               className="text-[11px] font-medium transition-colors hover:opacity-80"
-              style={{ color: "#a78bfa" }}>
+              style={{ color: "#06b6d4" }}>
               Ver tudo →
             </Link>
           </div>
@@ -419,9 +419,9 @@ function NavLinks({
             onClick={() => toggleExpand(item.id)}
             className={`w-full flex items-center rounded-lg text-sm font-medium transition-all ${itemPaddingLeft} py-2`}
             style={{
-              background: isActive || anyChildActive ? "rgba(124,58,237,0.1)" : "transparent",
-              color: isActive || anyChildActive ? "#a78bfa" : "rgba(255,255,255,0.55)",
-              borderLeft: isActive || anyChildActive ? "2px solid #7c3aed" : "2px solid transparent",
+              background: isActive || anyChildActive ? "rgba(6,182,212,0.1)" : "transparent",
+              color: isActive || anyChildActive ? "#06b6d4" : "rgba(255,255,255,0.55)",
+              borderLeft: isActive || anyChildActive ? "2px solid #06b6d4" : "2px solid transparent",
             }}
           >
             <NavIcon name={item.icon} className="shrink-0 w-4 h-4 mr-3" />
@@ -448,9 +448,9 @@ function NavLinks({
                     onClick={onNavigate}
                     className="flex items-center rounded-lg text-sm transition-all pl-9 pr-3 py-1.5"
                     style={{
-                      background: childActive ? "rgba(124,58,237,0.12)" : "transparent",
-                      color: childActive ? "#a78bfa" : "rgba(255,255,255,0.45)",
-                      borderLeft: childActive ? "2px solid #7c3aed" : "2px solid transparent",
+                      background: childActive ? "rgba(6,182,212,0.1)" : "transparent",
+                      color: childActive ? "#06b6d4" : "rgba(255,255,255,0.45)",
+                      borderLeft: childActive ? "2px solid #06b6d4" : "2px solid transparent",
                     }}
                   >
                     <span className="flex-1 text-[13px]">{child.label}</span>
@@ -479,9 +479,9 @@ function NavLinks({
           sidebarCollapsed ? "px-2 py-2.5 justify-center" : `${itemPaddingLeft} py-2`
         }`}
         style={{
-          background: isActive ? "rgba(124,58,237,0.15)" : "transparent",
-          color: isActive ? "#a78bfa" : isAdminItem ? "#f87171" : locked ? "rgba(255,255,255,0.2)" : (item.color || "rgba(255,255,255,0.55)"),
-          borderLeft: isActive ? "2px solid #7c3aed" : "2px solid transparent",
+          background: isActive ? "rgba(6,182,212,0.12)" : "transparent",
+          color: isActive ? "#06b6d4" : isAdminItem ? "#f87171" : locked ? "rgba(255,255,255,0.2)" : (item.color || "rgba(255,255,255,0.55)"),
+          borderLeft: isActive ? "2px solid #06b6d4" : "2px solid transparent",
         }}
       >
         <NavIcon name={item.icon} className={`shrink-0 ${sidebarCollapsed ? "w-4.5 h-4.5" : "w-4 h-4 mr-3"}`} />
@@ -635,7 +635,7 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
       {/* LEFT: app name + subtitle */}
       <div className="flex items-center gap-2.5 shrink-0">
         <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-          style={{ background: "linear-gradient(135deg, #06b6d4, #7c3aed)" }}>
+          style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
           {effectiveLogo
             ? <img src={effectiveLogo} alt={appName} className="h-5 object-contain" />
             : <SiTiktok className="w-3.5 h-3.5 text-white" />}
@@ -643,7 +643,7 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
         <div className="hidden sm:block leading-none">
           <p className="text-sm font-bold text-white tracking-tight">{appName}</p>
           {showSub && appSub && (
-            <p className="text-[9px] tracking-widest uppercase mt-0.5" style={{ color: "rgba(167,139,250,0.5)" }}>
+            <p className="text-[9px] tracking-widest uppercase mt-0.5" style={{ color: "rgba(6,182,212,0.5)" }}>
               {appSub}
             </p>
           )}
@@ -704,7 +704,7 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
         {showUpg && userPlan !== "pro" && (
           <Link href="/pricing"
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105 shrink-0"
-            style={{ background: "linear-gradient(90deg, #7c3aed, #ec4899)", color: "white" }}>
+            style={{ background: "linear-gradient(90deg, #06b6d4, #22c55e)", color: "white" }}>
             <Zap className="w-3 h-3" />
             Upgrade
           </Link>
@@ -717,7 +717,7 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
               <button className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors shrink-0"
                 style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
-                  style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)", color: "white" }}>
+                  style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white" }}>
                   {initials}
                 </div>
                 <div className="hidden sm:block text-left leading-none">
@@ -804,10 +804,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   // ── Topbar layout ──
   if (navType === "topbar") {
     return (
-      <div className="flex flex-col h-screen w-full overflow-hidden" style={{ background: "#0a0814" }}>
+      <div className="flex flex-col h-screen w-full overflow-hidden" style={{ background: "#0a0a0c" }}>
         <header className="h-14 flex items-center px-4 gap-4 shrink-0" style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #06b6d4, #7c3aed)" }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
               {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
             </div>
             <span className="font-bold text-base tracking-tight text-white">{logoText}</span>
@@ -819,7 +819,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               return (
                 <Link key={item.id} href={locked ? "/pricing" : item.href}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors shrink-0"
-                  style={{ color: isActive ? "#a78bfa" : "rgba(255,255,255,0.5)", background: isActive ? "rgba(124,58,237,0.12)" : "transparent" }}>
+                  style={{ color: isActive ? "#06b6d4" : "rgba(255,255,255,0.5)", background: isActive ? "rgba(6,182,212,0.1)" : "transparent" }}>
                   <NavIcon name={item.icon} className="w-3.5 h-3.5" />
                   <span>{item.label}</span>
                 </Link>
@@ -831,7 +831,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors shrink-0">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                    style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)", color: "white" }}>{initials}</div>
+                    style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white" }}>{initials}</div>
                   <span className="text-sm font-medium text-white/70 hidden sm:block">{user.name}</span>
                   <ChevronDown className="w-3.5 h-3.5 text-white/30" />
                 </button>
@@ -861,17 +861,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className={`h-14 flex items-center shrink-0 ${sidebarCollapsed ? "justify-center px-2" : "px-4"}`}
         style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
         {sidebarCollapsed ? (
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #06b6d4, #7c3aed)" }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
             {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
           </div>
         ) : (
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #06b6d4, #7c3aed)" }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
               {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
             </div>
             <div className="min-w-0">
               <div className="font-bold text-sm tracking-tight text-white leading-none truncate">{logoText}</div>
-              <div className="text-[9px] tracking-widest uppercase mt-0.5" style={{ color: "rgba(167,139,250,0.5)" }}>TikTok Live Studio</div>
+              <div className="text-[9px] tracking-widest uppercase mt-0.5" style={{ color: "rgba(6,182,212,0.5)" }}>TikTok Live Studio</div>
             </div>
           </div>
         )}
@@ -882,7 +882,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="px-4 py-3 shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)", color: "white" }}>{initials}</div>
+              style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white" }}>{initials}</div>
             <span className="text-xs truncate" style={{ color: "rgba(255,255,255,0.5)" }}>{user.email}</span>
           </div>
         </div>
@@ -905,13 +905,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="px-3 pb-2 shrink-0">
           <Link href="/pricing">
             <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all hover:opacity-90"
-              style={{ background: "linear-gradient(90deg, rgba(124,58,237,0.2), rgba(236,72,153,0.2))", border: "1px solid rgba(124,58,237,0.3)" }}>
-              <Zap className="w-4 h-4 shrink-0" style={{ color: "#a78bfa" }} />
+              style={{ background: "linear-gradient(90deg, rgba(6,182,212,0.15), rgba(34,197,94,0.12))", border: "1px solid rgba(6,182,212,0.25)" }}>
+              <Zap className="w-4 h-4 shrink-0" style={{ color: "#06b6d4" }} />
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold" style={{ color: "#a78bfa" }}>Upgrade agora</p>
+                <p className="text-xs font-semibold" style={{ color: "#06b6d4" }}>Upgrade agora</p>
                 <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>Desbloqueie mais ferramentas</p>
               </div>
-              <Crown className="w-3.5 h-3.5 shrink-0" style={{ color: "#f97316" }} />
+              <Crown className="w-3.5 h-3.5 shrink-0" style={{ color: "#22c55e" }} />
             </div>
           </Link>
         </div>
@@ -924,7 +924,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left group mt-3">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                  style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)", color: "white" }}>{initials}</div>
+                  style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white" }}>{initials}</div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium truncate text-white/70">{user.email?.split("@")[0]}</p>
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: planCfg.badgeBg, color: planCfg.color }}>{planCfg.label}</span>
@@ -984,7 +984,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="flex h-screen w-full overflow-hidden" style={{ background: "#0a0814" }}>
+    <div className="flex h-screen w-full overflow-hidden" style={{ background: "#0a0a0c" }}>
       {/* Desktop Sidebar */}
       <aside className={`${sidebarW} hidden md:flex flex-col shrink-0 transition-all duration-200`}
         style={{ background: "rgba(255,255,255,0.02)", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
@@ -996,7 +996,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-64 flex flex-col z-10"
-            style={{ background: "#0f0b1f", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
+            style={{ background: "#0d0d0f", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
             <SidebarContent onNavigate={() => setMobileOpen(false)} />
           </aside>
         </div>

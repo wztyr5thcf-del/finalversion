@@ -76,24 +76,24 @@ export default function Dashboard() {
 
       {/* ── Welcome header ─────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-2xl p-5 border border-white/8"
-        style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(236,72,153,0.06) 50%, rgba(6,182,212,0.06) 100%)" }}>
+        style={{ background: "linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(34,197,94,0.05) 50%, rgba(6,182,212,0.04) 100%)" }}>
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at top left, rgba(124,58,237,0.15) 0%, transparent 60%)" }} />
+          style={{ background: "radial-gradient(ellipse at top left, rgba(6,182,212,0.1) 0%, transparent 60%)" }} />
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             {user?.tiktokProfilePicture ? (
-              <img src={user.tiktokProfilePicture} alt="" className="w-14 h-14 rounded-full object-cover ring-2 ring-purple-500/40" />
+              <img src={user.tiktokProfilePicture} alt="" className="w-14 h-14 rounded-full object-cover ring-2 ring-cyan-500/40" />
             ) : (
-              <div className="w-14 h-14 rounded-full flex items-center justify-center ring-2 ring-purple-500/40 shrink-0"
-                style={{ background: "rgba(124,58,237,0.2)" }}>
-                <SiTiktok className="w-6 h-6 text-purple-400" />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center ring-2 ring-cyan-500/40 shrink-0"
+                style={{ background: "rgba(6,182,212,0.15)" }}>
+                <SiTiktok className="w-6 h-6 text-cyan-400" />
               </div>
             )}
             <div>
-              <p className="text-xs text-purple-300/50 font-medium mb-0.5">Bem-vindo de volta</p>
+              <p className="text-xs text-cyan-300/50 font-medium mb-0.5">Bem-vindo de volta</p>
               <h1 className="text-2xl font-bold text-white">{displayName}</h1>
               {handle && (
-                <p className="text-sm text-purple-300/60 font-mono">@{handle}</p>
+                <p className="text-sm text-cyan-300/60 font-mono">@{handle}</p>
               )}
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function Dashboard() {
               <button
                 onClick={() => setLocation("/pricing")}
                 className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(90deg, #7c3aed, #ec4899)", color: "white" }}>
+                style={{ background: "linear-gradient(90deg, #06b6d4, #22c55e)", color: "white" }}>
                 <Sparkles className="w-3 h-3" />
                 Fazer upgrade
               </button>
@@ -120,7 +120,7 @@ export default function Dashboard() {
           {/* Conta TikTok conectada */}
           <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
             <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-purple-300/50">Conta TikTok Conectada</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/50">Conta TikTok Conectada</p>
               <div className="flex items-center gap-1.5">
                 {handle ? (
                   <>
@@ -138,14 +138,14 @@ export default function Dashboard() {
             {handle ? (
               <div className="flex items-center gap-4">
                 <div className="flex items-center justify-center w-12 h-12 rounded-full shrink-0"
-                  style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.25)" }}>
-                  <SiTiktok className="w-5 h-5 text-purple-400" />
+                  style={{ background: "rgba(6,182,212,0.12)", border: "1px solid rgba(6,182,212,0.2)" }}>
+                  <SiTiktok className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-white truncate">{user?.tiktokDisplayName ?? handle}</p>
-                  <p className="text-sm text-purple-300/50 font-mono">@{handle}</p>
+                  <p className="text-sm text-cyan-300/50 font-mono">@{handle}</p>
                   {user?.tiktokFollowerCount && user.tiktokFollowerCount > 0 && (
-                    <p className="text-xs text-purple-300/40 mt-0.5 flex items-center gap-1">
+                    <p className="text-xs text-cyan-300/40 mt-0.5 flex items-center gap-1">
                       <Users className="w-3 h-3" />
                       {user.tiktokFollowerCount.toLocaleString("pt-BR")} seguidores
                     </p>
@@ -172,12 +172,12 @@ export default function Dashboard() {
           <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Monitor className="w-4 h-4 text-purple-400" />
-                <p className="text-sm font-semibold text-white">Sobreposições (Overlays)</p>
+                <Monitor className="w-4 h-4 text-cyan-400" />
+                <p className="text-sm font-semibold text-white">Sobreposicoes (Overlays)</p>
               </div>
               <button
                 onClick={() => setLocation("/overlays")}
-                className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors">
+                className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
                 Ver todas <ChevronRight className="w-3 h-3" />
               </button>
             </div>
@@ -187,7 +187,7 @@ export default function Dashboard() {
                   key={p.href}
                   onClick={() => setLocation(p.href)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all hover:scale-105"
-                  style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.2)", color: "#c4b5fd" }}>
+                  style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)", color: "#67e8f9" }}>
                   {p.label}
                   {p.badge && (
                     <span className="text-xs font-bold" style={{ color: "#f97316" }}>{p.badge}</span>
@@ -263,7 +263,7 @@ export default function Dashboard() {
 
           {/* Stats rápidas */}
           <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-purple-300/50 mb-4">Acesso Rápido</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/50 mb-4">Acesso Rapido</p>
             <div className="space-y-2">
               {[
                 { label: "Monitor Live",   icon: Wifi,     href: handle ? `/monitor/${handle}` : "/monitor/example", color: "#22d3ee" },
@@ -292,22 +292,22 @@ export default function Dashboard() {
           <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-purple-400" />
+                <Shield className="w-4 h-4 text-cyan-400" />
                 <p className="text-sm font-semibold text-white">Influenciadores Parceiros</p>
               </div>
               <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa" }}>BETA</span>
+                style={{ background: "rgba(6,182,212,0.2)", color: "#06b6d4" }}>BETA</span>
             </div>
             <div className="space-y-3">
               {PARTNER_INFLUENCERS.map((p) => (
                 <div key={p.handle} className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-xs font-bold"
-                    style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa" }}>
+                    style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
                     {p.avatar}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white truncate">{p.name}</p>
-                    <p className="text-xs text-purple-300/50">{p.handle}</p>
+                    <p className="text-xs text-cyan-300/50">{p.handle}</p>
                   </div>
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
                     style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}>
@@ -316,7 +316,7 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-            <button className="mt-4 w-full py-2 text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center justify-center gap-1 transition-colors">
+            <button className="mt-4 w-full py-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-1 transition-colors">
               Ver todos <ChevronRight className="w-3 h-3" />
             </button>
           </div>
@@ -328,7 +328,7 @@ export default function Dashboard() {
                 <BookOpen className="w-4 h-4 text-cyan-400" />
                 <p className="text-sm font-semibold text-white">Blog — Novidades</p>
               </div>
-              <span className="text-xs text-purple-300/40">Em breve</span>
+              <span className="text-xs text-cyan-300/40">Em breve</span>
             </div>
             <div className="space-y-3">
               {[

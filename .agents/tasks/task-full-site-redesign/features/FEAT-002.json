@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Complete visual redesign of the design system (index.css), landing page, login page, dashboard, sidebar/app-layout, and overlays page. Inspired by bettertok.app (clean dashboard, intuitive nav, professional landing with social proof) and tik.tools (dark theme #0a0a0c, cyan/green neon accents #22c55e/#06b6d4, modern professional aesthetic). The redesign should give the site a fresh new look while maintaining all existing functionality.",
+  "status": "in_progress",
+  "steps": [
+    "1. Update artifacts/creatools/src/index.css: Refresh the CSS custom properties to use a darker base (#0a0a0c background inspired by tik.tools), stronger cyan (#06b6d4) and green (#22c55e) neon accents. Keep purple as secondary. Update the body background gradient to match the new darker aesthetic. Add new utility classes for the neon glow effects.",
+    "2. Redesign artifacts/creatools/src/pages/landing.tsx: Complete rewrite of the landing page with a new hero section featuring a gradient heading with cyan/green neon accents, animated background particles/grid, improved feature cards with glassmorphism style, better social proof section, updated pricing section, streamlined CTA. Use #0a0a0c as base background. Make it feel like tik.tools meets bettertok.app - professional, modern, high-conversion.",
+    "3. Redesign artifacts/creatools/src/pages/login.tsx: Fresh login/register page with a cleaner split layout, neon accent borders on inputs, smoother transitions, updated gradient buttons using cyan/green palette, improved TikTok handle verification UI. Dark background matching the new design system.",
+    "4. Redesign artifacts/creatools/src/pages/dashboard.tsx: New dashboard with clean stat cards (neon borders/glow), quick action grid, improved overlay pills with hover animations, better visual hierarchy, streamlined welcome header with the new color palette. Inspired by bettertok.app's clean and easy-to-use dashboard.",
+    "5. Redesign artifacts/creatools/src/components/layout/app-layout.tsx: Modern sidebar with the new color scheme - darker background, cyan active state indicators, cleaner section separators, updated user profile area, improved mobile drawer. Sleek top bar with neon accents. Based on bettertok.app's intuitive navigation.",
+    "6. Redesign artifacts/creatools/src/pages/overlays.tsx: Update the overlay studio page with improved preview cards showing real overlay previews (not plain squares), glassmorphism card style, neon accent borders on hover, better categorization and grid layout."
+  ],
+  "acceptance_criteria": [
+    "Build succeeds: PORT=3001 BASE_PATH='/' pnpm --filter @workspace/creatools run build",
+    "Landing page uses #0a0a0c background with cyan (#06b6d4) and green (#22c55e) neon accents",
+    "Login page has refreshed design with new color palette",
+    "Dashboard has clean stat cards with neon glow effects",
+    "Sidebar uses darker tones with cyan active indicators",
+    "Overlays page shows improved preview cards with glassmorphism",
+    "All existing functionality (auth modal, TikTok handle lookup, navigation, routing) is preserved",
+    "No TypeScript errors in the build"
+  ],
+  "verification": [
+    "Run: PORT=3001 BASE_PATH='/' pnpm --filter @workspace/creatools run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
