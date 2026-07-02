@@ -168,27 +168,34 @@ export default function Login() {
 
   return (
     <div className="min-h-screen w-full flex overflow-hidden" style={{ background: "#0a0a0c" }}>
-      {/* Background animated mesh */}
+      {/* Background animated mesh - MORE DRAMATIC */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full" style={{ background: "radial-gradient(circle, rgba(6,182,212,0.12), transparent 70%)", animation: "float-up-down 6s ease-in-out infinite" }} />
-        <div className="absolute bottom-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full" style={{ background: "radial-gradient(circle, rgba(34,197,94,0.08), transparent 70%)", animation: "float-up-down 8s ease-in-out infinite 2s" }} />
-        <div className="absolute top-[40%] left-[50%] w-[400px] h-[400px] rounded-full" style={{ background: "radial-gradient(circle, rgba(6,182,212,0.06), transparent 70%)", animation: "float-up-down 7s ease-in-out infinite 1s" }} />
-        {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "80px 80px" }} />
+        <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full" style={{ background: "radial-gradient(circle, rgba(6,182,212,0.14), transparent 70%)", animation: "float-up-down 6s ease-in-out infinite" }} />
+        <div className="absolute bottom-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full" style={{ background: "radial-gradient(circle, rgba(34,197,94,0.10), transparent 70%)", animation: "float-up-down 8s ease-in-out infinite 2s" }} />
+        <div className="absolute top-[40%] left-[50%] w-[400px] h-[400px] rounded-full" style={{ background: "radial-gradient(circle, rgba(6,182,212,0.08), transparent 70%)", animation: "float-up-down 7s ease-in-out infinite 1s" }} />
+        <div className="absolute top-[10%] right-[30%] w-[300px] h-[300px] rounded-full" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.06), transparent 70%)", animation: "float-up-down 9s ease-in-out infinite 3s" }} />
+        <div className="absolute bottom-[30%] left-[20%] w-[250px] h-[250px] rounded-full" style={{ background: "radial-gradient(circle, rgba(236,72,153,0.05), transparent 70%)", animation: "float-up-down 10s ease-in-out infinite 4s" }} />
+        {/* Floating particle dots */}
+        <div className="absolute top-[25%] left-[12%] w-1.5 h-1.5 rounded-full" style={{ background: "rgba(6,182,212,0.6)", animation: "float-particle 6s ease-in-out infinite", boxShadow: "0 0 6px rgba(6,182,212,0.4)" }} />
+        <div className="absolute top-[60%] right-[25%] w-1 h-1 rounded-full" style={{ background: "rgba(34,197,94,0.5)", animation: "float-particle 8s ease-in-out infinite 2s" }} />
+        <div className="absolute top-[80%] left-[45%] w-1 h-1 rounded-full" style={{ background: "rgba(124,58,237,0.5)", animation: "float-particle 7s ease-in-out infinite 1s" }} />
+        <div className="absolute top-[15%] right-[15%] w-1.5 h-1.5 rounded-full" style={{ background: "rgba(6,182,212,0.4)", animation: "float-particle 9s ease-in-out infinite 3s" }} />
+        {/* Grid overlay - MORE visible */}
+        <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "80px 80px" }} />
       </div>
 
       {/* LEFT: Auth panel - frosted glass */}
       <div className="relative z-10 w-full md:w-[440px] lg:w-[480px] flex flex-col items-center justify-center px-8 py-10 shrink-0"
         style={{ background: "rgba(10, 10, 12, 0.92)", backdropFilter: "blur(32px)", borderRight: "1px solid rgba(6,182,212,0.08)", boxShadow: "4px 0 32px rgba(0,0,0,0.4)" }}>
 
-        {/* Logo with breathing animation */}
+        {/* Logo with dramatic breathing animation and pulsing ring */}
         <div className="flex items-center gap-3 mb-8 self-start">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 20px rgba(6,182,212,0.3)", animation: "breathe 3s ease-in-out infinite" }}>
-            <SiTiktok className="w-5 h-5 text-white" />
+          <div className="relative w-12 h-12 rounded-xl flex items-center justify-center pulse-ring"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 28px rgba(6,182,212,0.4), 0 0 56px rgba(6,182,212,0.15)", animation: "breathe 3s ease-in-out infinite" }}>
+            <SiTiktok className="w-6 h-6 text-white" />
           </div>
           <div>
-            <div className="font-bold text-lg tracking-tight text-white leading-none">Creatools</div>
+            <div className="font-bold text-xl tracking-tight text-white leading-none text-glow-cyan">Creatools</div>
             <div className="text-[10px] tracking-[0.15em] uppercase mt-0.5 font-mono" style={{ color: "rgba(6,182,212,0.6)" }}>Live Studio</div>
           </div>
         </div>
@@ -252,7 +259,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-8 pr-4 py-3 rounded-xl text-sm outline-none transition-all placeholder:text-cyan-400/30"
+                  className="w-full pl-8 pr-4 py-3 rounded-xl text-sm outline-none transition-all placeholder:text-cyan-400/30 input-neon-focus"
                   style={{
                     background: "rgba(255,255,255,0.06)",
                     border: "1px solid rgba(255,255,255,0.08)",
@@ -271,7 +278,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-8 pr-10 py-3 rounded-xl text-sm outline-none transition-all placeholder:text-cyan-400/30"
+                  className="w-full pl-8 pr-10 py-3 rounded-xl text-sm outline-none transition-all placeholder:text-cyan-400/30 input-neon-focus"
                   style={{
                     background: "rgba(255,255,255,0.06)",
                     border: "1px solid rgba(255,255,255,0.08)",
@@ -470,9 +477,9 @@ export default function Login() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 70% 70%, rgba(34,197,94,0.06) 0%, transparent 50%)" }} />
         
         <div className="max-w-lg relative">
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
+          <h2 className="text-4xl lg:text-6xl font-extrabold text-white leading-tight mb-4">
             Engaje seus fas{" "}
-            <span className="block gradient-text-shimmer">
+            <span className="block gradient-text-shimmer text-glow-cyan">
               em tempo real.
             </span>
           </h2>

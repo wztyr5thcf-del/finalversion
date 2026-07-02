@@ -596,8 +596,11 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
   const centerBtns = headerConfig?.centerButtons ?? [];
 
   return (
-    <header className="h-14 flex items-center px-4 gap-3 shrink-0"
+    <header className="h-14 flex items-center px-4 gap-3 shrink-0 relative"
       style={{ background: "rgba(10,10,12,0.8)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+      {/* Animated gradient bottom border */}
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] pointer-events-none"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(6,182,212,0.4), rgba(34,197,94,0.3), transparent)", backgroundSize: "200% 100%", animation: "topbar-gradient 4s ease-in-out infinite" }} />
 
       {/* Mobile menu */}
       <button className="md:hidden text-white/40 hover:text-cyan-400 mr-1 transition-colors" onClick={onMobileMenu}>
@@ -814,22 +817,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => (
     <>
-      {/* Logo header with breathing animation */}
+      {/* Logo header with dramatic breathing animation and glow */}
       <div className={`h-16 flex items-center shrink-0 ${sidebarCollapsed ? "justify-center px-2" : "px-4"}`}
         style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
         {sidebarCollapsed ? (
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center breathe"
-            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center breathe"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 24px rgba(6,182,212,0.4), 0 0 48px rgba(6,182,212,0.15)" }}>
             {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
           </div>
         ) : (
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 breathe"
-              style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
-              {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 breathe"
+              style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 24px rgba(6,182,212,0.4), 0 0 48px rgba(6,182,212,0.15)" }}>
+              {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4.5 h-4.5 text-white" />}
             </div>
             <div className="min-w-0">
-              <div className="font-bold text-sm tracking-tight text-white leading-none truncate">{logoText}</div>
+              <div className="font-bold text-sm tracking-tight text-white leading-none truncate text-glow-cyan">{logoText}</div>
               <div className="text-[9px] tracking-[0.15em] uppercase mt-1 font-mono" style={{ color: "rgba(6,182,212,0.5)" }}>Live Studio</div>
             </div>
           </div>
@@ -951,15 +954,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen w-full overflow-hidden" style={{ background: "#0a0a0c" }}>
-      {/* Desktop Sidebar - frosted glass panel */}
-      <aside className={`${sidebarW} hidden md:flex flex-col shrink-0 transition-all duration-300 ease-in-out`}
+      {/* Desktop Sidebar - frosted glass panel with gradient edge */}
+      <aside className={`${sidebarW} hidden md:flex flex-col shrink-0 transition-all duration-300 ease-in-out sidebar-gradient-edge noise-overlay`}
         style={{
-          background: "rgba(10,10,14,0.85)",
-          backdropFilter: "blur(24px)",
-          borderRight: "1px solid rgba(255,255,255,0.04)",
-          boxShadow: "4px 0 24px rgba(0,0,0,0.3)",
+          background: "rgba(8,8,12,0.92)",
+          backdropFilter: "blur(32px)",
+          borderRight: "1px solid rgba(6,182,212,0.06)",
+          boxShadow: "4px 0 32px rgba(0,0,0,0.4), 0 0 20px rgba(6,182,212,0.03)",
         }}>
         <SidebarContent />
+        {/* Bottom status indicator - pulsing online count */}
+        {!sidebarCollapsed && (
+          <div className="px-3 pb-2 shrink-0">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.08)" }}>
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" style={{ boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
+              <span className="text-[10px] font-semibold text-green-400/70">{liveCount > 0 ? liveCount : 42} online</span>
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* Mobile overlay */}

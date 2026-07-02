@@ -154,9 +154,10 @@ function MockMonitorUI() {
   const visible = [CHATS[chatIdx % 6], CHATS[(chatIdx + 1) % 6], CHATS[(chatIdx + 2) % 6], CHATS[(chatIdx + 3) % 6], CHATS[(chatIdx + 4) % 6]];
 
   return (
-    <div className="relative w-full max-w-[340px] mx-auto select-none">
-      {/* Ambient glow */}
-      <div className="absolute inset-0 rounded-3xl blur-3xl opacity-40 pointer-events-none" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", transform: "scale(1.15) translateY(8%)" }} />
+    <div className="relative w-full max-w-[380px] mx-auto select-none">
+      {/* Ambient glow - STRONGER */}
+      <div className="absolute inset-0 rounded-3xl blur-3xl opacity-50 pointer-events-none" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", transform: "scale(1.2) translateY(8%)" }} />
+      <div className="absolute inset-0 rounded-3xl blur-2xl opacity-20 pointer-events-none" style={{ background: "linear-gradient(135deg,#06b6d4,#a78bfa)", transform: "scale(1.05)", animation: "breathe 3s ease-in-out infinite" }} />
 
       {/* Main card */}
       <div className="relative rounded-2xl overflow-hidden" style={{ background: "rgba(12,8,30,0.97)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 40px 80px rgba(0,0,0,0.6)", transform: "perspective(1000px) rotateY(-6deg) rotateX(2deg)" }}>
@@ -226,13 +227,21 @@ function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void
       <div className="absolute w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(6,182,212,0.12)", top: "15%", left: "2%", animation: "lp-orb 8s ease-in-out infinite" }} />
       <div className="absolute w-[400px] h-[400px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(34,197,94,0.08)", top: "5%", right: "5%", animation: "lp-orb 10s ease-in-out infinite reverse", animationDelay: "3s" }} />
       <div className="absolute w-[300px] h-[300px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(124,58,237,0.06)", bottom: "20%", left: "40%", animation: "lp-orb 12s ease-in-out infinite", animationDelay: "5s" }} />
+      <div className="absolute w-[350px] h-[350px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(6,182,212,0.07)", bottom: "10%", right: "15%", animation: "lp-orb 9s ease-in-out infinite", animationDelay: "2s" }} />
+      <div className="absolute w-[250px] h-[250px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(34,197,94,0.06)", top: "50%", left: "15%", animation: "lp-orb 11s ease-in-out infinite reverse", animationDelay: "4s" }} />
+      <div className="absolute w-[200px] h-[200px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(236,72,153,0.05)", top: "30%", right: "30%", animation: "lp-orb 13s ease-in-out infinite", animationDelay: "6s" }} />
       {/* Grid - more visible */}
       <div className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "64px 64px" }} />
-      {/* Particle dots */}
-      <div className="absolute top-[20%] left-[15%] w-1.5 h-1.5 rounded-full pointer-events-none" style={{ background: "rgba(6,182,212,0.6)", animation: "float-particle 6s ease-in-out infinite" }} />
+      {/* Particle dots - scattered */}
+      <div className="absolute top-[20%] left-[15%] w-1.5 h-1.5 rounded-full pointer-events-none" style={{ background: "rgba(6,182,212,0.6)", animation: "float-particle 6s ease-in-out infinite", boxShadow: "0 0 6px rgba(6,182,212,0.4)" }} />
       <div className="absolute top-[30%] right-[20%] w-1 h-1 rounded-full pointer-events-none" style={{ background: "rgba(34,197,94,0.5)", animation: "float-particle 8s ease-in-out infinite 2s" }} />
       <div className="absolute bottom-[35%] left-[25%] w-1 h-1 rounded-full pointer-events-none" style={{ background: "rgba(6,182,212,0.4)", animation: "float-particle 7s ease-in-out infinite 4s" }} />
+      <div className="absolute top-[55%] right-[35%] w-1.5 h-1.5 rounded-full pointer-events-none" style={{ background: "rgba(124,58,237,0.5)", animation: "float-particle 9s ease-in-out infinite 1s", boxShadow: "0 0 4px rgba(124,58,237,0.3)" }} />
+      <div className="absolute top-[75%] left-[55%] w-1 h-1 rounded-full pointer-events-none" style={{ background: "rgba(34,197,94,0.6)", animation: "float-particle 6s ease-in-out infinite 3s" }} />
+      <div className="absolute top-[10%] left-[70%] w-1.5 h-1.5 rounded-full pointer-events-none" style={{ background: "rgba(6,182,212,0.5)", animation: "float-particle 10s ease-in-out infinite 5s", boxShadow: "0 0 4px rgba(6,182,212,0.3)" }} />
+      <div className="absolute bottom-[20%] right-[10%] w-1 h-1 rounded-full pointer-events-none" style={{ background: "rgba(236,72,153,0.4)", animation: "float-particle 7s ease-in-out infinite 2s" }} />
+      <div className="absolute top-[45%] left-[5%] w-1 h-1 rounded-full pointer-events-none" style={{ background: "rgba(34,197,94,0.5)", animation: "float-particle 8s ease-in-out infinite 6s" }} />
 
       <div className="relative max-w-6xl mx-auto px-5 w-full py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -244,8 +253,8 @@ function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void
               Plataforma #1 para TikTok LIVE
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-[4.2rem] font-black leading-[1.04] tracking-tight mb-6">
-              <span className="text-white block">{hero.headline.split(" ").slice(0, 3).join(" ")}</span>
+            <h1 className="text-6xl sm:text-7xl lg:text-[5rem] font-black leading-[1.02] tracking-tight mb-6">
+              <span className="text-white block text-glow-cyan">{hero.headline.split(" ").slice(0, 3).join(" ")}</span>
               <span className="block gradient-text-shimmer" style={{ backgroundSize: "200% 100%" }}>
                 {hero.headline.split(" ").slice(3).join(" ")}
               </span>
@@ -263,6 +272,12 @@ function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void
                 className="h-13 px-6 text-base text-white/40 hover:text-white border border-white/10 hover:border-cyan-500/30 hover:bg-white/5">
                 <Play className="w-4 h-4 mr-2 fill-current" />Ver demo
               </Button>
+              {/* Live users badge */}
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-full"
+                style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", animation: "breathe 2.5s ease-in-out infinite" }}>
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" style={{ boxShadow: "0 0 6px rgba(34,197,94,0.6)" }} />
+                <span className="text-xs font-bold text-green-400/80">327 streamers online agora</span>
+              </div>
             </div>
 
             <div className="flex items-center gap-10 flex-wrap">
@@ -327,10 +342,24 @@ function FeatureCard({ feat, i, big = false }: { feat: LandingFeature; i: number
       style={{
         background: hov ? `rgba(14,10,32,0.98)` : "rgba(10,7,25,0.95)",
         border: `1px solid ${hov ? c + "50" : "rgba(255,255,255,0.06)"}`,
-        boxShadow: hov ? `0 0 40px ${c}18, 0 24px 48px rgba(0,0,0,0.4)` : "0 4px 24px rgba(0,0,0,0.3)",
-        transition: "all 0.3s ease",
+        boxShadow: hov ? `0 0 50px ${c}20, 0 24px 48px rgba(0,0,0,0.4)` : "0 4px 24px rgba(0,0,0,0.3)",
+        transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+        transform: hov ? "translateY(-6px) scale(1.02)" : "none",
       }}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+      {/* Animated gradient border on hover */}
+      {hov && (
+        <div className="absolute inset-0 rounded-2xl pointer-events-none"
+          style={{
+            padding: "1.5px",
+            background: `linear-gradient(135deg, ${c}, transparent, ${c})`,
+            backgroundSize: "200% 200%",
+            animation: "gradient-rotate 3s linear infinite",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+          }} />
+      )}
       {/* Top glow line */}
       <div className="absolute top-0 inset-x-0 h-px transition-opacity duration-300" style={{ background: `linear-gradient(90deg,transparent,${c},transparent)`, opacity: hov ? 1 : 0 }} />
 

@@ -337,7 +337,7 @@
 
 /* Active nav item glow */
 .nav-item-active {
-  box-shadow: 0 0 16px rgba(6,182,212,0.2), inset 0 0 12px rgba(6,182,212,0.05);
+  box-shadow: 0 0 24px rgba(6,182,212,0.3), 0 0 48px rgba(6,182,212,0.08), inset 0 0 16px rgba(6,182,212,0.08);
 }
 
 /* Floating particles */
@@ -493,6 +493,121 @@
 }
 .animate-high-combo {
   animation: highComboShake 0.4s ease-in-out;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   DRAMATIC UI ENHANCEMENTS - Neon Pulse, Glass Sidebar, Hover Lift
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Neon pulse animation - cycling box-shadow */
+.neon-pulse {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+/* Glass sidebar - specific sidebar glass effect */
+.glass-sidebar {
+  background: rgba(8,8,12,0.92);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border-right: 1px solid rgba(6,182,212,0.06);
+}
+
+/* Card hover lift - dramatic hover with scale + glow */
+.card-hover-lift {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover-lift:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(6,182,212,0.15), 0 0 30px rgba(6,182,212,0.08);
+}
+
+/* Text glow utilities */
+.text-glow-cyan {
+  text-shadow: 0 0 10px rgba(6,182,212,0.5), 0 0 30px rgba(6,182,212,0.2);
+}
+
+.text-glow-green {
+  text-shadow: 0 0 10px rgba(34,197,94,0.5), 0 0 30px rgba(34,197,94,0.2);
+}
+
+/* Sidebar gradient edge - animated left border */
+.sidebar-gradient-edge {
+  position: relative;
+}
+.sidebar-gradient-edge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, #06b6d4, #22c55e, #06b6d4);
+  background-size: 100% 200%;
+  animation: gradient-flow 3s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+/* Input neon focus */
+.input-neon-focus:focus {
+  border-color: rgba(6,182,212,0.5) !important;
+  box-shadow: 0 0 12px rgba(6,182,212,0.3), 0 0 24px rgba(6,182,212,0.1), inset 0 0 8px rgba(6,182,212,0.05);
+}
+
+/* Pulsing ring animation (for logo backgrounds) */
+.pulse-ring {
+  position: relative;
+}
+.pulse-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid rgba(6,182,212,0.3);
+  animation: pulse-ring-anim 2s ease-in-out infinite;
+}
+
+/* Activity feed slide-in */
+.activity-slide-in {
+  animation: activity-slide 0.4s ease-out forwards;
+}
+
+/* Noise/grain texture overlay */
+.noise-overlay {
+  position: relative;
+}
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.015;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@keyframes neon-pulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(6,182,212,0.3), 0 0 10px rgba(6,182,212,0.1); }
+  50% { box-shadow: 0 0 20px rgba(6,182,212,0.6), 0 0 40px rgba(6,182,212,0.2), 0 0 60px rgba(6,182,212,0.1); }
+}
+
+@keyframes gradient-flow {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 0% 100%; }
+}
+
+@keyframes pulse-ring-anim {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.08); }
+}
+
+@keyframes activity-slide {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes topbar-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Scrollbar styling */
