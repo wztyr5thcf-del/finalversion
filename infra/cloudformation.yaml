@@ -373,7 +373,7 @@ Resources:
       PubliclyAccessible: false
       VPCSecurityGroups:
         - !Ref RDSSecurityGroup
-      DBSubnetGroup: !Ref DBSubnetGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
       BackupRetentionPeriod: 7
       DeletionProtection: false
       Tags:
