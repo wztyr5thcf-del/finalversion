@@ -54,9 +54,9 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
     label: "PAINEL",
     items: [
       { id: "dashboard", label: "Dashboard",     href: "/",                icon: "LayoutDashboard", visible: true },
-      { id: "monitor",   label: "Conexão",        href: "/monitor/example", icon: "Activity",        matchPrefix: "/monitor", visible: true },
+      { id: "monitor",   label: "Conexao",        href: "/monitor/example", icon: "Activity",        matchPrefix: "/monitor", visible: true },
       {
-        id: "overlays", label: "Sobreposições", href: "/overlays", icon: "Monitor", matchPrefix: "/overlays", visible: true,
+        id: "overlays", label: "Sobreposicoes", href: "/overlays", icon: "Monitor", matchPrefix: "/overlays", visible: true,
         children: [
           { id: "ov-likes",        label: "Likes",         href: "/overlays/likes",         icon: "Layers", visible: true },
           { id: "ov-likes-up",     label: "Likes Upgrade", href: "/overlays/likes-upgrade", icon: "Layers", visible: true, badge: "PRO", badgeColor: "#f97316" },
@@ -67,7 +67,7 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
           { id: "ov-whatsapp",     label: "WhatsApp",      href: "/overlays/whatsapp",      icon: "Layers", visible: true },
           { id: "ov-mvp",          label: "MVP",           href: "/overlays/mvp",           icon: "Layers", visible: true },
           { id: "ov-pote",         label: "Pote",          href: "/overlays/pote",          icon: "Layers", visible: true },
-          { id: "ov-notificacoes", label: "Notificações",  href: "/overlays/notificacoes",  icon: "Layers", visible: true },
+          { id: "ov-notificacoes", label: "Notificacoes",  href: "/overlays/notificacoes",  icon: "Layers", visible: true },
           { id: "ov-gamer",        label: "Gamer",         href: "/overlays/gamer",         icon: "Layers", visible: true, badge: "PRO", badgeColor: "#f97316" },
           { id: "ov-level-up",     label: "Level Up",      href: "/overlays/level-up",      icon: "Layers", visible: true },
         ],
@@ -83,7 +83,7 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
       { id: "layout",        label: "Layout OBS",     href: "/layout",        icon: "Monitor", matchPrefix: "/layout",        visible: true, badge: "PRO", badgeColor: "#f97316" },
       { id: "effect-battle", label: "Effect Battle",  href: "/effect-battle", icon: "Sparkles",matchPrefix: "/effect-battle", visible: true, badge: "PRO", badgeColor: "#f97316" },
       { id: "troll-gift",    label: "Troll Gift",     href: "/troll-gift",    icon: "Zap",     matchPrefix: "/troll-gift",    visible: true, badge: "APP", badgeColor: "#22d3ee" },
-      { id: "album",         label: "Álbum",          href: "/album",         icon: "Layers",  matchPrefix: "/album",         visible: true },
+      { id: "album",         label: "Album",          href: "/album",         icon: "Layers",  matchPrefix: "/album",         visible: true },
       { id: "alert-overlays", label: "Alertas Overlay", href: "/alert-overlays", icon: "Sparkles", matchPrefix: "/alert-overlays", visible: true },
     ],
   },
@@ -98,18 +98,18 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
           { id: "mg-wordbomb",  label: "Word Bomb",       href: "/minigames/word-bomb", icon: "Gamepad2", visible: true },
           { id: "mg-sentido",   label: "Verdade ou Mito", href: "/minigames/sentido",   icon: "Gamepad2", visible: true },
           { id: "mg-defender",  label: "Defender",        href: "/minigames/defender",  icon: "Gamepad2", visible: true },
-          { id: "mg-bau",       label: "Baú",             href: "/minigames/bau",       icon: "Gamepad2", visible: true },
+          { id: "mg-bau",       label: "Bau",             href: "/minigames/bau",       icon: "Gamepad2", visible: true },
         ],
       },
     ],
   },
   {
     id: "integracoes-section",
-    label: "INTEGRAÇÕES",
+    label: "INTEGRACOES",
     items: [
-      { id: "integracoes", label: "Integrações",   href: "/integracoes", icon: "Zap",      matchPrefix: "/integracoes", visible: true },
+      { id: "integracoes", label: "Integracoes",   href: "/integracoes", icon: "Zap",      matchPrefix: "/integracoes", visible: true },
       { id: "pricing",     label: "Planos",         href: "/pricing",    icon: "Tag",       visible: true },
-      { id: "settings",    label: "Configurações",  href: "/settings",   icon: "Settings",  adminOnly: true, visible: true },
+      { id: "settings",    label: "Configuracoes",  href: "/settings",   icon: "Settings",  adminOnly: true, visible: true },
     ],
   },
   {
@@ -138,7 +138,7 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
   },
 ];
 
-// ── Announcement types ────────────────────────────────────────────────────────
+// Announcement types
 interface Announcement {
   id: string;
   title: string;
@@ -166,7 +166,7 @@ function annTimeAgo(ts: number): string {
   return `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
 }
 
-// ── Announcement bell popup ───────────────────────────────────────────────────
+// Announcement bell popup
 function AnnouncementBell() {
   const { token } = useAuth();
   const [open, setOpen] = useState(false);
@@ -229,14 +229,14 @@ function AnnouncementBell() {
       <button
         ref={btnRef}
         onClick={handleOpen}
-        className="relative p-2 rounded-lg transition-colors hover:bg-white/5"
-        style={{ color: open ? "#06b6d4" : "rgba(255,255,255,0.4)" }}
+        className="relative p-2 rounded-xl transition-all hover:bg-white/5 group"
+        style={{ color: open ? "#06b6d4" : "rgba(255,255,255,0.35)" }}
         aria-label="Novidades"
       >
-        <Bell className="w-[18px] h-[18px]" />
+        <Bell className="w-[18px] h-[18px] transition-colors group-hover:text-cyan-400" />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full animate-pulse"
-            style={{ background: "#ef4444", color: "white" }}>
+            style={{ background: "#ef4444", color: "white", boxShadow: "0 0 8px rgba(239,68,68,0.5)" }}>
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -249,13 +249,13 @@ function AnnouncementBell() {
           style={{
             width: 340,
             maxHeight: 480,
-            background: "#0d0f12",
-            border: "1px solid rgba(6,182,212,0.3)",
-            borderRadius: 14,
-            boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(6,182,212,0.1)",
+            background: "rgba(12,12,16,0.98)",
+            backdropFilter: "blur(24px)",
+            border: "1px solid rgba(6,182,212,0.2)",
+            borderRadius: 16,
+            boxShadow: "0 12px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(6,182,212,0.08), 0 0 24px rgba(6,182,212,0.05)",
           }}
         >
-          {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 shrink-0"
             style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
             <div className="flex items-center gap-2">
@@ -274,7 +274,6 @@ function AnnouncementBell() {
             </button>
           </div>
 
-          {/* List */}
           <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
             {announcements.length === 0 ? (
               <div className="flex flex-col items-center gap-2 py-10 text-center px-4">
@@ -287,8 +286,8 @@ function AnnouncementBell() {
                   const cfg = ANN_TYPE_CONFIG[ann.type] ?? ANN_TYPE_CONFIG.info;
                   const AnnIcon = cfg.icon;
                   return (
-                    <div key={ann.id} className="flex gap-3 p-3 rounded-xl transition-colors hover:bg-white/3"
-                      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
+                    <div key={ann.id} className="flex gap-3 p-3 rounded-xl transition-colors hover:bg-white/[0.03]"
+                      style={{ border: "1px solid rgba(255,255,255,0.03)" }}>
                       <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5"
                         style={{ background: cfg.bg }}>
                         {ann.emoji
@@ -321,7 +320,6 @@ function AnnouncementBell() {
             )}
           </div>
 
-          {/* Footer */}
           <div className="px-4 py-2.5 shrink-0 flex items-center justify-between"
             style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
             <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.2)" }}>
@@ -330,7 +328,7 @@ function AnnouncementBell() {
             <Link href="/notifications" onClick={() => setOpen(false)}
               className="text-[11px] font-medium transition-colors hover:opacity-80"
               style={{ color: "#06b6d4" }}>
-              Ver tudo →
+              Ver tudo
             </Link>
           </div>
         </div>
@@ -339,18 +337,7 @@ function AnnouncementBell() {
   );
 }
 
-// Live clock component
-function LiveClock() {
-  const [time, setTime] = useState(() => new Date().toLocaleTimeString("pt-BR", { hour12: false }));
-  useEffect(() => {
-    const t = setInterval(() => {
-      setTime(new Date().toLocaleTimeString("pt-BR", { hour12: false }));
-    }, 1000);
-    return () => clearInterval(t);
-  }, []);
-  return <span className="font-mono text-sm font-semibold" style={{ color: "rgba(255,255,255,0.7)" }}>{time}</span>;
-}
-
+// NavLinks component
 function NavLinks({
   sections,
   onNavigate,
@@ -383,11 +370,7 @@ function NavLinks({
     });
   }, []);
 
-  // Track which expandable parent items are open
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(() => {
-    // Auto-expand parent if current location is a child
-    return {};
-  });
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
@@ -402,7 +385,6 @@ function NavLinks({
     const isAdminItem = item.adminOnly;
     const hasChildren = !!(item.children && item.children.length > 0);
 
-    // Auto-expand if any child is active
     const anyChildActive = hasChildren && item.children!.some(
       c => location === c.href || (c.matchPrefix && location.startsWith(c.matchPrefix))
     );
@@ -410,18 +392,17 @@ function NavLinks({
       ? expandedItems[item.id]
       : anyChildActive;
 
-    const itemPaddingLeft = sidebarCollapsed ? "px-2" : depth > 0 ? "pl-8 pr-3" : "px-3";
-
     if (hasChildren && !sidebarCollapsed) {
       return (
         <div key={item.id}>
           <button
             onClick={() => toggleExpand(item.id)}
-            className={`w-full flex items-center rounded-lg text-sm font-medium transition-all ${itemPaddingLeft} py-2`}
+            className={`w-full flex items-center rounded-xl text-sm font-medium transition-all px-3 py-2 nav-item-glow ${
+              isActive || anyChildActive ? "sidebar-active-pill" : ""
+            }`}
             style={{
-              background: isActive || anyChildActive ? "rgba(6,182,212,0.1)" : "transparent",
-              color: isActive || anyChildActive ? "#06b6d4" : "rgba(255,255,255,0.55)",
-              borderLeft: isActive || anyChildActive ? "2px solid #06b6d4" : "2px solid transparent",
+              background: isActive || anyChildActive ? "rgba(6,182,212,0.08)" : "transparent",
+              color: isActive || anyChildActive ? "#06b6d4" : "rgba(255,255,255,0.5)",
             }}
           >
             <NavIcon name={item.icon} className="shrink-0 w-4 h-4 mr-3" />
@@ -433,12 +414,12 @@ function NavLinks({
               </span>
             )}
             {isExpanded
-              ? <ChevronDown className="w-3.5 h-3.5 shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
-              : <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
+              ? <ChevronDown className="w-3.5 h-3.5 shrink-0 opacity-30" />
+              : <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-30" />
             }
           </button>
           {isExpanded && (
-            <div className="mt-0.5 space-y-0.5">
+            <div className="mt-0.5 ml-4 space-y-0.5 border-l border-white/[0.04] pl-3">
               {item.children!.filter(c => c.visible).map(child => {
                 const childActive = location === child.href || (child.matchPrefix && location.startsWith(child.matchPrefix));
                 return (
@@ -446,11 +427,10 @@ function NavLinks({
                     key={child.id}
                     href={child.href}
                     onClick={onNavigate}
-                    className="flex items-center rounded-lg text-sm transition-all pl-9 pr-3 py-1.5"
+                    className="flex items-center rounded-lg text-sm transition-all px-2 py-1.5 hover:bg-white/[0.03]"
                     style={{
-                      background: childActive ? "rgba(6,182,212,0.1)" : "transparent",
-                      color: childActive ? "#06b6d4" : "rgba(255,255,255,0.45)",
-                      borderLeft: childActive ? "2px solid #06b6d4" : "2px solid transparent",
+                      color: childActive ? "#06b6d4" : "rgba(255,255,255,0.4)",
+                      fontWeight: childActive ? 600 : 400,
                     }}
                   >
                     <span className="flex-1 text-[13px]">{child.label}</span>
@@ -475,16 +455,15 @@ function NavLinks({
         href={locked ? "/pricing" : item.href}
         onClick={onNavigate}
         title={sidebarCollapsed ? item.label : undefined}
-        className={`flex items-center rounded-lg text-sm font-medium transition-all group relative ${
-          sidebarCollapsed ? "px-2 py-2.5 justify-center" : `${itemPaddingLeft} py-2`
-        }`}
+        className={`flex items-center rounded-xl text-sm font-medium transition-all group relative nav-item-glow ${
+          sidebarCollapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2"
+        } ${isActive ? "sidebar-active-pill nav-item-active" : ""}`}
         style={{
-          background: isActive ? "rgba(6,182,212,0.12)" : "transparent",
-          color: isActive ? "#06b6d4" : isAdminItem ? "#f87171" : locked ? "rgba(255,255,255,0.2)" : (item.color || "rgba(255,255,255,0.55)"),
-          borderLeft: isActive ? "2px solid #06b6d4" : "2px solid transparent",
+          background: isActive ? "rgba(6,182,212,0.08)" : "transparent",
+          color: isActive ? "#06b6d4" : isAdminItem ? "#f87171" : locked ? "rgba(255,255,255,0.2)" : (item.color || "rgba(255,255,255,0.5)"),
         }}
       >
-        <NavIcon name={item.icon} className={`shrink-0 ${sidebarCollapsed ? "w-4.5 h-4.5" : "w-4 h-4 mr-3"}`} />
+        <NavIcon name={item.icon} className={`shrink-0 transition-all ${sidebarCollapsed ? "w-[18px] h-[18px]" : "w-4 h-4 mr-3"} ${isActive ? "drop-shadow-[0_0_6px_rgba(6,182,212,0.5)]" : ""}`} />
         {!sidebarCollapsed && (
           <>
             <span className="flex-1">{item.label}</span>
@@ -507,10 +486,7 @@ function NavLinks({
               </span>
             )}
             {locked && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-auto"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.25)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                {item.requiresPlan === "basic" ? "Basic" : "Pro"}
-              </span>
+              <Lock className="w-3 h-3 ml-auto opacity-30" />
             )}
           </>
         )}
@@ -519,7 +495,7 @@ function NavLinks({
   }
 
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-1">
       {sections.map((section) => {
         const visibleItems = section.items.filter((item) => {
           if (!item.visible) return false;
@@ -531,19 +507,19 @@ function NavLinks({
         const isCollapsed = section.label ? !!sectionCollapsed[section.id] : false;
 
         return (
-          <div key={section.id} className="mb-1">
+          <div key={section.id} className="mb-2">
             {section.label && !sidebarCollapsed && (
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full flex items-center px-3 py-1.5 rounded-lg mb-0.5 group transition-all hover:bg-white/5"
+                className="w-full flex items-center px-3 py-1.5 rounded-lg mb-1 group transition-all hover:bg-white/[0.02]"
               >
-                <span className="flex-1 text-left text-[9px] font-bold uppercase tracking-[0.15em]"
-                  style={{ color: "rgba(255,255,255,0.25)" }}>
+                <span className="flex-1 text-left text-[9px] font-bold uppercase tracking-[0.2em]"
+                  style={{ color: "rgba(6,182,212,0.35)" }}>
                   {section.label}
                 </span>
                 {isCollapsed
-                  ? <ChevronRight className="w-3 h-3 opacity-30" />
-                  : <ChevronDown className="w-3 h-3 opacity-30" />}
+                  ? <ChevronRight className="w-3 h-3 opacity-20" />
+                  : <ChevronDown className="w-3 h-3 opacity-20" />}
               </button>
             )}
 
@@ -559,7 +535,7 @@ function NavLinks({
   );
 }
 
-// ── Center button color map ───────────────────────────────────────────────────
+// Center button color map
 const BTN_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   purple: { bg: "rgba(124,58,237,0.18)", text: "#c4b5fd", border: "rgba(124,58,237,0.35)" },
   blue:   { bg: "rgba(59,130,246,0.18)", text: "#93c5fd", border: "rgba(59,130,246,0.35)" },
@@ -569,7 +545,7 @@ const BTN_COLORS: Record<string, { bg: string; text: string; border: string }> =
   cyan:   { bg: "rgba(34,211,238,0.18)", text: "#67e8f9", border: "rgba(34,211,238,0.35)" },
 };
 
-// ── Per-page maintenance wrapper ──────────────────────────────────────────────
+// Per-page maintenance wrapper
 function PageMaintenanceWrapper({
   location, isAdmin, children,
 }: { location: string; isAdmin: boolean; children: React.ReactNode }) {
@@ -600,7 +576,7 @@ function PageMaintenanceWrapper({
   return <>{children}</>;
 }
 
-// ── Top Bar ───────────────────────────────────────────────────────────────────
+// Top Bar - minimal, modern
 interface TopBarProps {
   user: ReturnType<typeof useAuth>["user"];
   logout: () => void;
@@ -615,39 +591,27 @@ interface TopBarProps {
 }
 
 function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMenu, headerConfig, logoText, logoUrl }: TopBarProps) {
-  const appName    = headerConfig?.appName    ?? logoText;
-  const appSub     = headerConfig?.appSubtitle;
-  const showSub    = headerConfig?.showSubtitle ?? true;
   const showUpg    = headerConfig?.showUpgradeBtn ?? true;
-  const showFlag   = headerConfig?.showFlag ?? false;
   const centerBtns = headerConfig?.centerButtons ?? [];
-  const effectiveLogo = headerConfig?.logoUrl || logoUrl;
 
   return (
     <header className="h-14 flex items-center px-4 gap-3 shrink-0"
-      style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+      style={{ background: "rgba(10,10,12,0.8)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
 
       {/* Mobile menu */}
-      <button className="md:hidden text-white/40 hover:text-white/70 mr-1 transition-colors" onClick={onMobileMenu}>
+      <button className="md:hidden text-white/40 hover:text-cyan-400 mr-1 transition-colors" onClick={onMobileMenu}>
         <Menu className="w-5 h-5" />
       </button>
 
-      {/* LEFT: app name + subtitle */}
-      <div className="flex items-center gap-2.5 shrink-0">
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+      {/* LEFT: just page area */}
+      <div className="flex items-center gap-2 md:hidden">
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 breathe"
           style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
-          {effectiveLogo
-            ? <img src={effectiveLogo} alt={appName} className="h-5 object-contain" />
+          {logoUrl
+            ? <img src={logoUrl} alt={logoText} className="h-5 object-contain" />
             : <SiTiktok className="w-3.5 h-3.5 text-white" />}
         </div>
-        <div className="hidden sm:block leading-none">
-          <p className="text-sm font-bold text-white tracking-tight">{appName}</p>
-          {showSub && appSub && (
-            <p className="text-[9px] tracking-widest uppercase mt-0.5" style={{ color: "rgba(6,182,212,0.5)" }}>
-              {appSub}
-            </p>
-          )}
-        </div>
+        <span className="text-sm font-bold text-white">{logoText}</span>
       </div>
 
       {/* CENTER: configurable action buttons */}
@@ -681,20 +645,12 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
       {centerBtns.length === 0 && <div className="flex-1" />}
 
       {/* RIGHT cluster */}
-      <div className="flex items-center gap-1.5 shrink-0 ml-auto">
-        {/* Country/flag badge */}
-        {showFlag && (
-          <div className="hidden sm:flex items-center px-2 py-1.5 rounded-lg text-[10px] font-semibold text-white/50"
-            style={{ background: "rgba(255,255,255,0.04)" }}>
-            🇧🇷
-          </div>
-        )}
-
-        {/* Online dot */}
+      <div className="flex items-center gap-2 shrink-0 ml-auto">
+        {/* Online indicator */}
         <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg"
-          style={{ background: "rgba(34,197,94,0.08)" }}>
-          <Wifi className="w-3 h-3 text-green-400" />
-          <span className="text-[10px] font-semibold text-green-400">Online</span>
+          style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.1)" }}>
+          <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+          <span className="text-[10px] font-semibold text-green-400/80">Online</span>
         </div>
 
         {/* Announcements bell */}
@@ -703,8 +659,8 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
         {/* Upgrade button */}
         {showUpg && userPlan !== "pro" && (
           <Link href="/pricing"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105 shrink-0"
-            style={{ background: "linear-gradient(90deg, #06b6d4, #22c55e)", color: "white" }}>
+            className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all hover:scale-105 shrink-0"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
             <Zap className="w-3 h-3" />
             Upgrade
           </Link>
@@ -714,10 +670,10 @@ function TopBar({ user, logout, isAdmin, userPlan, planCfg, initials, onMobileMe
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors shrink-0"
+              <button className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-white/5 transition-all shrink-0"
                 style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
-                <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
-                  style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white" }}>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
+                  style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white", boxShadow: "0 0 8px rgba(6,182,212,0.3)" }}>
                   {initials}
                 </div>
                 <div className="hidden sm:block text-left leading-none">
@@ -801,25 +757,25 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     });
   };
 
-  // ── Topbar layout ──
+  // Topbar layout
   if (navType === "topbar") {
     return (
       <div className="flex flex-col h-screen w-full overflow-hidden" style={{ background: "#0a0a0c" }}>
-        <header className="h-14 flex items-center px-4 gap-4 shrink-0" style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <header className="h-14 flex items-center px-4 gap-4 shrink-0 glass-panel" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center breathe" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
               {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
             </div>
             <span className="font-bold text-base tracking-tight text-white">{logoText}</span>
           </div>
-          <nav className="flex items-center gap-1 flex-1 overflow-x-auto">
+          <nav className="flex items-center gap-1 flex-1 overflow-x-auto scrollbar-hidden">
             {sections.flatMap((s) => s.items).filter((item) => item.visible && (!item.adminOnly || isAdmin)).map((item) => {
               const isActive = location === item.href || (item.matchPrefix && location.startsWith(item.matchPrefix));
               const locked = !!(item.requiresPlan && !planMeets(userPlan, item.requiresPlan));
               return (
                 <Link key={item.id} href={locked ? "/pricing" : item.href}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors shrink-0"
-                  style={{ color: isActive ? "#06b6d4" : "rgba(255,255,255,0.5)", background: isActive ? "rgba(6,182,212,0.1)" : "transparent" }}>
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all shrink-0 ${isActive ? "neon-border-cyan" : ""}`}
+                  style={{ color: isActive ? "#06b6d4" : "rgba(255,255,255,0.4)", background: isActive ? "rgba(6,182,212,0.08)" : "transparent", border: isActive ? undefined : "1px solid transparent" }}>
                   <NavIcon name={item.icon} className="w-3.5 h-3.5" />
                   <span>{item.label}</span>
                 </Link>
@@ -852,44 +808,53 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // ── Sidebar layout (default) ──
-  const sidebarW = sidebarCollapsed ? "w-14" : "w-60";
+  // Sidebar layout (default) - DRAMATIC REDESIGN with frosted glass
+  const sidebarW = sidebarCollapsed ? "w-[68px]" : "w-[240px]";
 
   const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => (
     <>
-      {/* Logo header */}
-      <div className={`h-14 flex items-center shrink-0 ${sidebarCollapsed ? "justify-center px-2" : "px-4"}`}
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+      {/* Logo header with breathing animation */}
+      <div className={`h-16 flex items-center shrink-0 ${sidebarCollapsed ? "justify-center px-2" : "px-4"}`}
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
         {sidebarCollapsed ? (
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center breathe"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
             {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
           </div>
         ) : (
-          <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 breathe"
+              style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
               {logoUrl ? <img src={logoUrl} alt={logoText} className="h-6 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
             </div>
             <div className="min-w-0">
               <div className="font-bold text-sm tracking-tight text-white leading-none truncate">{logoText}</div>
-              <div className="text-[9px] tracking-widest uppercase mt-0.5" style={{ color: "rgba(6,182,212,0.5)" }}>TikTok Live Studio</div>
+              <div className="text-[9px] tracking-[0.15em] uppercase mt-1 font-mono" style={{ color: "rgba(6,182,212,0.5)" }}>Live Studio</div>
             </div>
           </div>
         )}
       </div>
 
-      {/* User info at top */}
+      {/* User info */}
       {user && !sidebarCollapsed && (
-        <div className="px-4 py-3 shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="px-3 py-3 shrink-0 mx-2 mt-2 rounded-xl"
+          style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-              style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white" }}>{initials}</div>
-            <span className="text-xs truncate" style={{ color: "rgba(255,255,255,0.5)" }}>{user.email}</span>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
+              style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white", boxShadow: "0 0 10px rgba(6,182,212,0.3)" }}>
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-xs font-medium truncate block text-white/70">{user.name ?? user.email?.split("@")[0]}</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md inline-block mt-0.5"
+                style={{ background: planCfg.badgeBg, color: planCfg.color }}>{planCfg.label}</span>
+            </div>
           </div>
         </div>
       )}
 
       {/* Nav */}
-      <nav className="flex-1 py-3 px-2 overflow-y-auto">
+      <nav className="flex-1 py-3 px-2 overflow-y-auto scrollbar-hidden">
         <NavLinks
           sections={sections}
           onNavigate={onNavigate}
@@ -902,34 +867,34 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Upgrade banner */}
       {user && userPlan === "free" && !sidebarCollapsed && (
-        <div className="px-3 pb-2 shrink-0">
+        <div className="px-3 pb-3 shrink-0">
           <Link href="/pricing">
-            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all hover:opacity-90"
-              style={{ background: "linear-gradient(90deg, rgba(6,182,212,0.15), rgba(34,197,94,0.12))", border: "1px solid rgba(6,182,212,0.25)" }}>
-              <Zap className="w-4 h-4 shrink-0" style={{ color: "#06b6d4" }} />
-              <div className="min-w-0 flex-1">
+            <div className="relative overflow-hidden flex items-center gap-2 px-3 py-3 rounded-xl cursor-pointer transition-all hover:scale-[1.02]"
+              style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.15)" }}>
+              <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(6,182,212,0.08), transparent 60%)" }} />
+              <Zap className="w-4 h-4 shrink-0 relative" style={{ color: "#06b6d4" }} />
+              <div className="min-w-0 flex-1 relative">
                 <p className="text-xs font-semibold" style={{ color: "#06b6d4" }}>Upgrade agora</p>
-                <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>Desbloqueie mais ferramentas</p>
+                <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.25)" }}>Desbloquear ferramentas</p>
               </div>
-              <Crown className="w-3.5 h-3.5 shrink-0" style={{ color: "#22c55e" }} />
+              <Crown className="w-3.5 h-3.5 shrink-0 relative" style={{ color: "#22c55e" }} />
             </div>
           </Link>
         </div>
       )}
 
       {/* Bottom: user dropdown + collapse */}
-      <div className="shrink-0 px-2 pb-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+      <div className="shrink-0 px-2 pb-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
         {user && !sidebarCollapsed && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left group mt-3">
+              <button className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-white/[0.03] transition-colors text-left group mt-3">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
                   style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white" }}>{initials}</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate text-white/70">{user.email?.split("@")[0]}</p>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: planCfg.badgeBg, color: planCfg.color }}>{planCfg.label}</span>
+                  <p className="text-xs font-medium truncate text-white/60">{user.email?.split("@")[0]}</p>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-white/20 shrink-0" />
+                <ChevronDown className="w-3.5 h-3.5 text-white/15 shrink-0" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="w-56 mb-1">
@@ -966,17 +931,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Version display */}
         {!sidebarCollapsed && appVersion && (
           <div className="px-3 mt-2">
-            <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.2)" }}>v{appVersion}</span>
+            <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.15)" }}>v{appVersion}</span>
           </div>
         )}
 
         {/* Collapse button */}
         <button
           onClick={toggleSidebar}
-          className="mt-2 w-full flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all hover:bg-white/5"
+          className="mt-2 w-full flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all hover:bg-white/[0.03]"
           style={{ color: "rgba(255,255,255,0.2)" }}
         >
-          <ChevronLeft className={`w-4 h-4 transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`} />
+          <ChevronLeft className={`w-4 h-4 transition-transform duration-300 ${sidebarCollapsed ? "rotate-180" : ""}`} />
           {!sidebarCollapsed && <span className="text-[10px] uppercase tracking-widest font-semibold">Recolher</span>}
         </button>
       </div>
@@ -985,18 +950,28 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen w-full overflow-hidden" style={{ background: "#0a0a0c" }}>
-      {/* Desktop Sidebar */}
-      <aside className={`${sidebarW} hidden md:flex flex-col shrink-0 transition-all duration-200`}
-        style={{ background: "rgba(255,255,255,0.02)", borderRight: "1px solid rgba(255,255,255,0.05)" }}>
+      {/* Desktop Sidebar - frosted glass panel */}
+      <aside className={`${sidebarW} hidden md:flex flex-col shrink-0 transition-all duration-300 ease-in-out`}
+        style={{
+          background: "rgba(10,10,14,0.85)",
+          backdropFilter: "blur(24px)",
+          borderRight: "1px solid rgba(255,255,255,0.04)",
+          boxShadow: "4px 0 24px rgba(0,0,0,0.3)",
+        }}>
         <SidebarContent />
       </aside>
 
       {/* Mobile overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-64 flex flex-col z-10"
-            style={{ background: "#0d0d0f", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute left-0 top-0 h-full w-[260px] flex flex-col z-10"
+            style={{
+              background: "rgba(10,10,14,0.95)",
+              backdropFilter: "blur(24px)",
+              borderRight: "1px solid rgba(6,182,212,0.1)",
+              boxShadow: "8px 0 32px rgba(0,0,0,0.5)",
+            }}>
             <SidebarContent onNavigate={() => setMobileOpen(false)} />
           </aside>
         </div>
@@ -1004,7 +979,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top bar — BetterTok style */}
+        {/* Top bar */}
         <TopBar
           user={user}
           logout={logout}
@@ -1018,7 +993,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           logoUrl={logoUrl}
         />
 
-        {/* Global maintenance overlay — covers all pages for non-admins */}
+        {/* Global maintenance overlay */}
         {maint.enabled && !isAdmin && (
           <DashboardMaintenanceOverlay
             message={maint.message}
@@ -1026,7 +1001,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           />
         )}
 
-        {/* Page content with per-page maintenance overlay */}
+        {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mx-auto max-w-7xl">
             <PageMaintenanceWrapper location={location} isAdmin={isAdmin}>

@@ -105,21 +105,21 @@ export function UpdateCarousel() {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-purple-500/20 overflow-hidden"
-        style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(236,72,153,0.06) 100%)" }}>
+      <div className="glass-card rounded-2xl overflow-hidden"
+        style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(236,72,153,0.04) 100%)" }}>
         <div className="flex items-start gap-4 p-5">
           <div className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(124,58,237,0.2)" }}>
+            style={{ background: "rgba(124,58,237,0.15)", boxShadow: "0 0 12px rgba(124,58,237,0.15)" }}>
             <Megaphone className="w-5 h-5 text-purple-400" />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-base font-bold text-white">Creatools — TikTok LIVE Studio</span>
+              <span className="text-base font-bold text-white">Creatools</span>
               <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={{ background: "rgba(124,58,237,0.3)", color: "#a78bfa" }}>BETA</span>
+                style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa" }}>BETA</span>
             </div>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Sobreposições, rankings, alertas sonoros, jogos interativos e muito mais para suas lives no TikTok.
+            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
+              Sobreposicoes, rankings, alertas sonoros, jogos interativos e muito mais para suas lives no TikTok.
             </p>
           </div>
         </div>
@@ -130,8 +130,8 @@ export function UpdateCarousel() {
   const current = items[idx];
 
   return (
-    <div className="rounded-2xl border border-white/8 overflow-hidden relative"
-      style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(236,72,153,0.06) 100%)", minHeight: 140 }}
+    <div className="glass-card rounded-2xl overflow-hidden relative"
+      style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(6,182,212,0.04) 100%)", minHeight: 140 }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}>
 

@@ -97,18 +97,18 @@ function Nav({ logo, logoUrl, onLogin, onSignup }: { logo: string; logoUrl: stri
   }, []);
   return (
     <nav className="fixed top-0 inset-x-0 z-50 transition-all duration-300"
-      style={{ background: scrolled ? "rgba(10,10,12,0.95)" : "rgba(10,10,12,0.5)", backdropFilter: "blur(20px)", borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent" }}>
+      style={{ background: scrolled ? "rgba(10,10,12,0.95)" : "rgba(10,10,12,0.4)", backdropFilter: "blur(24px)", borderBottom: scrolled ? "1px solid rgba(6,182,212,0.08)" : "1px solid transparent" }}>
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2.5 cursor-pointer" onClick={onLogin}>
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", boxShadow: "0 0 12px rgba(6,182,212,0.3)" }}>
             {logoUrl ? <img src={logoUrl} alt={logo} className="h-5 object-contain" /> : <SiTiktok className="w-4 h-4 text-white" />}
           </div>
           <span className="text-white font-bold tracking-tight">{logo}</span>
         </div>
         <div className="hidden sm:flex items-center gap-2">
           <Button variant="ghost" onClick={onLogin} className="text-white/50 hover:text-white hover:bg-white/5 text-sm h-9">Entrar</Button>
-          <Button onClick={onSignup} className="h-9 px-5 text-sm border-0 text-white font-semibold" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }}>
-            Criar Conta Grátis
+          <Button onClick={onSignup} className="h-9 px-5 text-sm border-0 text-white font-bold" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
+            Criar Conta Gratis
           </Button>
         </div>
         <button className="sm:hidden p-1.5 text-white/50" onClick={() => setOpen(o => !o)}>
@@ -118,7 +118,7 @@ function Nav({ logo, logoUrl, onLogin, onSignup }: { logo: string; logoUrl: stri
       {open && (
         <div className="sm:hidden px-5 pb-4 flex flex-col gap-2 border-t border-white/5">
           <Button variant="ghost" className="w-full text-white/50" onClick={() => { setOpen(false); onLogin(); }}>Entrar</Button>
-          <Button className="w-full border-0 text-white" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }} onClick={() => { setOpen(false); onSignup(); }}>Criar Conta Grátis</Button>
+          <Button className="w-full border-0 text-white font-bold" style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)" }} onClick={() => { setOpen(false); onSignup(); }}>Criar Conta Gratis</Button>
         </div>
       )}
     </nav>
@@ -217,67 +217,72 @@ function MockMonitorUI() {
 function Hero({ hero, onCTA }: { hero: LandingContent["hero"]; onCTA: () => void }) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-16" style={{ background: "#0a0a0c" }}>
-      {/* Animated mesh gradient */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 25% 55%, rgba(6,182,212,0.15) 0%, transparent 50%)" }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 78% 25%, rgba(34,197,94,0.1) 0%, transparent 48%)" }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 85%, rgba(6,182,212,0.06) 0%, transparent 40%)" }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 10% 10%, rgba(34,197,94,0.05) 0%, transparent 40%)" }} />
-      {/* Animated orb */}
-      <div className="absolute w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(6,182,212,0.1)", top: "20%", left: "5%", animation: "lp-orb 8s ease-in-out infinite" }} />
-      <div className="absolute w-80 h-80 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(34,197,94,0.06)", top: "10%", right: "10%", animation: "lp-orb 10s ease-in-out infinite reverse", animationDelay: "3s" }} />
-      {/* Grid */}
-      <div className="absolute inset-0 opacity-[0.018] pointer-events-none"
+      {/* Animated mesh gradient - more dramatic */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 25% 55%, rgba(6,182,212,0.18) 0%, transparent 50%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 78% 25%, rgba(34,197,94,0.12) 0%, transparent 48%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 85%, rgba(6,182,212,0.08) 0%, transparent 40%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 10% 10%, rgba(34,197,94,0.06) 0%, transparent 40%)" }} />
+      {/* Animated orbs - larger and more visible */}
+      <div className="absolute w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(6,182,212,0.12)", top: "15%", left: "2%", animation: "lp-orb 8s ease-in-out infinite" }} />
+      <div className="absolute w-[400px] h-[400px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(34,197,94,0.08)", top: "5%", right: "5%", animation: "lp-orb 10s ease-in-out infinite reverse", animationDelay: "3s" }} />
+      <div className="absolute w-[300px] h-[300px] rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(124,58,237,0.06)", bottom: "20%", left: "40%", animation: "lp-orb 12s ease-in-out infinite", animationDelay: "5s" }} />
+      {/* Grid - more visible */}
+      <div className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "64px 64px" }} />
+      {/* Particle dots */}
+      <div className="absolute top-[20%] left-[15%] w-1.5 h-1.5 rounded-full pointer-events-none" style={{ background: "rgba(6,182,212,0.6)", animation: "float-particle 6s ease-in-out infinite" }} />
+      <div className="absolute top-[30%] right-[20%] w-1 h-1 rounded-full pointer-events-none" style={{ background: "rgba(34,197,94,0.5)", animation: "float-particle 8s ease-in-out infinite 2s" }} />
+      <div className="absolute bottom-[35%] left-[25%] w-1 h-1 rounded-full pointer-events-none" style={{ background: "rgba(6,182,212,0.4)", animation: "float-particle 7s ease-in-out infinite 4s" }} />
 
       <div className="relative max-w-6xl mx-auto px-5 w-full py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left */}
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-6"
-              style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.28)", color: "#67e8f9" }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold mb-8"
+              style={{ background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.25)", color: "#67e8f9", boxShadow: "0 0 16px rgba(6,182,212,0.1)" }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" style={{ boxShadow: "0 0 6px rgba(34,197,94,0.6)" }} />
               Plataforma #1 para TikTok LIVE
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-extrabold leading-[1.06] tracking-tight mb-6">
+            <h1 className="text-5xl sm:text-6xl lg:text-[4.2rem] font-black leading-[1.04] tracking-tight mb-6">
               <span className="text-white block">{hero.headline.split(" ").slice(0, 3).join(" ")}</span>
-              <span className="block" style={{ background: "linear-gradient(90deg,#06b6d4,#22c55e 50%,#06b6d4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundSize: "200% 100%", animation: "lp-gradient-shift 5s linear infinite" }}>
+              <span className="block gradient-text-shimmer" style={{ backgroundSize: "200% 100%" }}>
                 {hero.headline.split(" ").slice(3).join(" ")}
               </span>
             </h1>
 
-            <p className="text-lg text-white/40 leading-relaxed mb-8 max-w-md">{hero.subheadline}</p>
+            <p className="text-lg text-white/35 leading-relaxed mb-8 max-w-md">{hero.subheadline}</p>
 
-            <div className="flex flex-wrap items-center gap-3 mb-10">
+            <div className="flex flex-wrap items-center gap-3 mb-12">
               <Button size="lg" onClick={onCTA}
-                className="h-12 px-8 text-base font-bold border-0 text-white"
-                style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", boxShadow: "0 0 0 0 rgba(6,182,212,0.5)", animation: "lp-btn-pulse 2.5s ease-in-out infinite" }}>
+                className="h-13 px-8 text-base font-black border-0 text-white"
+                style={{ background: "linear-gradient(135deg,#06b6d4,#22c55e)", boxShadow: "0 0 24px rgba(6,182,212,0.4), 0 0 48px rgba(6,182,212,0.1)", animation: "lp-btn-pulse 2.5s ease-in-out infinite" }}>
                 {hero.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <Button size="lg" variant="ghost" onClick={onCTA}
-                className="h-12 px-6 text-base text-white/45 hover:text-white border border-white/10 hover:border-cyan-500/30 hover:bg-white/5">
+                className="h-13 px-6 text-base text-white/40 hover:text-white border border-white/10 hover:border-cyan-500/30 hover:bg-white/5">
                 <Play className="w-4 h-4 mr-2 fill-current" />Ver demo
               </Button>
             </div>
 
-            <div className="flex items-center gap-8 flex-wrap">
-              {[{ val: "10+", sub: "ferramentas" }, { val: "Real-time", sub: "WebSocket" }, { val: "Grátis", sub: "para começar" }].map(s => (
+            <div className="flex items-center gap-10 flex-wrap">
+              {[{ val: "10+", sub: "ferramentas" }, { val: "Real-time", sub: "WebSocket" }, { val: "Gratis", sub: "para comecar" }].map(s => (
                 <div key={s.val}>
                   <p className="text-2xl font-black text-white">{s.val}</p>
-                  <p className="text-xs text-white/25 mt-0.5">{s.sub}</p>
+                  <p className="text-xs text-white/20 mt-0.5 font-mono">{s.sub}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right — mock UI with floating badges */}
+          {/* Right - mock UI with floating badges */}
           <div className="hidden lg:block relative py-16">
             <MockMonitorUI />
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 inset-x-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to top,#0a0a0c,transparent)" }} />
+      <div className="absolute bottom-0 inset-x-0 h-40 pointer-events-none" style={{ background: "linear-gradient(to top,#0a0a0c,transparent)" }} />
     </section>
   );
 }
@@ -358,17 +363,18 @@ function Features({ features }: { features: LandingFeature[] }) {
   if (!sorted.length) return null;
   return (
     <section className="py-28 px-5 relative" style={{ background: "#0a0a0c" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.06) 0%, transparent 50%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.08) 0%, transparent 50%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 80%, rgba(34,197,94,0.04) 0%, transparent 40%)" }} />
       <div className="max-w-6xl mx-auto">
         <Reveal className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4"
-            style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", color: "#06b6d4" }}>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5"
+            style={{ background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.2)", color: "#06b6d4", boxShadow: "0 0 12px rgba(6,182,212,0.08)" }}>
             <Sparkles className="w-3 h-3" /> Ferramentas
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
+          <h2 className="text-4xl sm:text-5xl font-black text-white mb-5 tracking-tight">
             Tudo que sua live precisa
           </h2>
-          <p className="text-white/35 text-lg max-w-lg mx-auto">Do overlay ao analytics — uma plataforma completa construída para streamers do TikTok LIVE.</p>
+          <p className="text-white/30 text-lg max-w-lg mx-auto">Do overlay ao analytics - uma plataforma completa construida para streamers do TikTok LIVE.</p>
         </Reveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -399,19 +405,19 @@ function StatNum({ target, prefix = "", suffix = "", label, color }: { target: n
 // ── Stats band ────────────────────────────────────────────────────────────────
 function StatsBand() {
   return (
-    <section className="py-20 px-5 relative overflow-hidden" style={{ background: "#0a0a0c" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.06) 0%, transparent 60%)" }} />
-      <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(6,182,212,0.4),rgba(34,197,94,0.4),transparent)" }} />
-      <div className="absolute bottom-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(34,197,94,0.3),transparent)" }} />
+    <section className="py-24 px-5 relative overflow-hidden" style={{ background: "#0a0a0c" }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.08) 0%, transparent 60%)" }} />
+      <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(6,182,212,0.5),rgba(34,197,94,0.5),transparent)" }} />
+      <div className="absolute bottom-0 inset-x-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(34,197,94,0.4),transparent)" }} />
       <div className="max-w-5xl mx-auto">
-        <Reveal className="text-center mb-12">
-          <p className="text-xs font-bold uppercase tracking-widest text-white/30">Por que o Creatools?</p>
+        <Reveal className="text-center mb-14">
+          <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "rgba(6,182,212,0.5)" }}>Por que o Creatools?</p>
         </Reveal>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
           <Reveal delay={0}><StatNum target={10} suffix="+" label="Ferramentas integradas" color="#06b6d4" /></Reveal>
-          <Reveal delay={80}><StatNum target={0} suffix="ms" label="Latência WebSocket" color="#22c55e" /></Reveal>
+          <Reveal delay={80}><StatNum target={0} suffix="ms" label="Latencia WebSocket" color="#22c55e" /></Reveal>
           <Reveal delay={160}><StatNum target={100} suffix="%" label="Dados em tempo real" color="#06b6d4" /></Reveal>
-          <Reveal delay={240}><StatNum target={0} prefix="" suffix="" label="Cartão de crédito necessário" color="#22c55e" /></Reveal>
+          <Reveal delay={240}><StatNum target={0} prefix="" suffix="" label="Cartao necessario" color="#22c55e" /></Reveal>
         </div>
       </div>
     </section>
@@ -963,7 +969,8 @@ export default function LandingPage({ isPreview = false }: { isPreview?: boolean
         @keyframes lp-orb { 0%,100%{transform:scale(1);opacity:0.7} 50%{transform:scale(1.15);opacity:1} }
         @keyframes lp-chat-in { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
         @keyframes lp-gradient-shift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-        @keyframes lp-btn-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(6,182,212,0.5),0 0 40px rgba(6,182,212,0.3)} 50%{box-shadow:0 0 0 8px rgba(6,182,212,0),0 0 60px rgba(6,182,212,0.45)} }
+        @keyframes lp-btn-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(6,182,212,0.5),0 0 40px rgba(6,182,212,0.3)} 50%{box-shadow:0 0 0 10px rgba(6,182,212,0),0 0 60px rgba(6,182,212,0.5)} }
+        @keyframes float-particle { 0%,100%{transform:translateY(0) translateX(0);opacity:0} 10%{opacity:1} 50%{transform:translateY(-80px) translateX(20px);opacity:0.6} 90%{opacity:0} }
       `}</style>
 
       <AuthModal open={showAuth} initialMode={authMode} onClose={() => setShowAuth(false)} />

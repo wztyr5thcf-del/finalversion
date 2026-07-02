@@ -167,26 +167,29 @@ export default function Login() {
   const isUnverified = tikProfile?.reason === "no_api_key";
 
   return (
-    <div className="min-h-screen w-full flex overflow-hidden" style={{ background: "linear-gradient(135deg, #0a0a0c 0%, #0c1015 50%, #0a0a0c 100%)" }}>
-      {/* Background orbs */}
+    <div className="min-h-screen w-full flex overflow-hidden" style={{ background: "#0a0a0c" }}>
+      {/* Background animated mesh */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-15" style={{ background: "radial-gradient(circle, #06b6d4, transparent 70%)" }} />
-        <div className="absolute bottom-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full opacity-10" style={{ background: "radial-gradient(circle, #22c55e, transparent 70%)" }} />
-        <div className="absolute top-[40%] left-[30%] w-[300px] h-[300px] rounded-full opacity-8" style={{ background: "radial-gradient(circle, #06b6d4, transparent 70%)" }} />
+        <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full" style={{ background: "radial-gradient(circle, rgba(6,182,212,0.12), transparent 70%)", animation: "float-up-down 6s ease-in-out infinite" }} />
+        <div className="absolute bottom-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full" style={{ background: "radial-gradient(circle, rgba(34,197,94,0.08), transparent 70%)", animation: "float-up-down 8s ease-in-out infinite 2s" }} />
+        <div className="absolute top-[40%] left-[50%] w-[400px] h-[400px] rounded-full" style={{ background: "radial-gradient(circle, rgba(6,182,212,0.06), transparent 70%)", animation: "float-up-down 7s ease-in-out infinite 1s" }} />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "80px 80px" }} />
       </div>
 
-      {/* ── LEFT: Auth panel ─────────────────────────────────────────────────── */}
-      <div className="relative z-10 w-full md:w-[420px] lg:w-[460px] flex flex-col items-center justify-center px-6 py-10 shrink-0"
-        style={{ background: "rgba(10, 10, 12, 0.9)", backdropFilter: "blur(20px)", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
+      {/* LEFT: Auth panel - frosted glass */}
+      <div className="relative z-10 w-full md:w-[440px] lg:w-[480px] flex flex-col items-center justify-center px-8 py-10 shrink-0"
+        style={{ background: "rgba(10, 10, 12, 0.92)", backdropFilter: "blur(32px)", borderRight: "1px solid rgba(6,182,212,0.08)", boxShadow: "4px 0 32px rgba(0,0,0,0.4)" }}>
 
-        {/* Logo */}
+        {/* Logo with breathing animation */}
         <div className="flex items-center gap-3 mb-8 self-start">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)" }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 20px rgba(6,182,212,0.3)", animation: "breathe 3s ease-in-out infinite" }}>
             <SiTiktok className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="font-bold text-lg tracking-tight text-white leading-none">Creatools</div>
-            <div className="text-[10px] text-cyan-400/70 tracking-widest uppercase">TikTok Live Studio</div>
+            <div className="text-[10px] tracking-[0.15em] uppercase mt-0.5 font-mono" style={{ color: "rgba(6,182,212,0.6)" }}>Live Studio</div>
           </div>
         </div>
 
@@ -460,53 +463,56 @@ export default function Login() {
         )}
       </div>
 
-      {/* ── RIGHT: Marketing panel ───────────────────────────────────────────── */}
+      {/* RIGHT: Marketing panel - animated visual */}
       <div className="hidden md:flex flex-1 flex-col justify-center px-12 lg:px-20 py-12 relative z-10">
-        <div className="max-w-lg">
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-3">
-            Engaje seus fãs{" "}
-            <span className="block" style={{ background: "linear-gradient(90deg, #06b6d4, #22c55e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+        {/* Animated gradient mesh background on this side */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 30% 40%, rgba(6,182,212,0.08) 0%, transparent 50%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 70% 70%, rgba(34,197,94,0.06) 0%, transparent 50%)" }} />
+        
+        <div className="max-w-lg relative">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
+            Engaje seus fas{" "}
+            <span className="block gradient-text-shimmer">
               em tempo real.
             </span>
           </h2>
-          <p className="text-cyan-300/60 text-base mb-10 leading-relaxed">
-            Rankings, overlays e métricas que respondem a cada gift, like e comentário da sua live.
+          <p className="text-white/40 text-base mb-10 leading-relaxed">
+            Rankings, overlays e metricas que respondem a cada gift, like e comentario da sua live.
           </p>
 
-          {/* Stats */}
+          {/* Stats with glassmorphism */}
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="glass-card rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-3.5 h-3.5 text-cyan-400/60" />
-                <span className="text-[10px] uppercase tracking-widest text-cyan-400/50 font-semibold">Ativos · 24H</span>
+                <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: "rgba(6,182,212,0.5)" }}>Ativos 24H</span>
               </div>
               <div className="text-3xl font-black text-white mb-1">
                 <Counter target={2847} />
               </div>
               <div className="flex items-center gap-1 text-xs text-green-400">
-                <TrendingUp className="w-3 h-3" />+12% streamers ativos
+                <TrendingUp className="w-3 h-3" />+12% streamers
               </div>
             </div>
 
-            <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="glass-card rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-2">
                 <Radio className="w-3.5 h-3.5 text-pink-400/60" />
-                <span className="text-[10px] uppercase tracking-widest text-cyan-400/50 font-semibold">Likes por segundo</span>
-                <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse" style={{ background: "#ef4444", color: "white" }}>● LIVE</span>
+                <span className="text-[10px] uppercase tracking-[0.15em] font-bold" style={{ color: "rgba(6,182,212,0.5)" }}>Likes/seg</span>
+                <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse" style={{ background: "#ef4444", color: "white", boxShadow: "0 0 8px rgba(239,68,68,0.4)" }}>LIVE</span>
               </div>
               <div className="text-3xl font-black text-white mb-1">
                 <Counter target={4023} />
-                <span className="text-base font-normal text-pink-400/60 ml-1">+21/s</span>
               </div>
-              <div className="h-1 rounded-full overflow-hidden mt-2" style={{ background: "rgba(6,182,212,0.15)" }}>
-                <div className="h-full rounded-full animate-pulse" style={{ width: "70%", background: "linear-gradient(90deg, #06b6d4, #22c55e)" }} />
+              <div className="h-1.5 rounded-full overflow-hidden mt-2" style={{ background: "rgba(6,182,212,0.1)" }}>
+                <div className="h-full rounded-full" style={{ width: "70%", background: "linear-gradient(90deg, #06b6d4, #22c55e)", animation: "pulse-glow 2s ease-in-out infinite" }} />
               </div>
             </div>
           </div>
 
-          {/* Top streamers */}
-          <div className="rounded-2xl p-5 mb-8" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <p className="text-[10px] uppercase tracking-widest text-cyan-400/50 font-semibold mb-4 text-center">
+          {/* Top streamers - glassmorphism */}
+          <div className="glass-card rounded-2xl p-5 mb-8">
+            <p className="text-[10px] uppercase tracking-[0.15em] font-bold mb-4 text-center" style={{ color: "rgba(6,182,212,0.5)" }}>
               Top streamers que usam Creatools
             </p>
             <div className="flex justify-between gap-3">
@@ -525,18 +531,17 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Feature chips */}
+          {/* Feature chips - glassmorphism */}
           <div className="grid grid-cols-4 gap-3">
             {[
               { icon: Trophy, label: "Rankings" },
-              { icon: Monitor, label: "Overlay Studio" },
+              { icon: Monitor, label: "Overlays" },
               { icon: Zap, label: "Tempo real" },
               { icon: LogIn, label: "Analytics" },
             ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex flex-col items-center gap-2 py-4 rounded-xl text-center"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div key={label} className="glass-card flex flex-col items-center gap-2 py-4 rounded-xl text-center">
                 <Icon className="w-5 h-5 text-cyan-400/70" />
-                <span className="text-[10px] text-cyan-300/50 font-medium">{label}</span>
+                <span className="text-[10px] font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>{label}</span>
               </div>
             ))}
           </div>

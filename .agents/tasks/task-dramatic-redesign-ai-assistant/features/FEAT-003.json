@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Enhanced Admin Panel with ALL system management functions + Docker compose verification. Ensure admin has comprehensive controls for every aspect of the platform, and verify docker-compose.yml is exactly as specified.",
+  "status": "pending",
+  "steps": [
+    "Step 1 - Verify infra/docker-compose.yml matches the exact specification: services.api with build context .., dockerfile infra/Dockerfile, ports 3000:3000, env_file .env, environment NODE_TLS_REJECT_UNAUTHORIZED=0, restart always, volumes static_html:/app/static-export, entrypoint with rm -rf and cp and exec node. services.nginx with image nginx:alpine, ports 80:80, volumes for nginx.conf and static_html, depends_on api, restart always. volumes section with static_html. NO healthcheck. If it already matches (which it does based on earlier read), leave it unchanged.",
+    "Step 2 - Enhance the admin panel in artifacts/creatools/src/pages/admin.tsx to ensure ALL these management sections exist with full CRUD capabilities: (a) User Management: list all users, search/filter, change plans, ban/unban, view activity, force password reset, impersonate user, (b) Plan Management: create/edit/delete plans, set permissions, set limits, set pricing, reorder, (c) Role Management: create/edit/delete roles, assign permissions, color-code, (d) System Status: server health, database status, memory usage, CPU, uptime, connected WebSockets, (e) Announcements: create/edit/delete announcements with types (info/warning/success/new/update), pin/unpin, schedule, (f) Support Tickets: view all tickets, reply to messages, approve/deny, assign to admin, (g) AI Assistant Config (from FEAT-002), (h) Landing Page Config: edit hero text, features, partners, CTA text, toggle landing enabled, (i) UI Config: logo, app name, sidebar sections, header config, center buttons, (j) Stripe/Payment Config: API keys, webhook secret, price IDs, payment toggle, (k) Maintenance Mode: global toggle, per-page maintenance, custom messages, estimated return time, landing alert, (l) Analytics Dashboard: user signups over time, plan distribution, active users, revenue stats, (m) Content Management: media uploads, featured slides, update carousel items, (n) Rate Limits: view/edit per-streamer rate limits, global limits, (o) Webhooks Management: view all user webhooks, disable malicious ones, (p) Developer Tools: API key management, JWT config, system logs viewer. Apply the new glassmorphism design system to all admin sections - glass cards, neon accents, gradient headers, animated tab transitions.",
+    "Step 3 - Ensure all admin API routes exist in the backend to support the above admin panel features. Check artifacts/api-server/src/routes/ for existing routes (admin-tools.ts, announcements.ts, config.ts, plans.ts, roles.ts, system.ts, ui-config.ts, landing.ts, support.ts, stripe.ts) and add any missing endpoints needed for the enhanced admin features. At minimum ensure there are routes for: user management CRUD, analytics data aggregation, content management, and the AI config endpoints from FEAT-002."
+  ],
+  "acceptance_criteria": [
+    "infra/docker-compose.yml is exactly as specified with NODE_TLS_REJECT_UNAUTHORIZED=0 and no healthcheck",
+    "Admin panel has all 16 management sections listed in step 2",
+    "Admin panel uses the new glassmorphism design system consistently",
+    "Running pnpm --filter @workspace/creatools run build succeeds",
+    "Running pnpm --filter @workspace/api-server run build succeeds",
+    "pnpm run typecheck passes"
+  ],
+  "verification": [
+    "pnpm --filter @workspace/creatools run build",
+    "pnpm --filter @workspace/api-server run build",
+    "pnpm run typecheck"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

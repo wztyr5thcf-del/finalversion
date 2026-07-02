@@ -2,15 +2,16 @@ import { useAuth } from "@/context/auth-context";
 import { UpdateCarousel } from "@/components/dashboard/update-carousel";
 import { FeaturedSlider } from "@/components/dashboard/featured-slider";
 import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
 import {
   Monitor, Zap, Gamepad2, Radio, Layers, BarChart2, Crown,
   ExternalLink, ChevronRight, CheckCircle2, Wifi, WifiOff,
   Star, Users, Megaphone, BookOpen, Sparkles, ArrowRight,
-  Shield, Target, Tv2,
+  Shield, Target, Tv2, TrendingUp, Gift, Eye,
 } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 
-// ── Feature pill data ──────────────────────────────────────────────────────────
+// Feature pill data
 const OVERLAY_PILLS = [
   { label: "Likes",         href: "/overlays/likes" },
   { label: "Battle",        href: "/overlays/battle",       badge: "PRO" },
@@ -19,7 +20,7 @@ const OVERLAY_PILLS = [
   { label: "Pote",          href: "/overlays/pote" },
   { label: "Gifts",         href: "/overlays/gifts" },
   { label: "WhatsApp",      href: "/overlays/whatsapp" },
-  { label: "Notificações",  href: "/overlays/notificacoes" },
+  { label: "Notificacoes",  href: "/overlays/notificacoes" },
   { label: "Level Up",      href: "/overlays/level-up" },
   { label: "Gamer",         href: "/overlays/gamer",        badge: "PRO" },
   { label: "Share",         href: "/overlays/share" },
@@ -32,7 +33,7 @@ const TOOL_CARDS = [
   { label: "Layout OBS",      icon: Monitor,   href: "/layout",        badge: "PRO",  color: "#a78bfa" },
   { label: "Effect Battle",   icon: Sparkles,  href: "/effect-battle", badge: "PRO",  color: "#ec4899" },
   { label: "Troll Gift",      icon: Target,    href: "/troll-gift",    badge: "APP",  color: "#22d3ee" },
-  { label: "Álbum",           icon: Layers,    href: "/album",         badge: null,   color: "#34d399" },
+  { label: "Album",           icon: Layers,    href: "/album",         badge: null,   color: "#34d399" },
 ];
 
 const GAME_PILLS = [
@@ -40,14 +41,35 @@ const GAME_PILLS = [
   { label: "Word Bomb",     href: "/minigames/word-bomb" },
   { label: "Verdade/Mito",  href: "/minigames/sentido" },
   { label: "Defender",      href: "/minigames/defender" },
-  { label: "Baú",           href: "/minigames/bau" },
+  { label: "Bau",           href: "/minigames/bau" },
 ];
 
-const PARTNER_INFLUENCERS = [
-  { name: "Criador Parceiro 1", handle: "@parceiro1", badge: "Verificado", avatar: "C1" },
-  { name: "Criador Parceiro 2", handle: "@parceiro2", badge: "Verificado", avatar: "C2" },
-  { name: "Criador Parceiro 3", handle: "@parceiro3", badge: "Verificado", avatar: "C3" },
-  { name: "Criador Parceiro 4", handle: "@parceiro4", badge: "Verificado", avatar: "C4" },
+// Animated counter component
+function AnimCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    let frame: number;
+    const duration = 1500;
+    const start = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setVal(Math.round(target * eased));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [target]);
+  return <>{val.toLocaleString("pt-BR")}{suffix}</>;
+}
+
+// Stat cards data
+const STATS = [
+  { label: "Seguidores", icon: Users, value: 1247, suffix: "", color: "#06b6d4", trend: "+12%" },
+  { label: "Gifts Hoje", icon: Gift, value: 89, suffix: "", color: "#22c55e", trend: "+8%" },
+  { label: "Viewers Pico", icon: Eye, value: 3420, suffix: "", color: "#a78bfa", trend: "+24%" },
+  { label: "Engajamento", icon: TrendingUp, value: 94, suffix: "%", color: "#f97316", trend: "+5%" },
 ];
 
 function PlanBadge({ plan }: { plan: string }) {
@@ -72,28 +94,37 @@ export default function Dashboard() {
   const handle = user?.tiktokUsername;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-400">
+    <div className="space-y-6" style={{ animation: "fade-in-up 0.5s ease-out" }}>
 
-      {/* ── Welcome header ─────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl p-5 border border-white/8"
-        style={{ background: "linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(34,197,94,0.05) 50%, rgba(6,182,212,0.04) 100%)" }}>
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at top left, rgba(6,182,212,0.1) 0%, transparent 60%)" }} />
+      {/* Welcome header - full width banner with animated gradient */}
+      <div className="relative overflow-hidden rounded-2xl p-6"
+        style={{
+          background: "linear-gradient(135deg, rgba(6,182,212,0.1) 0%, rgba(34,197,94,0.06) 50%, rgba(124,58,237,0.04) 100%)",
+          border: "1px solid rgba(6,182,212,0.15)",
+          boxShadow: "0 0 40px rgba(6,182,212,0.05)",
+        }}>
+        {/* Animated gradient orb */}
+        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(6,182,212,0.12), transparent 70%)", animation: "float-up-down 4s ease-in-out infinite" }} />
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(34,197,94,0.08), transparent 70%)", animation: "float-up-down 5s ease-in-out infinite 1s" }} />
+
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             {user?.tiktokProfilePicture ? (
-              <img src={user.tiktokProfilePicture} alt="" className="w-14 h-14 rounded-full object-cover ring-2 ring-cyan-500/40" />
+              <img src={user.tiktokProfilePicture} alt="" className="w-14 h-14 rounded-full object-cover"
+                style={{ border: "2px solid rgba(6,182,212,0.4)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }} />
             ) : (
-              <div className="w-14 h-14 rounded-full flex items-center justify-center ring-2 ring-cyan-500/40 shrink-0"
-                style={{ background: "rgba(6,182,212,0.15)" }}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: "rgba(6,182,212,0.12)", border: "2px solid rgba(6,182,212,0.3)", boxShadow: "0 0 16px rgba(6,182,212,0.2)" }}>
                 <SiTiktok className="w-6 h-6 text-cyan-400" />
               </div>
             )}
             <div>
-              <p className="text-xs text-cyan-300/50 font-medium mb-0.5">Bem-vindo de volta</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] font-bold mb-1" style={{ color: "rgba(6,182,212,0.5)" }}>Bem-vindo de volta</p>
               <h1 className="text-2xl font-bold text-white">{displayName}</h1>
               {handle && (
-                <p className="text-sm text-cyan-300/60 font-mono">@{handle}</p>
+                <p className="text-sm font-mono mt-0.5" style={{ color: "rgba(6,182,212,0.6)" }}>@{handle}</p>
               )}
             </div>
           </div>
@@ -102,9 +133,9 @@ export default function Dashboard() {
             {user?.plan !== "pro" && (
               <button
                 onClick={() => setLocation("/pricing")}
-                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(90deg, #06b6d4, #22c55e)", color: "white" }}>
-                <Sparkles className="w-3 h-3" />
+                className="flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-full transition-all hover:scale-105"
+                style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", color: "white", boxShadow: "0 0 20px rgba(6,182,212,0.3)" }}>
+                <Sparkles className="w-3.5 h-3.5" />
                 Fazer upgrade
               </button>
             )}
@@ -112,25 +143,49 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      {/* Animated stat cards row - bento style */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {STATS.map((stat, i) => (
+          <div key={stat.label} className="stat-card p-4 rounded-2xl group cursor-default"
+            style={{ "--stat-color": stat.color, animationDelay: `${i * 100}ms`, animation: "fade-in-up 0.5s ease-out backwards" } as React.CSSProperties}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center transition-all group-hover:scale-110"
+                style={{ background: `${stat.color}15`, boxShadow: `0 0 12px ${stat.color}20` }}>
+                <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}>
+                {stat.trend}
+              </span>
+            </div>
+            <p className="text-2xl font-black text-white mb-0.5">
+              <AnimCounter target={stat.value} suffix={stat.suffix} />
+            </p>
+            <p className="text-[11px] font-medium" style={{ color: "rgba(255,255,255,0.35)" }}>{stat.label}</p>
+          </div>
+        ))}
+      </div>
 
-        {/* ── Left column ────────────────────────────────────────────────────── */}
-        <div className="xl:col-span-2 space-y-5">
+      {/* Main bento grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
-          {/* Conta TikTok conectada */}
-          <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+        {/* Left column - 2/3 width */}
+        <div className="xl:col-span-2 space-y-4">
+
+          {/* TikTok connected */}
+          <div className="glass-card rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/50">Conta TikTok Conectada</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: "rgba(6,182,212,0.5)" }}>Conta TikTok Conectada</p>
               <div className="flex items-center gap-1.5">
                 {handle ? (
                   <>
-                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" style={{ boxShadow: "0 0 6px rgba(34,197,94,0.5)" }} />
                     <span className="text-xs text-green-400 font-medium">Ativa</span>
                   </>
                 ) : (
                   <>
                     <div className="w-2 h-2 rounded-full bg-red-400" />
-                    <span className="text-xs text-red-400 font-medium">Não vinculada</span>
+                    <span className="text-xs text-red-400 font-medium">Nao vinculada</span>
                   </>
                 )}
               </div>
@@ -138,28 +193,28 @@ export default function Dashboard() {
             {handle ? (
               <div className="flex items-center gap-4">
                 <div className="flex items-center justify-center w-12 h-12 rounded-full shrink-0"
-                  style={{ background: "rgba(6,182,212,0.12)", border: "1px solid rgba(6,182,212,0.2)" }}>
+                  style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)", boxShadow: "0 0 12px rgba(6,182,212,0.1)" }}>
                   <SiTiktok className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-white truncate">{user?.tiktokDisplayName ?? handle}</p>
-                  <p className="text-sm text-cyan-300/50 font-mono">@{handle}</p>
+                  <p className="text-sm font-mono" style={{ color: "rgba(6,182,212,0.5)" }}>@{handle}</p>
                   {user?.tiktokFollowerCount && user.tiktokFollowerCount > 0 && (
-                    <p className="text-xs text-cyan-300/40 mt-0.5 flex items-center gap-1">
+                    <p className="text-xs mt-0.5 flex items-center gap-1" style={{ color: "rgba(255,255,255,0.3)" }}>
                       <Users className="w-3 h-3" />
                       {user.tiktokFollowerCount.toLocaleString("pt-BR")} seguidores
                     </p>
                   )}
                 </div>
-                <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" style={{ filter: "drop-shadow(0 0 4px rgba(34,197,94,0.5))" }} />
               </div>
             ) : (
               <div className="flex items-center gap-3 p-3 rounded-xl"
-                style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)" }}>
+                style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.12)" }}>
                 <WifiOff className="w-5 h-5 text-red-400 shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-red-300">Nenhuma conta vinculada</p>
-                  <p className="text-xs text-red-300/60">Seu @ do TikTok é necessário para as ferramentas funcionarem.</p>
+                  <p className="text-xs text-red-300/60">Seu @ do TikTok e necessario para as ferramentas funcionarem.</p>
                 </div>
               </div>
             )}
@@ -168,16 +223,19 @@ export default function Dashboard() {
           {/* Update carousel */}
           <UpdateCarousel />
 
-          {/* Overlays pills */}
-          <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+          {/* Overlays - bento card */}
+          <div className="glass-card rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Monitor className="w-4 h-4 text-cyan-400" />
-                <p className="text-sm font-semibold text-white">Sobreposições (Overlays)</p>
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
+                  <Monitor className="w-3.5 h-3.5 text-cyan-400" />
+                </div>
+                <p className="text-sm font-semibold text-white">Sobreposicoes</p>
               </div>
               <button
                 onClick={() => setLocation("/overlays")}
-                className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
+                className="text-xs font-medium flex items-center gap-1 px-2.5 py-1 rounded-full transition-all hover:scale-105"
+                style={{ color: "#06b6d4", background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.15)" }}>
                 Ver todas <ChevronRight className="w-3 h-3" />
               </button>
             </div>
@@ -187,20 +245,22 @@ export default function Dashboard() {
                   key={p.href}
                   onClick={() => setLocation(p.href)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all hover:scale-105"
-                  style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)", color: "#67e8f9" }}>
+                  style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.12)", color: "#67e8f9" }}>
                   {p.label}
                   {p.badge && (
-                    <span className="text-xs font-bold" style={{ color: "#f97316" }}>{p.badge}</span>
+                    <span className="text-[9px] font-bold" style={{ color: "#f97316" }}>{p.badge}</span>
                   )}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Tools cards */}
-          <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+          {/* Tools - bento grid */}
+          <div className="glass-card rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-4 h-4 text-yellow-400" />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(249,115,22,0.1)" }}>
+                <Zap className="w-3.5 h-3.5 text-orange-400" />
+              </div>
               <p className="text-sm font-semibold text-white">Ferramentas</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -208,37 +268,40 @@ export default function Dashboard() {
                 <button
                   key={t.href}
                   onClick={() => setLocation(t.href)}
-                  className="group flex flex-col gap-2 p-3 rounded-xl text-left transition-all hover:scale-[1.02]"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  className="group flex flex-col gap-2.5 p-3.5 rounded-xl text-left transition-all hover:scale-[1.03]"
+                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                   <div className="flex items-center justify-between">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                      style={{ background: `${t.color}22` }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center transition-all group-hover:shadow-lg"
+                      style={{ background: `${t.color}12`, border: `1px solid ${t.color}20` }}>
                       <t.icon className="w-4 h-4" style={{ color: t.color }} />
                     </div>
                     {t.badge && (
-                      <span className="text-xs font-bold px-1.5 py-0.5 rounded"
-                        style={{ background: t.badge === "PRO" ? "rgba(249,115,22,0.2)" : "rgba(34,211,238,0.15)",
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                        style={{ background: t.badge === "PRO" ? "rgba(249,115,22,0.15)" : "rgba(34,211,238,0.12)",
                                  color: t.badge === "PRO" ? "#f97316" : "#22d3ee" }}>
                         {t.badge}
                       </span>
                     )}
                   </div>
-                  <p className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">{t.label}</p>
+                  <p className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">{t.label}</p>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Jogos pills */}
-          <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+          {/* Games */}
+          <div className="glass-card rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Gamepad2 className="w-4 h-4 text-cyan-400" />
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
+                  <Gamepad2 className="w-3.5 h-3.5 text-cyan-400" />
+                </div>
                 <p className="text-sm font-semibold text-white">Jogos / Minigames</p>
               </div>
               <button
                 onClick={() => setLocation("/minigames")}
-                className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
+                className="text-xs font-medium flex items-center gap-1 px-2.5 py-1 rounded-full transition-all hover:scale-105"
+                style={{ color: "#06b6d4", background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.15)" }}>
                 Ver todos <ChevronRight className="w-3 h-3" />
               </button>
             </div>
@@ -248,7 +311,7 @@ export default function Dashboard() {
                   key={g.href}
                   onClick={() => setLocation(g.href)}
                   className="px-3 py-1.5 rounded-full text-sm font-medium transition-all hover:scale-105"
-                  style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)", color: "#67e8f9" }}>
+                  style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.12)", color: "#86efac" }}>
                   {g.label}
                 </button>
               ))}
@@ -256,101 +319,67 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* ── Right column ───────────────────────────────────────────────────── */}
-        <div className="space-y-5">
+        {/* Right column - 1/3 width */}
+        <div className="space-y-4">
           {/* Featured slides */}
           <FeaturedSlider />
 
-          {/* Stats rápidas */}
-          <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/50 mb-4">Acesso Rápido</p>
+          {/* Quick access */}
+          <div className="glass-card rounded-2xl p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: "rgba(6,182,212,0.5)" }}>Acesso Rapido</p>
             <div className="space-y-2">
               {[
                 { label: "Monitor Live",   icon: Wifi,     href: handle ? `/monitor/${handle}` : "/monitor/example", color: "#22d3ee" },
                 { label: "Rankings",       icon: Crown,    href: "/leaderboards",  color: "#f97316" },
                 { label: "Gifters",        icon: Star,     href: "/gifters",       color: "#a78bfa" },
                 { label: "Live Analytics", icon: BarChart2, href: "/live-analytics", color: "#34d399" },
-                { label: "Integrações",   icon: Tv2,      href: "/integracoes",   color: "#f472b6" },
+                { label: "Integracoes",   icon: Tv2,      href: "/integracoes",   color: "#f472b6" },
               ].map((item) => (
                 <button
                   key={item.href}
                   onClick={() => setLocation(item.href)}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:scale-[1.01]"
-                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: `${item.color}20` }}>
+                  className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:scale-[1.02] group"
+                  style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all group-hover:shadow-lg"
+                    style={{ background: `${item.color}12`, border: `1px solid ${item.color}18` }}>
                     <item.icon className="w-3.5 h-3.5" style={{ color: item.color }} />
                   </div>
-                  <span className="text-sm text-white/70 flex-1">{item.label}</span>
-                  <ArrowRight className="w-3 h-3 text-white/20" />
+                  <span className="text-sm text-white/60 flex-1 group-hover:text-white/80 transition-colors">{item.label}</span>
+                  <ArrowRight className="w-3 h-3 text-white/15 group-hover:text-cyan-400/50 transition-colors" />
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Influenciadores parceiros */}
-          <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+          {/* Blog / Updates */}
+          <div className="glass-card rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-cyan-400" />
-                <p className="text-sm font-semibold text-white">Influenciadores Parceiros</p>
-              </div>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={{ background: "rgba(6,182,212,0.2)", color: "#06b6d4" }}>BETA</span>
-            </div>
-            <div className="space-y-3">
-              {PARTNER_INFLUENCERS.map((p) => (
-                <div key={p.handle} className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-xs font-bold"
-                    style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
-                    {p.avatar}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{p.name}</p>
-                    <p className="text-xs text-cyan-300/50">{p.handle}</p>
-                  </div>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
-                    style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}>
-                    ✓ {p.badge}
-                  </span>
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(6,182,212,0.1)" }}>
+                  <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
                 </div>
-              ))}
-            </div>
-            <button className="mt-4 w-full py-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-1 transition-colors">
-              Ver todos <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
-
-          {/* Blog / Atualizações */}
-          <div className="rounded-2xl border border-white/8 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-cyan-400" />
-                <p className="text-sm font-semibold text-white">Blog — Novidades</p>
+                <p className="text-sm font-semibold text-white">Novidades</p>
               </div>
-              <span className="text-xs text-cyan-300/40">Em breve</span>
+              <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.2)" }}>Em breve</span>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[
-                { title: "Novos overlays disponíveis para live", date: "1 jul. · 3 min" },
-                { title: "Como usar o Effect Battle em sua live",   date: "28 jun. · 5 min" },
-                { title: "Guia completo de Gifters e Rankings",     date: "20 jun. · 7 min" },
+                { title: "Novos overlays disponiveis para live", date: "1 jul." },
+                { title: "Como usar o Effect Battle em sua live", date: "28 jun." },
+                { title: "Guia completo de Gifters e Rankings", date: "20 jun." },
               ].map((post, i) => (
-                <div key={i} className="flex gap-3 items-start p-2 rounded-lg transition-colors hover:bg-white/5 cursor-pointer">
-                  <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center"
-                    style={{ background: "rgba(6,182,212,0.1)" }}>
-                    <BookOpen className="w-4 h-4 text-cyan-400/60" />
+                <div key={i} className="flex gap-3 items-start p-2.5 rounded-xl transition-all hover:bg-white/[0.03] cursor-pointer group">
+                  <div className="w-9 h-9 rounded-lg shrink-0 flex items-center justify-center"
+                    style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.1)" }}>
+                    <BookOpen className="w-3.5 h-3.5 text-cyan-400/50" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white/80 line-clamp-2 leading-snug">{post.title}</p>
-                    <p className="text-xs text-purple-300/40 mt-1">{post.date}</p>
+                    <p className="text-sm font-medium text-white/70 line-clamp-2 leading-snug group-hover:text-white/90 transition-colors">{post.title}</p>
+                    <p className="text-[10px] mt-1 font-mono" style={{ color: "rgba(255,255,255,0.2)" }}>{post.date}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <button className="mt-3 w-full py-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-1 transition-colors">
-              Ver todos os posts <ExternalLink className="w-3 h-3" />
-            </button>
           </div>
 
         </div>

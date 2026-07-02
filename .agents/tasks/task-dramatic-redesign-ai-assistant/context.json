@@ -1,0 +1,32 @@
+{
+  "project_type": "Full-stack monorepo: React+Vite+Tailwind v4 frontend + Express API + PostgreSQL (drizzle ORM)",
+  "language": "TypeScript",
+  "build_system": "pnpm workspaces with workspace:* references. Root build does typecheck then recursive build. Individual packages: pnpm --filter @workspace/creatools run build, pnpm --filter @workspace/api-server run build",
+  "test_framework": "No formal test framework found. Verification via typecheck (tsc --noEmit) and build success.",
+  "build_command": "pnpm run build",
+  "test_command": "pnpm run typecheck",
+  "verification_instructions": "1. Run pnpm run typecheck to verify TypeScript compiles. 2. Run pnpm --filter @workspace/creatools run build to verify frontend builds. 3. Run pnpm --filter @workspace/api-server run build to verify API builds.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "pnpm install (already done, node_modules exists)",
+  "environment_constraints": "OPEN_INTERNET network mode. Node 22 available. pnpm available. Docker may or may not be available for build validation.",
+  "contribution_requirements": "Use pnpm only. Tailwind v4 with @import 'tailwindcss'. shadcn/ui components in artifacts/creatools/src/components/ui/. Wouter for routing. Express 5 for API.",
+  "key_patterns": "Frontend: pages in artifacts/creatools/src/pages/, layout in components/layout/app-layout.tsx, CSS vars in index.css, contexts in context/. Backend: routes in artifacts/api-server/src/routes/, DB schema in lib/db/src/schema/. Admin page is massive single file (4974 lines). All colors use CSS custom properties (HSL) with inline styles for custom colors. Glassmorphism, neon glow effects already started. Uses lucide-react and react-icons for icons.",
+  "relevant_files": [
+    "artifacts/creatools/src/index.css",
+    "artifacts/creatools/src/components/layout/app-layout.tsx",
+    "artifacts/creatools/src/pages/dashboard.tsx",
+    "artifacts/creatools/src/pages/landing.tsx",
+    "artifacts/creatools/src/pages/login.tsx",
+    "artifacts/creatools/src/pages/admin.tsx",
+    "artifacts/creatools/src/App.tsx",
+    "artifacts/creatools/src/components/support-widget.tsx",
+    "artifacts/creatools/src/components/dashboard/update-carousel.tsx",
+    "artifacts/creatools/src/components/dashboard/featured-slider.tsx",
+    "artifacts/api-server/src/routes/index.ts",
+    "artifacts/api-server/src/routes/support.ts",
+    "lib/db/src/schema/index.ts",
+    "infra/docker-compose.yml",
+    "infra/Dockerfile"
+  ],
+  "directory_structure": "Root: infra/ (docker), artifacts/creatools/ (frontend SPA), artifacts/api-server/ (Express API), lib/db/ (drizzle schema), lib/api-spec/ (shared types), lib/api-zod/ (validators), scripts/ (utilities)"
+}
