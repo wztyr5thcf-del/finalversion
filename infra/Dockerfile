@@ -11,11 +11,23 @@ RUN corepack enable && corepack prepare pnpm@9 --activate
 
 WORKDIR /app
 
-# Copy the entire monorepo
-COPY . .
+# Copy dependency manifests FIRST for optimal layer caching.
+# If only source code changes, Docker reuses the cached pnpm install layer.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY artifacts/api-server/package.json ./artifacts/api-server/
+COPY artifacts/creatools/package.json ./artifacts/creatools/
+COPY artifacts/mockup-sandbox/package.json ./artifacts/mockup-sandbox/
+COPY lib/api-client-react/package.json ./lib/api-client-react/
+COPY lib/api-spec/package.json ./lib/api-spec/
+COPY lib/api-zod/package.json ./lib/api-zod/
+COPY lib/db/package.json ./lib/db/
+COPY scripts/package.json ./scripts/
 
-# Install all dependencies (pnpm)
+# Install all dependencies (pnpm) - this layer is cached when manifests don't change
 RUN pnpm install --no-frozen-lockfile --config.confirmModulesPurge=false
+
+# Now copy the rest of the source code
+COPY . .
 
 # Build the entire project (typecheck + all packages)
 ENV PORT=5173
