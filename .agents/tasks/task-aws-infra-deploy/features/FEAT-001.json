@@ -1,0 +1,39 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Create complete AWS infrastructure-as-code in infra/ directory: CloudFormation template, Dockerfiles, Docker Compose, Nginx config, deploy scripts, and Portuguese README",
+  "status": "completed",
+  "steps": [
+    "Create infra/ directory at the root of the repository",
+    "Create infra/cloudformation.yaml - CloudFormation template with 37 resources: VPC, subnets, IGW, NAT, route tables, ALB, ACM, EC2, RDS, Route53, Security Groups",
+    "Create infra/Dockerfile - Multi-stage build with separate runtime deps stage for flat node_modules",
+    "Create infra/runtime-deps.json - Standalone package.json for externalized runtime dependencies",
+    "Create infra/docker-compose.yml - api + nginx services with health checks",
+    "Create infra/nginx/nginx.conf - 3 server blocks for all domains",
+    "Create infra/deploy.sh - Complete bootstrap script",
+    "Create infra/.env.example - All env vars documented",
+    "Create infra/README.md - Portuguese deployment guide"
+  ],
+  "acceptance_criteria": [
+    "infra/ directory exists at repository root with all files - PASS",
+    "CloudFormation template is valid YAML with 37 resources - PASS",
+    "Dockerfile builds successfully - PASS (3-stage build)",
+    "docker-compose.yml is valid with api + nginx services - PASS",
+    "nginx.conf handles all 3 domains correctly - PASS (syntax validated)",
+    "deploy.sh is executable with complete bootstrap logic - PASS",
+    "README.md is in Portuguese with step-by-step instructions - PASS",
+    ".env.example lists all required environment variables - PASS",
+    "Container starts and server listens on port 3000 - PASS"
+  ],
+  "verification": [
+    "CloudFormation YAML parsed successfully with 37 resources, 8 parameters, 6 outputs",
+    "Docker image built successfully (3-stage: builder + deps + production)",
+    "Server starts and logs 'Server listening' on port 3000",
+    "All externalized packages resolve correctly (pg, drizzle-orm, express, @google-cloud/storage, etc.)",
+    "Frontend static files present in /app/public/ (index.html, assets/, etc.)",
+    "Nginx config syntax validated with nginx -t",
+    "docker-compose.yml validated as proper YAML with correct service structure"
+  ],
+  "blocked_reason": null,
+  "findings": "pnpm's symlinked node_modules structure required a separate build stage with npm and a runtime-deps.json to create flat node_modules for the production container. The app starts correctly but requires a real PostgreSQL connection - DB seed errors are non-blocking (app still serves requests)."
+}

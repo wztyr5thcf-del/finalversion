@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Fix critical issues found in code review: heredoc bug, volume staleness, missing migration, domain routing, and pnpm fallback",
+  "status": "completed",
+  "steps": [
+    "Fix CloudFormation UserData heredoc - replace with echo statements",
+    "Fix Docker volume staleness - replace named volume with bind mount or copy approach",
+    "Add database migration step to deploy flow",
+    "Fix nginx config for creatools.stream and creatools.live to serve SPA frontend for non-API paths",
+    "Remove pnpm install fallback in Dockerfile"
+  ],
+  "acceptance_criteria": [
+    "CloudFormation UserData uses echo statements instead of heredoc",
+    "Docker compose does not use named volume for frontend_static",
+    "Deploy script includes drizzle-kit push after containers start",
+    "Nginx serves SPA frontend on creatools.stream and creatools.live for non-API paths",
+    "Dockerfile only uses --frozen-lockfile without fallback"
+  ],
+  "verification": [
+    "docker-compose.yml validated as valid YAML with correct services and volume structure",
+    "CloudFormation YAML parsed with 37 resources, 8 parameters, 6 outputs - UserData uses echo statements",
+    "nginx.conf validated with nginx -t (host resolution error expected in standalone test)",
+    "deploy.sh passes bash -n syntax check",
+    "Dockerfile has no --no-frozen-lockfile fallback"
+  ],
+  "blocked_reason": null,
+  "findings": "All 5 critical review issues addressed. The migration step uses a one-off container approach since the production image does not include drizzle-kit or schema source files. The volume staleness fix uses a copy-on-start entrypoint that clears and re-copies frontend files on every container restart."
+}

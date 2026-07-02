@@ -1,0 +1,594 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Creatools - Complete infrastructure stack with VPC, EC2, RDS PostgreSQL,
+  ALB with ACM SSL, and Route 53 DNS records for creatools.co, creatools.stream,
+  and creatools.live domains.
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t3.medium
+    Description: EC2 instance type
+    AllowedValues:
+      - t3.small
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+
+  DBInstanceClass:
+    Type: String
+    Default: db.t3.micro
+    Description: RDS instance class
+    AllowedValues:
+      - db.t3.micro
+      - db.t3.small
+      - db.t3.medium
+
+  DBPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 8
+    MaxLength: 128
+    Description: Password for the RDS PostgreSQL database
+
+  DBUsername:
+    Type: String
+    Default: creatools
+    Description: Username for the RDS PostgreSQL database
+
+  JWTSecret:
+    Type: String
+    NoEcho: true
+    MinLength: 16
+    Description: Secret key for JWT token signing
+
+  DomainName:
+    Type: String
+    Default: creatools.co
+    Description: Primary domain name
+
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair for SSH access
+
+  GitRepoURL:
+    Type: String
+    Default: https://github.com/your-org/creatools.git
+    Description: Git repository URL for the application code
+
+Resources:
+  # =============================================================================
+  # VPC and Networking
+  # =============================================================================
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: creatools-vpc
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: creatools-igw
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # Public Subnets
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: creatools-public-subnet-1
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: creatools-public-subnet-2
+
+  # Private Subnets
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: creatools-private-subnet-1
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: creatools-private-subnet-2
+
+  # NAT Gateway (for private subnets to access internet)
+  NATGatewayEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: creatools-nat-eip
+
+  NATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NATGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet1
+      Tags:
+        - Key: Name
+          Value: creatools-nat-gw
+
+  # Route Tables
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: creatools-public-rt
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: creatools-private-rt
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGateway
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+
+  # =============================================================================
+  # Security Groups
+  # =============================================================================
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for the Application Load Balancer
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: creatools-alb-sg
+
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for EC2 instance
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: creatools-ec2-sg
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RDS PostgreSQL
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref EC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: creatools-rds-sg
+
+  # =============================================================================
+  # ACM Certificate
+  # =============================================================================
+  SSLCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: creatools.co
+      SubjectAlternativeNames:
+        - '*.creatools.co'
+        - creatools.stream
+        - '*.creatools.stream'
+        - creatools.live
+        - '*.creatools.live'
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: creatools.co
+          HostedZoneId: !Ref HostedZoneCo
+        - DomainName: creatools.stream
+          HostedZoneId: !Ref HostedZoneStream
+        - DomainName: creatools.live
+          HostedZoneId: !Ref HostedZoneLive
+      Tags:
+        - Key: Name
+          Value: creatools-ssl-cert
+
+  # =============================================================================
+  # Application Load Balancer
+  # =============================================================================
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: creatools-alb
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups:
+        - !Ref ALBSecurityGroup
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      Tags:
+        - Key: Name
+          Value: creatools-alb
+
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: creatools-tg
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VPC
+      TargetType: instance
+      HealthCheckEnabled: true
+      HealthCheckPath: /api/health
+      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 3
+      Targets:
+        - Id: !Ref EC2Instance
+          Port: 80
+
+  ALBListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: '443'
+            StatusCode: HTTP_301
+
+  ALBListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref SSLCertificate
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+
+  # =============================================================================
+  # RDS PostgreSQL
+  # =============================================================================
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for Creatools RDS
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      Tags:
+        - Key: Name
+          Value: creatools-db-subnet-group
+
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: creatools-db
+      DBInstanceClass: !Ref DBInstanceClass
+      Engine: postgres
+      EngineVersion: '16.4'
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBName: creatools
+      AllocatedStorage: 20
+      MaxAllocatedStorage: 100
+      StorageType: gp3
+      MultiAZ: false
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - !Ref RDSSecurityGroup
+      DBSubnetGroup: !Ref DBSubnetGroup
+      BackupRetentionPeriod: 7
+      DeletionProtection: false
+      Tags:
+        - Key: Name
+          Value: creatools-rds
+
+  # =============================================================================
+  # EC2 Instance
+  # =============================================================================
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - RDSInstance
+      - VPCGatewayAttachment
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Sub '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
+      KeyName: !Ref KeyPairName
+      SubnetId: !Ref PublicSubnet1
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 30
+            VolumeType: gp3
+      Tags:
+        - Key: Name
+          Value: creatools-server
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -e
+
+          # Log output to file
+          exec > /var/log/user-data.log 2>&1
+
+          echo "=== Starting Creatools deployment ==="
+
+          # Install Docker
+          dnf update -y
+          dnf install -y docker git
+          systemctl start docker
+          systemctl enable docker
+          usermod -aG docker ec2-user
+
+          # Install Docker Compose plugin
+          mkdir -p /usr/local/lib/docker/cli-plugins
+          curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64" \
+            -o /usr/local/lib/docker/cli-plugins/docker-compose
+          chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+          # Clone repository
+          cd /opt
+          git clone ${GitRepoURL} creatools
+          cd creatools
+
+          # Create .env file using echo statements (heredoc breaks after YAML processing)
+          echo "NODE_ENV=production" > infra/.env
+          echo "PORT=3000" >> infra/.env
+          echo "DATABASE_URL=postgresql://${DBUsername}:${DBPassword}@${RDSInstance.Endpoint.Address}:5432/creatools" >> infra/.env
+          echo "JWT_SECRET=${JWTSecret}" >> infra/.env
+          echo "FRONTEND_URL=https://creatools.co" >> infra/.env
+          echo "APP_URL=https://creatools.co" >> infra/.env
+          echo "STRIPE_SECRET_KEY=" >> infra/.env
+          echo "STRIPE_WEBHOOK_SECRET=" >> infra/.env
+          echo "STRIPE_PUBLISHABLE_KEY=" >> infra/.env
+          echo "STRIPE_PRICE_ID_BASIC=" >> infra/.env
+          echo "STRIPE_PRICE_ID_PRO=" >> infra/.env
+          echo "TIKTOOLS_API_KEY=" >> infra/.env
+          echo "TIKTOK_CLIENT_KEY=" >> infra/.env
+          echo "TIKTOK_REDIRECT_URI=https://creatools.co/api/tiktok/callback" >> infra/.env
+
+          # Build and start with Docker Compose
+          cd infra
+          docker compose up -d --build
+
+          # Run database migrations using a one-off container
+          echo "=== Running database migrations ==="
+          cd /opt/creatools
+          docker run --rm \
+            --network infra_default \
+            --env-file infra/.env \
+            -v "$(pwd):/workspace" \
+            -w /workspace \
+            node:22-slim sh -c "\
+              npm install -g pnpm@9 && \
+              pnpm install --frozen-lockfile --config.confirmModulesPurge=false && \
+              npx drizzle-kit push" || echo "WARNING: drizzle-kit push failed, manual migration may be needed"
+
+          # Health check loop
+          echo "=== Waiting for application to be healthy ==="
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost/api/health > /dev/null 2>&1; then
+              echo "=== Application is healthy! ==="
+              exit 0
+            fi
+            echo "Health check attempt $i/30 failed, retrying in 10s..."
+            sleep 10
+          done
+
+          echo "=== WARNING: Application did not become healthy within timeout ==="
+
+  # =============================================================================
+  # Route 53 Hosted Zones and Records
+  # =============================================================================
+  HostedZoneCo:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: creatools.co
+      HostedZoneConfig:
+        Comment: Hosted zone for creatools.co
+
+  HostedZoneStream:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: creatools.stream
+      HostedZoneConfig:
+        Comment: Hosted zone for creatools.stream
+
+  HostedZoneLive:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: creatools.live
+      HostedZoneConfig:
+        Comment: Hosted zone for creatools.live
+
+  # A records pointing to ALB
+  DNSRecordCo:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneCo
+      Name: creatools.co
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneID
+
+  DNSRecordCoWildcard:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneCo
+      Name: '*.creatools.co'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneID
+
+  DNSRecordStream:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneStream
+      Name: creatools.stream
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneID
+
+  DNSRecordStreamWildcard:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneStream
+      Name: '*.creatools.stream'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneID
+
+  DNSRecordLive:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneLive
+      Name: creatools.live
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneID
+
+  DNSRecordLiveWildcard:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneLive
+      Name: '*.creatools.live'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneID
+
+Outputs:
+  ALBDNSName:
+    Description: DNS name of the Application Load Balancer
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
+    Export:
+      Name: creatools-alb-dns
+
+  EC2PublicIP:
+    Description: Public IP of the EC2 instance
+    Value: !GetAtt EC2Instance.PublicIp
+    Export:
+      Name: creatools-ec2-ip
+
+  RDSEndpoint:
+    Description: Endpoint of the RDS PostgreSQL instance
+    Value: !GetAtt RDSInstance.Endpoint.Address
+    Export:
+      Name: creatools-rds-endpoint
+
+  HostedZoneCoNameServers:
+    Description: Name servers for creatools.co (configure at your domain registrar)
+    Value: !Join [', ', !GetAtt HostedZoneCo.NameServers]
+
+  HostedZoneStreamNameServers:
+    Description: Name servers for creatools.stream (configure at your domain registrar)
+    Value: !Join [', ', !GetAtt HostedZoneStream.NameServers]
+
+  HostedZoneLiveNameServers:
+    Description: Name servers for creatools.live (configure at your domain registrar)
+    Value: !Join [', ', !GetAtt HostedZoneLive.NameServers]

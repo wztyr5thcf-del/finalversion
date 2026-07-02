@@ -1,0 +1,14 @@
+{
+  "task_id": "task-aws-infra-deploy",
+  "task_description": "Create complete AWS infrastructure-as-code in infra/ directory with CloudFormation template, Docker setup, Nginx configuration for 3 domains with SSL, and deployment guide in Portuguese",
+  "status": "completed",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "pass",
+    "docker_build": "pass",
+    "summary": "Docker image builds and server starts successfully. All module imports resolve. Frontend static files present. CloudFormation YAML valid with 37 resources. Nginx config validated. Review issues (heredoc bug, volume staleness, missing migrations, domain routing, lockfile fallback) all fixed."
+  }
+}
