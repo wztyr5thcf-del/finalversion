@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Create live_sessions metrics table in the database schema and a background monitoring service that detects when a registered user goes live on TikTok and automatically records session metrics in real-time (viewers, gifts, likes, comments, duration, etc.). This enables leaderboards and analytics to form even when the user has not opened the app. Also fix the TikTok profile data fetching issue - when a user registers or links their TikTok, the system must properly fetch and save their profile picture, display name, and follower count from the tik.tools API.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. Create new schema file lib/db/src/schema/live-sessions.ts with a liveSessionsTable (id, userId, tiktokUsername, roomId, startedAt, endedAt, peakViewers, totalViewers, totalGifts, totalDiamonds, totalLikes, totalComments, totalShares, totalFollows, totalNewSubscribers, duration in seconds, status: 'active'|'ended'). Also create a liveSessionEventsTable for granular time-series data (id, sessionId, timestamp, viewerCount, likesInWindow, giftsInWindow, diamondsInWindow, commentsInWindow). Export from lib/db/src/schema/index.ts.",
     "2. Create artifacts/api-server/src/lib/live-monitor.ts - a background service that polls tik.tools /webcast/live_status for all registered users with a tiktokUsername every 60 seconds. When a user is detected live: create a session record, start monitoring via WebSocket or periodic polling (webcast/fetch endpoint), accumulate metrics. When stream ends: mark session as ended, calculate duration. Store periodic snapshots (every 30s) in liveSessionEventsTable for time-series analytics.",
@@ -28,5 +28,5 @@
     "Verify artifacts/api-server/src/routes/metrics.ts has the required endpoints"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Typecheck passes cleanly. Vite build for creatools and mockup-sandbox fails due to missing PORT/BASE_PATH env vars (pre-existing, not caused by this change). API server builds successfully with esbuild. The fetchAndUpdateTiktokProfile function is exported from live-monitor.ts and used both in the background sync and in the auth.ts registration flow via dynamic import. The profile.ts route now enforces tiktokUsername as primary handle."
 }
