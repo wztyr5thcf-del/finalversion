@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Install all dependencies and set up PostgreSQL locally, then configure the database, push the Drizzle schema, build the API server, and start both the API and frontend dev servers.",
+  "status": "completed",
+  "steps": [
+    "Ensure Node.js 24 and pnpm are available: source /root/.nvm/nvm.sh && nvm use 24 && corepack enable pnpm",
+    "Run pnpm install in the workspace root /projects/sandbox/finalversion",
+    "Install PostgreSQL 16 via dnf: dnf install -y postgresql16-server postgresql16",
+    "Initialize PostgreSQL: postgresql-setup --initdb (or equivalent for pg16). If initdb is at a non-standard path, find it and run directly.",
+    "Start PostgreSQL as a background process (no systemd available - run pg_ctl or postgres directly). Data dir is typically /var/lib/pgsql/data or /var/lib/pgsql/16/data.",
+    "Create a database user and database: createuser and createdb, or use psql. Suggested: user=postgres password=password dbname=creatools_dev",
+    "Update artifacts/api-server/data/db-config.json to point to the local PostgreSQL: {\"url\": \"postgresql://postgres:password@localhost:5432/creatools_dev\"}",
+    "Push the Drizzle schema: DATABASE_URL=postgresql://postgres:password@localhost:5432/creatools_dev pnpm --filter @workspace/db push",
+    "Build the API server: pnpm --filter @workspace/api-server run build",
+    "Start the API server in background: PORT=8080 DATABASE_URL=postgresql://postgres:password@localhost:5432/creatools_dev node --enable-source-maps artifacts/api-server/dist/index.mjs",
+    "Start the frontend dev server in background: PORT=5173 BASE_PATH=/ pnpm --filter @workspace/creatools run dev",
+    "Verify both servers are running: curl http://localhost:8080/api (or similar health endpoint) and curl http://localhost:5173"
+  ],
+  "acceptance_criteria": [
+    "pnpm install completes successfully",
+    "PostgreSQL is running and accepting connections on localhost:5432",
+    "Drizzle schema push completes without errors",
+    "API server build produces artifacts/api-server/dist/index.mjs",
+    "API server is running and responding on port 8080",
+    "Frontend dev server is running and responding on port 5173"
+  ],
+  "verification": [
+    "curl -s http://localhost:8080/ returns a response (may be 404 but server is up)",
+    "curl -s http://localhost:5173/ returns HTML content from the Vite dev server"
+  ],
+  "blocked_reason": null,
+  "findings": "1. PostgreSQL processes dont persist between separate bash command invocations in this sandbox - they must run in the same shell session (use start-local.sh or run_in_background). 2. The preinstall script in root package.json was checking npm_config_user_agent but it was failing even with pnpm - simplified it to just remove lock files. 3. pnpm-workspace.yaml needed allowBuilds: esbuild: true to approve esbuild postinstall script. 4. PostgreSQL trust auth is configured for 127.0.0.1 - no password needed. The DATABASE_URL is postgresql://postgres@127.0.0.1:5432/creatools_dev. 5. API server returns 404 at root path which is expected (API routes are at specific paths). 6. chmod 1777 /tmp is needed before starting PostgreSQL (default /tmp has 0755 in this container). 7. Port 8080 is occupied by sandbox infrastructure (uvicorn proxy), so API server runs on port 3000 instead. 8. Added Vite proxy config to forward /api requests from frontend (5173) to API server (3000) for seamless local development. 9. The vite.config.ts was updated with a proxy entry for /api pointing to localhost:3000."
+}

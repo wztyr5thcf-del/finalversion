@@ -1,0 +1,29 @@
+{
+  "project_type": "pnpm monorepo - Express 5 API server + React/Vite frontend + Drizzle ORM with PostgreSQL",
+  "language": "TypeScript",
+  "build_system": "pnpm workspace with esbuild for API server, vite for frontend. Node.js 24 via nvm.",
+  "test_framework": "No test files found - no tests to run",
+  "build_command": "source /root/.nvm/nvm.sh && nvm use 24 && pnpm run build",
+  "test_command": "N/A - no tests in this project",
+  "verification_instructions": "1. Verify PostgreSQL is running and accessible. 2. Verify API server responds on port 8080. 3. Verify frontend dev server responds on port 5173.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "1. source /root/.nvm/nvm.sh && nvm use 24 && corepack enable pnpm. 2. Install PostgreSQL via dnf. 3. Initialize and start PostgreSQL. 4. Create database and user. 5. pnpm install. 6. Push Drizzle schema. 7. Build API server. 8. Start API server and frontend dev server.",
+  "environment_constraints": "Amazon Linux 2023. dnf package manager. Node.js 24 via nvm (must source /root/.nvm/nvm.sh && nvm use 24). pnpm 11.1.2 via corepack. No systemd - must start postgres manually. Running as root.",
+  "contribution_requirements": "N/A for local dev setup",
+  "key_patterns": "API server reads DATABASE_URL from env or from artifacts/api-server/data/db-config.json. Vite frontend requires PORT and BASE_PATH env vars. API server requires PORT env var. startup.ts runs additive schema migrations on boot. The Replit-specific vite plugins only load when REPL_ID is set (not set here, which is fine).",
+  "relevant_files": [
+    "package.json",
+    "pnpm-workspace.yaml",
+    "artifacts/api-server/package.json",
+    "artifacts/api-server/build.mjs",
+    "artifacts/api-server/src/index.ts",
+    "artifacts/api-server/src/startup.ts",
+    "artifacts/api-server/data/db-config.json",
+    "artifacts/creatools/package.json",
+    "artifacts/creatools/vite.config.ts",
+    "lib/db/package.json",
+    "lib/db/drizzle.config.ts",
+    "lib/db/src/schema/index.ts"
+  ],
+  "directory_structure": "Root: pnpm workspace. artifacts/api-server: Express 5 backend. artifacts/creatools: React+Vite frontend. lib/db: Drizzle ORM schemas. lib/api-zod: API validation schemas. lib/api-client-react: React query client. lib/api-spec: API spec."
+}
