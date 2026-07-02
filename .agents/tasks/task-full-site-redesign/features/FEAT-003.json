@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Ensure the admin panel (admin.tsx) has ALL management functions with the new design system applied, covering complete system administration: user management, plan management, roles/permissions, Stripe config, announcements, tickets/support, system status, UI customization (sidebar/header config), landing page editor, maintenance mode. Apply the new neon cyan/green accent design to the admin page while preserving all existing functionality.",
+  "status": "completed",
+  "steps": [
+    "1. Read the existing admin.tsx (4974 lines) to understand all current sections and functionality",
+    "2. Apply the new design system to admin.tsx: update section headers to use cyan/green neon accents, improve card styling with glassmorphism borders, update badges and status indicators to use the new palette, improve tables and form styling",
+    "3. Ensure all admin sections are fully functional: Visao Geral (system overview with stats), Usuarios (user management - search/edit/delete/change roles/plans), Planos (plan CRUD with permissions), Cargos (role management), Stripe (payment config), Comunicados (announcements CRUD), Tickets (support ticket management), Sistema (system health checks), UI Config (sidebar editor, header config, featured slides, center buttons), Landing (landing page content editor), Manutencao (maintenance mode toggle)",
+    "4. Add any missing admin functionality: bulk user actions, export users, activity log viewer, webhook management overview, rate limit configuration if not already present",
+    "5. Verify the build succeeds with the updated admin page"
+  ],
+  "acceptance_criteria": [
+    "Build succeeds with the redesigned admin page",
+    "Admin panel uses the new cyan/green neon accent design system",
+    "All existing admin sections remain functional",
+    "Admin panel provides complete system management capabilities"
+  ],
+  "verification": [
+    "Run: PORT=3001 BASE_PATH='/' pnpm --filter @workspace/creatools run build"
+  ],
+  "blocked_reason": null,
+  "findings": "Applied cyan/green design system to admin panel. Changed: nav sidebar active states (purple->cyan), loading spinners, stat card colors, user avatar backgrounds, card borders, tab indicators, action buttons, editing states, badge backgrounds, hover borders. Kept purple in CenterButton/FeaturedSlide color picker presets (user-selectable data values, not UI theme). Build succeeds with no errors."
+}

@@ -170,13 +170,13 @@ function VisaoGeralSection() {
       </div>
 
       {loading ? (
-        <div className="py-16 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-400" /></div>
+        <div className="py-16 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-cyan-400" /></div>
       ) : status ? (
         <>
           {/* User stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: "Total de Usuários", value: status.users.total, color: "#a78bfa", icon: Users2 },
+              { label: "Total de Usuários", value: status.users.total, color: "#06b6d4", icon: Users2 },
               { label: "Admins",            value: status.users.admins, color: "#f97316", icon: Shield },
               { label: "Plano Gratuito",    value: status.users.byPlan["free"] ?? 0, color: "#9ca3af", icon: Users },
               { label: "Plano PRO",         value: status.users.byPlan["pro"] ?? 0,  color: "#ec4899", icon: Crown },
@@ -205,7 +205,7 @@ function VisaoGeralSection() {
                     <div key={planId} className="flex items-center gap-3">
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${PLAN_COLORS[planId] ?? ""}`}>{PLAN_LABEL[planId] ?? planId}</span>
                       <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                        <div className="h-full rounded-full bg-purple-500/60 transition-all" style={{ width: `${pct}%` }} />
+                        <div className="h-full rounded-full bg-cyan-500/60 transition-all" style={{ width: `${pct}%` }} />
                       </div>
                       <span className="text-xs text-muted-foreground w-12 text-right">{count} ({pct}%)</span>
                     </div>
@@ -361,7 +361,7 @@ function UsuariosSection({ roles }: { roles: Role[] }) {
       {/* Quick stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {[
-          { label: "Total", value: stats.total, color: "#a78bfa" },
+          { label: "Total", value: stats.total, color: "#06b6d4" },
           { label: "Admins", value: stats.admins, color: "#f97316" },
           { label: "Gratuito", value: stats.byPlan.free, color: "#6b7280" },
           { label: "Basic", value: stats.byPlan.basic, color: "#22d3ee" },
@@ -423,11 +423,11 @@ function UsuariosSection({ roles }: { roles: Role[] }) {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
-                        style={{ background: u.isAdmin ? "rgba(249,115,22,0.15)" : "rgba(124,58,237,0.15)", color: u.isAdmin ? "#f97316" : "#a78bfa" }}>
+                        style={{ background: u.isAdmin ? "rgba(249,115,22,0.15)" : "rgba(6,182,212,0.15)", color: u.isAdmin ? "#f97316" : "#06b6d4" }}>
                         {u.name[0]?.toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium text-sm leading-tight">{u.name}{u.id === me?.id && <span className="ml-1.5 text-[10px] text-purple-400/50">(você)</span>}</p>
+                        <p className="font-medium text-sm leading-tight">{u.name}{u.id === me?.id && <span className="ml-1.5 text-[10px] text-cyan-400/50">(você)</span>}</p>
                         <p className="text-xs text-muted-foreground leading-tight">{u.email}</p>
                       </div>
                     </div>
@@ -436,7 +436,7 @@ function UsuariosSection({ roles }: { roles: Role[] }) {
                     {u.tiktokUsername ? (
                       <div className="flex items-center gap-1">
                         {u.tiktokProfilePicture && <img src={u.tiktokProfilePicture} alt="" className="w-5 h-5 rounded-full object-cover" />}
-                        <span className="text-sm font-mono text-purple-300">@{u.tiktokUsername}</span>
+                        <span className="text-sm font-mono text-cyan-300">@{u.tiktokUsername}</span>
                         {u.tiktokVerified && <CheckCircle2 className="w-3 h-3 text-green-400 shrink-0" />}
                       </div>
                     ) : <span className="text-xs text-muted-foreground">—</span>}
@@ -495,7 +495,7 @@ function UsuariosSection({ roles }: { roles: Role[] }) {
       <Dialog open={!!editDraft} onOpenChange={(o) => !o && setEditDraft(null)}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><UserCog className="w-5 h-5 text-purple-400" />Editar usuário</DialogTitle>
+            <DialogTitle className="flex items-center gap-2"><UserCog className="w-5 h-5 text-cyan-400" />Editar usuário</DialogTitle>
             <DialogDescription>Edite os dados, plano, função e permissões do usuário.</DialogDescription>
           </DialogHeader>
           {editDraft && (
@@ -660,7 +660,7 @@ function PlanosSection({ plans, permissions, onRefresh }: { plans: Plan[]; permi
 
       {/* Create new plan inline form */}
       {showNewPlan && (
-        <Card className="border-dashed border-purple-500/30">
+        <Card className="border-dashed border-cyan-500/30">
           <CardContent className="p-4">
             <p className="text-sm font-semibold mb-3">Novo plano</p>
             <div className="grid grid-cols-2 gap-3 mb-3">
@@ -965,7 +965,7 @@ function AnunciosSection() {
       </div>
 
       {creating && (
-        <Card className="border-purple-500/30">
+        <Card className="border-cyan-500/30">
           <CardHeader className="pb-3"><CardTitle className="text-sm">Criar anúncio</CardTitle></CardHeader>
           <CardContent>
             <AnnForm value={form} onChange={setForm} onSubmit={createAnn} onCancel={() => setCreating(false)} submitLabel="Publicar" />
@@ -1063,7 +1063,7 @@ function ConteudoSection() {
       <div className="flex gap-2">
         {([["blog", "Blog", BookOpen], ["agencies", "Influenciadores Parceiros", Users], ["landing", "Landing Page", Image]] as const).map(([id, label, Icon]) => (
           <button key={id} onClick={() => setTab(id as typeof tab)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${tab === id ? "bg-purple-500/20 text-purple-300 border border-purple-500/30" : "text-muted-foreground hover:text-white"}`}>
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${tab === id ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30" : "text-muted-foreground hover:text-white"}`}>
             <Icon className="w-4 h-4" />{label}
           </button>
         ))}
@@ -1107,7 +1107,7 @@ function ConteudoSection() {
           </div>
 
           {addingAgency && (
-            <Card className="border-purple-500/30">
+            <Card className="border-cyan-500/30">
               <CardContent className="pt-4 space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5"><Label>Nome</Label><Input value={newAgency.name} onChange={(e) => setNewAgency((p) => ({ ...p, name: e.target.value }))} placeholder="Nome do influenciador" /></div>
@@ -1137,7 +1137,7 @@ function ConteudoSection() {
               <Card key={ag.id}>
                 <CardContent className="p-4 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                    style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa" }}>{ag.name.charAt(0)}</div>
+                    style={{ background: "rgba(6,182,212,0.2)", color: "#22d3ee" }}>{ag.name.charAt(0)}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-sm text-white">{ag.name}</p>
@@ -1496,7 +1496,7 @@ function SistemaSection() {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <Key className="w-4 h-4 text-purple-400" />
+            <Key className="w-4 h-4 text-cyan-400" />
             <CardTitle className="text-sm">tik.tools API Key</CardTitle>
             {tiktoolsMasked ? (
               <Badge className="text-xs bg-green-500/10 text-green-400 border-green-500/20">Configurada: {tiktoolsMasked}</Badge>
@@ -1648,7 +1648,7 @@ function FuncoesSection({ roles, permissions, onRefresh }: { roles: Role[]; perm
       </div>
 
       {creating && (
-        <Card className="border-purple-500/30">
+        <Card className="border-cyan-500/30">
           <CardHeader className="pb-3"><CardTitle className="text-sm">Nova função</CardTitle></CardHeader>
           <CardContent><RoleForm value={form} onChange={(v) => setForm(v as typeof form)} isNew={true} /></CardContent>
         </Card>
@@ -2177,7 +2177,7 @@ function PartnersAdminSection({ token, toast }: { token: string; toast: ReturnTy
                   style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                   {/* Avatar */}
                   <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 flex items-center justify-center"
-                    style={{ border: p.isLive ? "2px solid #f59e0b" : "2px solid rgba(255,255,255,0.1)", background: "rgba(124,58,237,0.2)" }}>
+                    style={{ border: p.isLive ? "2px solid #f59e0b" : "2px solid rgba(255,255,255,0.1)", background: "rgba(6,182,212,0.2)" }}>
                     {p.avatarUrl ? (
                       <img src={p.avatarUrl} alt={p.displayName} className="w-full h-full object-cover"
                         onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
@@ -2869,11 +2869,11 @@ function PaginasSection() {
         </div>
         <div className="flex gap-1 p-1 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
           <button onClick={() => setActiveTab("structure")}
-            className={`text-xs px-3 py-1.5 rounded-md transition-all font-medium ${activeTab === "structure" ? "bg-purple-600 text-white" : "text-muted-foreground hover:text-white"}`}>
+            className={`text-xs px-3 py-1.5 rounded-md transition-all font-medium ${activeTab === "structure" ? "bg-cyan-600 text-white" : "text-muted-foreground hover:text-white"}`}>
             <Layout className="w-3 h-3 inline mr-1.5" />Estrutura
           </button>
           <button onClick={() => setActiveTab("pages")}
-            className={`text-xs px-3 py-1.5 rounded-md transition-all font-medium ${activeTab === "pages" ? "bg-purple-600 text-white" : "text-muted-foreground hover:text-white"}`}>
+            className={`text-xs px-3 py-1.5 rounded-md transition-all font-medium ${activeTab === "pages" ? "bg-cyan-600 text-white" : "text-muted-foreground hover:text-white"}`}>
             <FileText className="w-3 h-3 inline mr-1.5" />Páginas
           </button>
         </div>
@@ -2909,7 +2909,7 @@ function PaginasSection() {
             return (
               <Card key={sec.id} className="overflow-hidden">
                 {/* Section header */}
-                <div className="flex items-center gap-2 px-3 py-2.5 border-b border-white/5" style={{ background: "rgba(124,58,237,0.06)" }}>
+                <div className="flex items-center gap-2 px-3 py-2.5 border-b border-white/5" style={{ background: "rgba(6,182,212,0.06)" }}>
                   <GripVertical className="w-4 h-4 text-muted-foreground/30 shrink-0" />
                   {isRenaming ? (
                     <div className="flex gap-2 flex-1 items-center">
@@ -2944,7 +2944,7 @@ function PaginasSection() {
                     const isEditingThis = editingItem?.sectionId === sec.id && editingItem?.itemId === item.id;
                     return (
                       <div key={item.id}>
-                        <div className={`flex items-center gap-2 px-2 py-1.5 rounded-lg group transition-all ${isEditingThis ? "bg-purple-500/8 border border-purple-500/20" : "hover:bg-white/3"}`}>
+                        <div className={`flex items-center gap-2 px-2 py-1.5 rounded-lg group transition-all ${isEditingThis ? "bg-cyan-500/8 border border-cyan-500/20" : "hover:bg-white/3"}`}>
                           <div className="w-6 h-6 rounded-md flex items-center justify-center shrink-0" style={{ background: "rgba(255,255,255,0.06)" }}>
                             <MenuIcon name={item.icon} className="w-3 h-3 text-muted-foreground" />
                           </div>
@@ -3060,11 +3060,11 @@ function PaginasSection() {
                   {pages.map(page => {
                     const inMenu = pageInMenu(page);
                     return (
-                      <Card key={page.id} className={inMenu ? "border-purple-500/20" : "border-white/5"}>
+                      <Card key={page.id} className={inMenu ? "border-cyan-500/20" : "border-white/5"}>
                         <CardContent className="p-3">
                           <div className="flex items-center gap-3">
                             <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                              style={{ background: inMenu ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.05)" }}>
+                              style={{ background: inMenu ? "rgba(6,182,212,0.15)" : "rgba(255,255,255,0.05)" }}>
                               <MenuIcon name={page.icon} className="w-3.5 h-3.5" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -3074,7 +3074,7 @@ function PaginasSection() {
                             <div className="flex items-center gap-2 shrink-0">
                               {inMenu ? (
                                 <span className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                                  style={{ background: "rgba(124,58,237,0.12)", color: "#a78bfa" }}>{inMenu.sectionLabel}</span>
+                                  style={{ background: "rgba(6,182,212,0.12)", color: "#22d3ee" }}>{inMenu.sectionLabel}</span>
                               ) : (
                                 <Select onValueChange={sId => { if (sId) addPageToSection(sId, page); }}>
                                   <SelectTrigger className="h-7 text-xs w-36">
@@ -3577,7 +3577,7 @@ function BancoDadosSection() {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <Key className="w-4 h-4 text-purple-400" />
+            <Key className="w-4 h-4 text-cyan-400" />
             <CardTitle className="text-sm">Alterar URL de Conexão</CardTitle>
           </div>
           <CardDescription>
@@ -4069,7 +4069,7 @@ function AlertOverlaysAdminSection() {
           <h2 className="text-xl font-bold text-white mb-1">Alertas Overlay</h2>
           <p className="text-sm text-muted-foreground">Gerencie os overlays .webm disponiveis na plataforma.</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowForm(true); }} className="bg-purple-600 hover:bg-purple-700">
+        <Button onClick={() => { resetForm(); setShowForm(true); }} className="bg-cyan-600 hover:bg-cyan-700">
           <Plus className="w-4 h-4 mr-2" />Novo Overlay
         </Button>
       </div>
@@ -4102,7 +4102,7 @@ function AlertOverlaysAdminSection() {
                 <Label className="text-xs">Preview URL (video .webm) *</Label>
                 <Input value={form.previewUrl} onChange={(e) => setForm((p) => ({ ...p, previewUrl: e.target.value }))} placeholder="URL do video preview" />
                 <div className="flex items-center gap-2">
-                  <Label className="text-[10px] text-muted-foreground cursor-pointer px-2 py-1 rounded border border-dashed border-white/20 hover:border-purple-400 transition-colors">
+                  <Label className="text-[10px] text-muted-foreground cursor-pointer px-2 py-1 rounded border border-dashed border-white/20 hover:border-cyan-400 transition-colors">
                     Upload .webm
                     <input type="file" accept="video/webm" className="hidden" onChange={(e) => handleUploadWebm(e, "previewUrl")} />
                   </Label>
@@ -4112,7 +4112,7 @@ function AlertOverlaysAdminSection() {
                 <Label className="text-xs">Overlay URL (URL para OBS) *</Label>
                 <Input value={form.overlayUrl} onChange={(e) => setForm((p) => ({ ...p, overlayUrl: e.target.value }))} placeholder="URL que o usuario copia para OBS" />
                 <div className="flex items-center gap-2">
-                  <Label className="text-[10px] text-muted-foreground cursor-pointer px-2 py-1 rounded border border-dashed border-white/20 hover:border-purple-400 transition-colors">
+                  <Label className="text-[10px] text-muted-foreground cursor-pointer px-2 py-1 rounded border border-dashed border-white/20 hover:border-cyan-400 transition-colors">
                     Upload .webm
                     <input type="file" accept="video/webm" className="hidden" onChange={(e) => handleUploadWebm(e, "overlayUrl")} />
                   </Label>
@@ -4151,7 +4151,7 @@ function AlertOverlaysAdminSection() {
             )}
 
             <div className="flex gap-2 pt-2">
-              <Button onClick={handleSave} disabled={saving} className="bg-purple-600 hover:bg-purple-700">
+              <Button onClick={handleSave} disabled={saving} className="bg-cyan-600 hover:bg-cyan-700">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
                 {editingId ? "Atualizar" : "Criar"}
               </Button>
@@ -4163,7 +4163,7 @@ function AlertOverlaysAdminSection() {
 
       {/* Overlays list */}
       {loading ? (
-        <div className="py-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-400" /></div>
+        <div className="py-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-cyan-400" /></div>
       ) : overlays.length === 0 ? (
         <div className="py-10 text-center text-muted-foreground text-sm">Nenhum overlay cadastrado.</div>
       ) : (
@@ -4184,7 +4184,7 @@ function AlertOverlaysAdminSection() {
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full"
-                    style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>{o.category}</span>
+                    style={{ background: "rgba(6,182,212,0.15)", color: "#22d3ee" }}>{o.category}</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full"
                     style={{ background: o.minPlan === "pro" ? "rgba(249,115,22,0.15)" : o.minPlan === "basic" ? "rgba(34,211,238,0.15)" : "rgba(156,163,175,0.15)", color: o.minPlan === "pro" ? "#f97316" : o.minPlan === "basic" ? "#22d3ee" : "#9ca3af" }}>
                     {o.minPlan === "free" ? "Gratuito" : o.minPlan === "basic" ? "Basic" : "PRO"}
@@ -4337,7 +4337,7 @@ function VersoesSection() {
           </h2>
           <p className="text-sm text-muted-foreground">Gerencie o changelog e as versoes da plataforma.</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowForm(true); }} className="bg-purple-600 hover:bg-purple-700">
+        <Button onClick={() => { resetForm(); setShowForm(true); }} className="bg-cyan-600 hover:bg-cyan-700">
           <Plus className="w-4 h-4 mr-2" />Nova Versao
         </Button>
       </div>
@@ -4357,7 +4357,7 @@ function VersoesSection() {
 
       {/* Create/Edit form */}
       {showForm && (
-        <Card className="border-purple-500/30">
+        <Card className="border-cyan-500/30">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">{editingId ? "Editar Versao" : "Nova Versao"}</CardTitle>
           </CardHeader>
@@ -4391,7 +4391,7 @@ function VersoesSection() {
               <p className="text-[10px] text-muted-foreground">Deixe vazio para usar a data atual.</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleSave} disabled={saving} className="bg-purple-600 hover:bg-purple-700">
+              <Button onClick={handleSave} disabled={saving} className="bg-cyan-600 hover:bg-cyan-700">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
                 {editingId ? "Atualizar" : "Criar"}
               </Button>
@@ -4403,7 +4403,7 @@ function VersoesSection() {
 
       {/* Versions list */}
       {loading ? (
-        <div className="py-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-400" /></div>
+        <div className="py-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-cyan-400" /></div>
       ) : versions.length === 0 ? (
         <Card>
           <CardContent className="py-10 text-center text-muted-foreground">
@@ -4613,7 +4613,7 @@ function LiveMonitorSection() {
       </div>
 
       {loading && !status ? (
-        <div className="py-16 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-400" /></div>
+        <div className="py-16 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-cyan-400" /></div>
       ) : (
         <>
           {/* Stats cards */}
@@ -4621,7 +4621,7 @@ function LiveMonitorSection() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 { label: "Ao Vivo Agora", value: stats.currentlyLive, color: "#ef4444", icon: Radio },
-                { label: "Total Sessoes", value: stats.totalSessions, color: "#a78bfa", icon: Activity },
+                { label: "Total Sessoes", value: stats.totalSessions, color: "#06b6d4", icon: Activity },
                 { label: "Horas de Live", value: stats.totalHoursLive.toFixed(1), color: "#22d3ee", icon: Clock },
                 { label: "Pico Viewers", value: stats.peakViewers, color: "#f59e0b", icon: Users2 },
                 { label: "Total Diamonds", value: stats.totalDiamonds.toLocaleString(), color: "#ec4899", icon: Diamond },
@@ -4707,7 +4707,7 @@ function LiveMonitorSection() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Users2 className="w-4 h-4 text-purple-400" />
+                  <Users2 className="w-4 h-4 text-cyan-400" />
                   Usuarios Monitorados ({status?.totalMonitorable ?? 0})
                 </CardTitle>
               </div>
@@ -4726,7 +4726,7 @@ function LiveMonitorSection() {
                           {user.tiktokProfilePicture ? (
                             <img src={user.tiktokProfilePicture} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-purple-500/20 text-purple-400 text-xs font-bold">
+                            <div className="w-full h-full flex items-center justify-center bg-cyan-500/20 text-cyan-400 text-xs font-bold">
                               {user.name[0]?.toUpperCase()}
                             </div>
                           )}
@@ -4844,24 +4844,936 @@ function LiveMonitorSection() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// AI ASSISTANT ADMIN SECTION
+// ════════════════════════════════════════════════════════════════════════════
+interface AiConfigData {
+  systemPrompt: string;
+  personalityName: string;
+  maxContextMessages: number;
+  enabled: boolean;
+  supportEscalationEnabled: boolean;
+  creativeModeEnabled: boolean;
+  allowedTopics: string[] | null;
+  blockedTopics: string[] | null;
+}
+
+interface AiPlanLimitData {
+  id: string;
+  planId: string;
+  messagesPerMonth: number;
+  creativeRequestsPerMonth: number;
+  priority: string;
+}
+
+interface AiConvData {
+  id: string;
+  userId: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface AiMsgData {
+  id: string;
+  conversationId: string;
+  role: string;
+  content: string;
+  createdAt: string;
+  tokensUsed: number;
+}
+
+function AIAssistantSection() {
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [config, setConfig] = useState<AiConfigData>({
+    systemPrompt: "",
+    personalityName: "Crea AI",
+    maxContextMessages: 10,
+    enabled: true,
+    supportEscalationEnabled: true,
+    creativeModeEnabled: false,
+    allowedTopics: null,
+    blockedTopics: null,
+  });
+  const [planLimits, setPlanLimits] = useState<AiPlanLimitData[]>([]);
+  const [conversations, setConversations] = useState<AiConvData[]>([]);
+  const [selectedConv, setSelectedConv] = useState<AiConvData | null>(null);
+  const [convMessages, setConvMessages] = useState<AiMsgData[]>([]);
+  const [activeTab, setActiveTab] = useState<"config" | "limits" | "conversations">("config");
+  const [topicsInput, setTopicsInput] = useState("");
+  const [blockedInput, setBlockedInput] = useState("");
+
+  const fetchConfig = useCallback(async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const data = await authFetch("/ai/config", token) as { config: AiConfigData; planLimits: AiPlanLimitData[] };
+      if (data.config) {
+        setConfig(data.config);
+        setTopicsInput((data.config.allowedTopics ?? []).join(", "));
+        setBlockedInput((data.config.blockedTopics ?? []).join(", "));
+      }
+      setPlanLimits(data.planLimits ?? []);
+    } catch { /* ignore */ }
+    finally { setLoading(false); }
+  }, [token]);
+
+  const fetchConversations = useCallback(async () => {
+    if (!token) return;
+    try {
+      const data = await authFetch("/ai/admin/conversations?limit=50", token) as { conversations: AiConvData[] };
+      setConversations(data.conversations ?? []);
+    } catch { /* ignore */ }
+  }, [token]);
+
+  useEffect(() => { void fetchConfig(); void fetchConversations(); }, [fetchConfig, fetchConversations]);
+
+  async function saveConfig() {
+    if (!token) return;
+    setSaving(true);
+    try {
+      const payload = {
+        ...config,
+        allowedTopics: topicsInput.trim() ? topicsInput.split(",").map(s => s.trim()).filter(Boolean) : null,
+        blockedTopics: blockedInput.trim() ? blockedInput.split(",").map(s => s.trim()).filter(Boolean) : null,
+      };
+      await authFetch("/ai/config", token, { method: "PUT", body: JSON.stringify(payload) });
+      toast({ title: "Configuracao salva", description: "Configuracao da IA atualizada com sucesso." });
+    } catch {
+      toast({ title: "Erro", description: "Erro ao salvar configuracao.", variant: "destructive" });
+    } finally { setSaving(false); }
+  }
+
+  async function savePlanLimit(planId: string, data: { messagesPerMonth: number; creativeRequestsPerMonth: number; priority: string }) {
+    if (!token) return;
+    try {
+      await authFetch(`/ai/plan-limits/${planId}`, token, { method: "PUT", body: JSON.stringify(data) });
+      toast({ title: "Limite atualizado", description: `Limites do plano ${planId} atualizados.` });
+      void fetchConfig();
+    } catch {
+      toast({ title: "Erro", description: "Erro ao salvar limite.", variant: "destructive" });
+    }
+  }
+
+  async function viewConversation(conv: AiConvData) {
+    if (!token) return;
+    setSelectedConv(conv);
+    try {
+      const data = await authFetch(`/ai/admin/conversations/${conv.id}/messages`, token) as { messages: AiMsgData[] };
+      setConvMessages(data.messages ?? []);
+    } catch { /* ignore */ }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-white">IA Assistente</h2>
+            <p className="text-xs text-muted-foreground">Configuracao, limites e monitoramento</p>
+          </div>
+        </div>
+        <Badge className={`text-xs px-3 py-1 ${config.enabled ? "bg-green-500/10 text-green-400 border-green-400/30" : "bg-red-500/10 text-red-400 border-red-400/30"}`}>
+          {config.enabled ? "Ativa" : "Desativada"}
+        </Badge>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        {([
+          { id: "config", label: "Configuracao", icon: Settings2 },
+          { id: "limits", label: "Limites por Plano", icon: CreditCard },
+          { id: "conversations", label: "Conversas", icon: MessageSquare },
+        ] as const).map(({ id, label, icon: Icon }) => (
+          <button key={id} onClick={() => setActiveTab(id)}
+            className={`flex-1 flex items-center justify-center gap-2 text-xs px-3 py-2 rounded-lg transition-all font-medium ${
+              activeTab === id ? "text-white" : "text-muted-foreground hover:text-white"
+            }`}
+            style={{
+              background: activeTab === id ? "rgba(6,182,212,0.15)" : "transparent",
+              border: activeTab === id ? "1px solid rgba(6,182,212,0.25)" : "1px solid transparent",
+            }}>
+            <Icon className="w-3.5 h-3.5" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Config Tab */}
+      {activeTab === "config" && (
+        <div className="space-y-4">
+          <Card className="border-white/8 bg-white/[0.02]">
+            <CardHeader>
+              <CardTitle className="text-base text-white">Personalidade e Prompt</CardTitle>
+              <CardDescription>Defina como a IA se comporta e responde</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Nome da personalidade</Label>
+                  <Input
+                    value={config.personalityName}
+                    onChange={(e) => setConfig({ ...config, personalityName: e.target.value })}
+                    placeholder="Crea AI"
+                    className="bg-background border-white/10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Max mensagens de contexto</Label>
+                  <Input
+                    type="number"
+                    value={config.maxContextMessages}
+                    onChange={(e) => setConfig({ ...config, maxContextMessages: Number(e.target.value) })}
+                    className="bg-background border-white/10"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">System Prompt</Label>
+                <Textarea
+                  value={config.systemPrompt}
+                  onChange={(e) => setConfig({ ...config, systemPrompt: e.target.value })}
+                  placeholder="Voce e um assistente virtual..."
+                  className="bg-background border-white/10 min-h-[120px] resize-y"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Topicos permitidos (separados por virgula)</Label>
+                  <Input
+                    value={topicsInput}
+                    onChange={(e) => setTopicsInput(e.target.value)}
+                    placeholder="overlays, planos, configuracoes..."
+                    className="bg-background border-white/10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Topicos bloqueados (separados por virgula)</Label>
+                  <Input
+                    value={blockedInput}
+                    onChange={(e) => setBlockedInput(e.target.value)}
+                    placeholder="politica, religiao..."
+                    className="bg-background border-white/10"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/8 bg-white/[0.02]">
+            <CardHeader>
+              <CardTitle className="text-base text-white">Funcionalidades</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between py-2 px-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div>
+                  <p className="text-sm font-medium text-white">IA Habilitada</p>
+                  <p className="text-xs text-muted-foreground">Liga/desliga o assistente para todos os usuarios</p>
+                </div>
+                <Switch checked={config.enabled} onCheckedChange={(v) => setConfig({ ...config, enabled: v })} />
+              </div>
+              <div className="flex items-center justify-between py-2 px-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div>
+                  <p className="text-sm font-medium text-white">Escalacao para suporte</p>
+                  <p className="text-xs text-muted-foreground">Permite escalar conversas para atendimento humano</p>
+                </div>
+                <Switch checked={config.supportEscalationEnabled} onCheckedChange={(v) => setConfig({ ...config, supportEscalationEnabled: v })} />
+              </div>
+              <div className="flex items-center justify-between py-2 px-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div>
+                  <p className="text-sm font-medium text-white">Modo criativo</p>
+                  <p className="text-xs text-muted-foreground">Permite sugestoes criativas de overlays e configuracoes</p>
+                </div>
+                <Switch checked={config.creativeModeEnabled} onCheckedChange={(v) => setConfig({ ...config, creativeModeEnabled: v })} />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Button onClick={() => void saveConfig()} disabled={saving} className="w-full">
+            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+            Salvar Configuracao
+          </Button>
+        </div>
+      )}
+
+      {/* Limits Tab */}
+      {activeTab === "limits" && (
+        <Card className="border-white/8 bg-white/[0.02]">
+          <CardHeader>
+            <CardTitle className="text-base text-white">Limites por Plano</CardTitle>
+            <CardDescription>Defina quantas mensagens cada plano pode enviar por mes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-white/8">
+                  <TableHead className="text-white/60">Plano</TableHead>
+                  <TableHead className="text-white/60">Msgs/mes</TableHead>
+                  <TableHead className="text-white/60">Criativos/mes</TableHead>
+                  <TableHead className="text-white/60">Prioridade</TableHead>
+                  <TableHead className="text-white/60"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(["free", "basic", "pro"] as const).map((planId) => {
+                  const limit = planLimits.find((l) => l.planId === planId);
+                  const msgs = limit?.messagesPerMonth ?? (planId === "free" ? 20 : planId === "basic" ? 100 : -1);
+                  const creative = limit?.creativeRequestsPerMonth ?? (planId === "pro" ? 50 : 0);
+                  const priority = limit?.priority ?? (planId === "pro" ? "high" : planId === "basic" ? "normal" : "low");
+                  return (
+                    <PlanLimitRow key={planId} planId={planId} msgs={msgs} creative={creative} priority={priority} onSave={savePlanLimit} />
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <p className="text-[10px] text-muted-foreground mt-3">Use -1 para ilimitado. Use 0 para bloquear.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Conversations Tab */}
+      {activeTab === "conversations" && (
+        <div className="space-y-4">
+          {selectedConv ? (
+            <Card className="border-white/8 bg-white/[0.02]">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => { setSelectedConv(null); setConvMessages([]); }}
+                    className="p-1.5 rounded-lg hover:bg-white/5 transition-colors text-muted-foreground hover:text-white">
+                    <ChevronRight className="w-4 h-4 rotate-180" />
+                  </button>
+                  <div>
+                    <CardTitle className="text-base text-white">{selectedConv.title}</CardTitle>
+                    <CardDescription>
+                      ID: {selectedConv.userId} | Status: {selectedConv.status} | {new Date(selectedConv.createdAt).toLocaleString("pt-BR")}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {convMessages.map((msg) => (
+                    <div key={msg.id} className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                      <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm`}
+                        style={{
+                          background: msg.role === "user" ? "rgba(6,182,212,0.1)" : msg.role === "system" ? "rgba(249,115,22,0.08)" : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${msg.role === "user" ? "rgba(6,182,212,0.2)" : msg.role === "system" ? "rgba(249,115,22,0.2)" : "rgba(255,255,255,0.06)"}`,
+                        }}>
+                        <p className="text-[10px] font-semibold mb-0.5" style={{ color: msg.role === "user" ? "#06b6d4" : msg.role === "system" ? "#f97316" : "#22c55e" }}>
+                          {msg.role === "user" ? "Usuario" : msg.role === "system" ? "Sistema" : "IA"}
+                        </p>
+                        <p className="text-white/80">{msg.content}</p>
+                        <p className="text-[9px] text-muted-foreground mt-1">{new Date(msg.createdAt).toLocaleString("pt-BR")}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {convMessages.length === 0 && (
+                    <p className="text-center text-sm text-muted-foreground py-8">Nenhuma mensagem</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-white/8 bg-white/[0.02]">
+              <CardHeader>
+                <CardTitle className="text-base text-white">Conversas Recentes</CardTitle>
+                <CardDescription>{conversations.length} conversas encontradas</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-1">
+                  {conversations.length === 0 ? (
+                    <p className="text-center text-sm text-muted-foreground py-8">Nenhuma conversa ainda</p>
+                  ) : (
+                    conversations.map((conv) => (
+                      <button key={conv.id} onClick={() => void viewConversation(conv)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all hover:bg-white/[0.04]"
+                        style={{ border: "1px solid rgba(255,255,255,0.04)" }}>
+                        <MessageSquare className="w-4 h-4 shrink-0" style={{ color: conv.status === "escalated" ? "#f97316" : "#06b6d4" }} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white truncate">{conv.title}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            User: {conv.userId.slice(0, 8)}... | {new Date(conv.updatedAt).toLocaleString("pt-BR")}
+                          </p>
+                        </div>
+                        <Badge className={`text-[9px] ${
+                          conv.status === "escalated" ? "bg-orange-500/10 text-orange-400 border-orange-400/30" :
+                          conv.status === "archived" ? "bg-muted/20 text-muted-foreground border-muted" :
+                          "bg-green-500/10 text-green-400 border-green-400/30"
+                        }`}>
+                          {conv.status === "escalated" ? "Escalada" : conv.status === "archived" ? "Arquivada" : "Ativa"}
+                        </Badge>
+                        <ChevronRight className="w-4 h-4 text-white/20" />
+                      </button>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PlanLimitRow({ planId, msgs, creative, priority, onSave }: {
+  planId: string; msgs: number; creative: number; priority: string;
+  onSave: (planId: string, data: { messagesPerMonth: number; creativeRequestsPerMonth: number; priority: string }) => Promise<void>;
+}) {
+  const [editMsgs, setEditMsgs] = useState(msgs);
+  const [editCreative, setEditCreative] = useState(creative);
+  const [editPriority, setEditPriority] = useState(priority);
+  const [saving, setSaving] = useState(false);
+
+  const changed = editMsgs !== msgs || editCreative !== creative || editPriority !== priority;
+
+  async function save() {
+    setSaving(true);
+    await onSave(planId, { messagesPerMonth: editMsgs, creativeRequestsPerMonth: editCreative, priority: editPriority });
+    setSaving(false);
+  }
+
+  return (
+    <TableRow className="border-white/6">
+      <TableCell>
+        <span className="text-sm font-semibold capitalize" style={{ color: planId === "free" ? "#9ca3af" : planId === "basic" ? "#06b6d4" : "#22c55e" }}>
+          {planId}
+        </span>
+      </TableCell>
+      <TableCell>
+        <Input type="number" value={editMsgs} onChange={(e) => setEditMsgs(Number(e.target.value))} className="w-20 h-8 text-xs bg-background border-white/10" />
+      </TableCell>
+      <TableCell>
+        <Input type="number" value={editCreative} onChange={(e) => setEditCreative(Number(e.target.value))} className="w-20 h-8 text-xs bg-background border-white/10" />
+      </TableCell>
+      <TableCell>
+        <Select value={editPriority} onValueChange={setEditPriority}>
+          <SelectTrigger className="w-24 h-8 text-xs bg-background border-white/10">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">Baixa</SelectItem>
+            <SelectItem value="normal">Normal</SelectItem>
+            <SelectItem value="high">Alta</SelectItem>
+          </SelectContent>
+        </Select>
+      </TableCell>
+      <TableCell>
+        {changed && (
+          <Button size="sm" variant="ghost" onClick={() => void save()} disabled={saving} className="h-7 text-xs text-cyan-400">
+            {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+          </Button>
+        )}
+      </TableCell>
+    </TableRow>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: ANALYTICS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function AnalyticsSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <BarChart2 className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Analytics</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Painel de analytics em desenvolvimento.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: WEBHOOKS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function WebhooksSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Link2 className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Webhooks</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Gerenciamento de webhooks em desenvolvimento.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: RATE LIMITS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function RateLimitsSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Zap className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Rate Limits</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Configuracao de rate limits em desenvolvimento.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: DEV TOOLS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function DevToolsSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Code2 className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Dev Tools</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Ferramentas de desenvolvimento em construcao.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: BATTLE AI ADMIN
+// ════════════════════════════════════════════════════════════════════════════
+interface BattleAiAvatar {
+  name: string;
+  previewUrl: string;
+  voiceId: string;
+  gender: string;
+  description: string;
+}
+
+interface BattleAiConfig {
+  id: string;
+  availableAvatars: string;
+  pricePerSession: number;
+  planRestrictions: string;
+  maxSessionDuration: number;
+  enabled: boolean;
+  updatedAt: string;
+}
+
+interface BattleAiSession {
+  id: string;
+  userId: string;
+  status: string;
+  avatarConfig: string;
+  tiktokUsername: string;
+  rtmpUrl: string;
+  heygenSessionId: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+function BattleAiAdminSection() {
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [enabled, setEnabled] = useState(false);
+  const [avatars, setAvatars] = useState<BattleAiAvatar[]>([]);
+  const [pricePerSession, setPricePerSession] = useState(0);
+  const [planRestrictions, setPlanRestrictions] = useState({ free: false, basic: true, pro: true });
+  const [maxSessionDuration, setMaxSessionDuration] = useState(60);
+  const [sessions, setSessions] = useState<BattleAiSession[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [showAvatarDialog, setShowAvatarDialog] = useState(false);
+  const [editingAvatarIdx, setEditingAvatarIdx] = useState<number | null>(null);
+  const [avatarForm, setAvatarForm] = useState<BattleAiAvatar>({ name: "", previewUrl: "", voiceId: "", gender: "female", description: "" });
+
+  const fetchConfig = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await authFetch("/battle-ai/admin/config", token!) as BattleAiConfig;
+      setEnabled(data.enabled);
+      setPricePerSession(data.pricePerSession);
+      setMaxSessionDuration(data.maxSessionDuration);
+      try { setAvatars(JSON.parse(data.availableAvatars) as BattleAiAvatar[]); } catch { setAvatars([]); }
+      try { setPlanRestrictions(JSON.parse(data.planRestrictions) as { free: boolean; basic: boolean; pro: boolean }); } catch { /* keep defaults */ }
+    } catch {
+      toast({ title: "Erro", description: "Falha ao carregar config Battle AI", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  }, [token, toast]);
+
+  const fetchSessions = useCallback(async () => {
+    try {
+      setSessionsLoading(true);
+      const data = await authFetch("/battle-ai/admin/sessions", token!) as { sessions: BattleAiSession[] };
+      setSessions(data.sessions ?? []);
+    } catch {
+      /* ignore */
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { void fetchConfig(); void fetchSessions(); }, [fetchConfig, fetchSessions]);
+
+  const saveConfig = async () => {
+    try {
+      setSaving(true);
+      await authFetch("/battle-ai/admin/config", token!, {
+        method: "PUT",
+        body: JSON.stringify({
+          enabled,
+          availableAvatars: JSON.stringify(avatars),
+          pricePerSession,
+          planRestrictions: JSON.stringify(planRestrictions),
+          maxSessionDuration,
+        }),
+      });
+      toast({ title: "Salvo", description: "Configuracao Battle AI atualizada com sucesso." });
+    } catch {
+      toast({ title: "Erro", description: "Falha ao salvar configuracao", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const openAddAvatar = () => {
+    setEditingAvatarIdx(null);
+    setAvatarForm({ name: "", previewUrl: "", voiceId: "", gender: "female", description: "" });
+    setShowAvatarDialog(true);
+  };
+
+  const openEditAvatar = (idx: number) => {
+    setEditingAvatarIdx(idx);
+    setAvatarForm({ ...avatars[idx] });
+    setShowAvatarDialog(true);
+  };
+
+  const saveAvatar = () => {
+    if (!avatarForm.name.trim()) return;
+    if (editingAvatarIdx !== null) {
+      const updated = [...avatars];
+      updated[editingAvatarIdx] = { ...avatarForm };
+      setAvatars(updated);
+    } else {
+      setAvatars([...avatars, { ...avatarForm }]);
+    }
+    setShowAvatarDialog(false);
+  };
+
+  const removeAvatar = (idx: number) => {
+    setAvatars(avatars.filter((_, i) => i !== idx));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Sparkles className="w-5 h-5 text-cyan-400" />
+          <h2 className="text-xl font-bold text-white">Battle AI</h2>
+          <Badge variant="outline" className="text-cyan-400 border-cyan-400/50 text-xs">BETA</Badge>
+        </div>
+        <Button onClick={() => void saveConfig()} disabled={saving} className="gap-2">
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Salvar Configuracao
+        </Button>
+      </div>
+
+      {/* Enable/Disable Toggle */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-white">Status do Recurso</CardTitle>
+          <CardDescription>Ativar ou desativar o Battle AI para todos os usuarios.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-3">
+            <Switch checked={enabled} onCheckedChange={setEnabled} />
+            <span className={`text-sm font-medium ${enabled ? "text-green-400" : "text-muted-foreground"}`}>
+              {enabled ? "Ativo" : "Desativado"}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pricing & Duration */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="glass-card border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-white">Preco por Sessao</CardTitle>
+            <CardDescription>Valor cobrado por cada sessao de Battle AI.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={0}
+                step={0.01}
+                value={pricePerSession}
+                onChange={(e) => setPricePerSession(Number(e.target.value))}
+                className="w-32 bg-background border-white/10"
+              />
+              <span className="text-sm text-muted-foreground">BRL</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-card border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-white">Duracao Maxima</CardTitle>
+            <CardDescription>Tempo maximo por sessao em minutos.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={1}
+                max={480}
+                value={maxSessionDuration}
+                onChange={(e) => setMaxSessionDuration(Number(e.target.value))}
+                className="w-32 bg-background border-white/10"
+              />
+              <span className="text-sm text-muted-foreground">minutos</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Plan Restrictions */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-white">Restricoes de Plano</CardTitle>
+          <CardDescription>Quais planos podem acessar o Battle AI.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={planRestrictions.free}
+                onCheckedChange={(v) => setPlanRestrictions({ ...planRestrictions, free: !!v })}
+              />
+              <span className="text-sm text-white">Free</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={planRestrictions.basic}
+                onCheckedChange={(v) => setPlanRestrictions({ ...planRestrictions, basic: !!v })}
+              />
+              <span className="text-sm text-white">Basic</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={planRestrictions.pro}
+                onCheckedChange={(v) => setPlanRestrictions({ ...planRestrictions, pro: !!v })}
+              />
+              <span className="text-sm text-white">Pro</span>
+            </label>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Avatars Management */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base text-white">Avatares Disponiveis</CardTitle>
+              <CardDescription>Gerencie os avatares que os usuarios podem escolher.</CardDescription>
+            </div>
+            <Button size="sm" variant="outline" onClick={openAddAvatar} className="gap-1 border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10">
+              <Plus className="w-3 h-3" /> Adicionar
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {avatars.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">Nenhum avatar configurado.</p>
+          ) : (
+            <div className="space-y-3">
+              {avatars.map((avatar, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/8">
+                  {avatar.previewUrl ? (
+                    <img src={avatar.previewUrl} alt={avatar.name} className="w-10 h-10 rounded-full object-cover border border-white/10" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-cyan-400/20 flex items-center justify-center">
+                      <Users2 className="w-5 h-5 text-cyan-400" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{avatar.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{avatar.gender} &middot; Voice: {avatar.voiceId || "N/A"}</p>
+                  </div>
+                  <Button size="sm" variant="ghost" onClick={() => openEditAvatar(idx)} className="h-7 w-7 p-0 text-muted-foreground hover:text-white">
+                    <Edit2 className="w-3 h-3" />
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => removeAvatar(idx)} className="h-7 w-7 p-0 text-muted-foreground hover:text-red-400">
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Sessions Table */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base text-white">Sessoes</CardTitle>
+              <CardDescription>Todas as sessoes de Battle AI.</CardDescription>
+            </div>
+            <Button size="sm" variant="ghost" onClick={() => void fetchSessions()} disabled={sessionsLoading} className="gap-1 text-cyan-400">
+              <RefreshCw className={`w-3 h-3 ${sessionsLoading ? "animate-spin" : ""}`} /> Atualizar
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {sessions.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">Nenhuma sessao encontrada.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-white/8">
+                    <TableHead className="text-xs">ID</TableHead>
+                    <TableHead className="text-xs">Usuario</TableHead>
+                    <TableHead className="text-xs">Status</TableHead>
+                    <TableHead className="text-xs">TikTok</TableHead>
+                    <TableHead className="text-xs">Inicio</TableHead>
+                    <TableHead className="text-xs">Fim</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sessions.map((session) => (
+                    <TableRow key={session.id} className="border-white/5">
+                      <TableCell className="text-xs font-mono text-muted-foreground">{session.id.slice(0, 8)}...</TableCell>
+                      <TableCell className="text-xs">{session.userId.slice(0, 8)}...</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={`text-xs ${
+                          session.status === "streaming" ? "text-green-400 border-green-400/50" :
+                          session.status === "error" ? "text-red-400 border-red-400/50" :
+                          session.status === "stopped" ? "text-yellow-400 border-yellow-400/50" :
+                          "text-muted-foreground border-white/20"
+                        }`}>
+                          {session.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs">{session.tiktokUsername || "-"}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {session.startedAt ? new Date(session.startedAt).toLocaleString("pt-BR") : "-"}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {session.endedAt ? new Date(session.endedAt).toLocaleString("pt-BR") : "-"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Avatar Dialog */}
+      <Dialog open={showAvatarDialog} onOpenChange={setShowAvatarDialog}>
+        <DialogContent className="bg-background border-white/10">
+          <DialogHeader>
+            <DialogTitle>{editingAvatarIdx !== null ? "Editar Avatar" : "Adicionar Avatar"}</DialogTitle>
+            <DialogDescription>Preencha as informacoes do avatar.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-xs text-muted-foreground">Nome</Label>
+              <Input value={avatarForm.name} onChange={(e) => setAvatarForm({ ...avatarForm, name: e.target.value })} className="mt-1 bg-background border-white/10" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Preview URL</Label>
+              <Input value={avatarForm.previewUrl} onChange={(e) => setAvatarForm({ ...avatarForm, previewUrl: e.target.value })} className="mt-1 bg-background border-white/10" placeholder="https://..." />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Voice ID</Label>
+              <Input value={avatarForm.voiceId} onChange={(e) => setAvatarForm({ ...avatarForm, voiceId: e.target.value })} className="mt-1 bg-background border-white/10" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Genero</Label>
+              <Select value={avatarForm.gender} onValueChange={(v) => setAvatarForm({ ...avatarForm, gender: v })}>
+                <SelectTrigger className="mt-1 bg-background border-white/10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="female">Feminino</SelectItem>
+                  <SelectItem value="male">Masculino</SelectItem>
+                  <SelectItem value="non-binary">Nao-binario</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Descricao</Label>
+              <Textarea value={avatarForm.description} onChange={(e) => setAvatarForm({ ...avatarForm, description: e.target.value })} className="mt-1 bg-background border-white/10" rows={3} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowAvatarDialog(false)}>Cancelar</Button>
+            <Button onClick={saveAvatar} className="gap-1"><Check className="w-3 h-3" /> Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // MAIN ADMIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
-type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions" | "live-monitor";
+type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions" | "live-monitor" | "ai-assistant" | "analytics" | "webhooks" | "dev-tools" | "rate-limits" | "battle-ai";
 
 const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentType<{ className?: string }>; badge?: string }> = [
   { id: "overview",      label: "Visao Geral",       icon: LayoutDashboard },
+  { id: "analytics",     label: "Analytics",          icon: BarChart2, badge: "NEW" },
   { id: "live-monitor",  label: "Lives / Monitoramento", icon: Radio },
   { id: "users",         label: "Usuarios",           icon: Users2 },
   { id: "roles",         label: "Funcoes",            icon: Star },
   { id: "plans",         label: "Planos",             icon: CreditCard },
   { id: "announcements", label: "Anuncios",           icon: Bell },
   { id: "support",       label: "Suporte",            icon: MessageSquare },
+  { id: "ai-assistant",  label: "IA Assistente",      icon: Sparkles, badge: "AI" },
+  { id: "battle-ai",     label: "Battle AI",          icon: Gamepad2, badge: "BETA" },
   { id: "paginas",       label: "Paginas",            icon: FileText },
   { id: "content",       label: "Conteudo",           icon: BookOpen },
   { id: "customization", label: "Customizacao",       icon: Palette },
   { id: "landing",       label: "Landing Page",       icon: Globe },
   { id: "gifts",         label: "Gifts TikTok",       icon: Diamond },
   { id: "alert-overlays",label: "Alertas Overlay",    icon: Video },
+  { id: "webhooks",      label: "Webhooks",           icon: Link2, badge: "NEW" },
+  { id: "rate-limits",   label: "Rate Limits",        icon: Zap, badge: "NEW" },
+  { id: "dev-tools",     label: "Dev Tools",          icon: Code2, badge: "NEW" },
   { id: "versions",     label: "Versoes",             icon: Tag },
   { id: "database",      label: "Banco de Dados",     icon: Database },
   { id: "sistema",       label: "Sistema",            icon: Server },
@@ -4918,16 +5830,16 @@ export default function Admin() {
               <button key={item.id} onClick={() => setActiveSection(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all text-sm ${
                   isActive
-                    ? "bg-purple-500/15 text-white font-semibold"
+                    ? "bg-cyan-500/15 text-white font-semibold"
                     : "text-muted-foreground hover:text-white hover:bg-white/5"
                 }`}>
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-purple-400" : ""}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-cyan-400" : ""}`} />
                 <span className="flex-1">{item.label}</span>
                 {item.badge && (
                   <span className="text-xs px-1.5 py-0.5 rounded-full font-bold"
-                    style={{ background: "rgba(124,58,237,0.3)", color: "#a78bfa" }}>{item.badge}</span>
+                    style={{ background: "rgba(6,182,212,0.3)", color: "#22d3ee" }}>{item.badge}</span>
                 )}
-                {isActive && <div className="w-1 h-1 rounded-full bg-purple-400" />}
+                {isActive && <div className="w-1 h-1 rounded-full bg-cyan-400" />}
               </button>
             );
           })}
@@ -4942,7 +5854,7 @@ export default function Admin() {
           const isActive = activeSection === item.id;
           return (
             <button key={item.id} onClick={() => setActiveSection(item.id)}
-              className={`flex flex-col items-center gap-1 px-3 py-2 text-xs shrink-0 ${isActive ? "text-purple-400" : "text-muted-foreground"}`}>
+              className={`flex flex-col items-center gap-1 px-3 py-2 text-xs shrink-0 ${isActive ? "text-cyan-400" : "text-muted-foreground"}`}>
               <Icon className="w-4 h-4" />
               {item.label.split(" ")[0]}
             </button>
@@ -4953,6 +5865,7 @@ export default function Admin() {
       {/* Content */}
       <div className="flex-1 min-w-0 p-6 overflow-y-auto">
         {activeSection === "overview"      && <VisaoGeralSection />}
+        {activeSection === "analytics"      && <AnalyticsSection />}
         {activeSection === "live-monitor"   && <LiveMonitorSection />}
         {activeSection === "users"         && <UsuariosSection roles={roles} />}
         {activeSection === "roles"         && <FuncoesSection roles={roles} permissions={permissions} onRefresh={fetchRoles} />}
@@ -4964,10 +5877,15 @@ export default function Admin() {
         {activeSection === "landing"       && <LandingPageTab allPlans={plans} />}
         {activeSection === "gifts"         && <GiftsSection />}
         {activeSection === "alert-overlays" && <AlertOverlaysAdminSection />}
+        {activeSection === "webhooks"      && <WebhooksSection />}
+        {activeSection === "rate-limits"   && <RateLimitsSection />}
+        {activeSection === "dev-tools"     && <DevToolsSection />}
         {activeSection === "versions"       && <VersoesSection />}
         {activeSection === "database"      && <BancoDadosSection />}
         {activeSection === "sistema"       && <SistemaSection />}
         {activeSection === "support"       && <SuporteSection />}
+        {activeSection === "ai-assistant"   && <AIAssistantSection />}
+        {activeSection === "battle-ai"      && <BattleAiAdminSection />}
       </div>
     </div>
   );

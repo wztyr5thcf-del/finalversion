@@ -70,6 +70,7 @@ import MinigamesDefender from "./pages/minigames-defender";
 import MinigamesBau from "./pages/minigames-bau";
 import AlertOverlaysLibrary from "./pages/alert-overlays-library";
 import Analytics from "./pages/analytics";
+import BattleAi from "./pages/battle-ai";
 import AppLayout from "./components/layout/app-layout";
 import { AuthProvider, useAuth } from "./context/auth-context";
 import { UIConfigProvider } from "./context/ui-config-context";
@@ -227,6 +228,7 @@ function Router() {
             <Route path="/troll-gift" component={() => <ProtectedRoute component={TrollGift} />} />
             <Route path="/integracoes" component={() => <ProtectedRoute component={Integracoes} />} />
             <Route path="/album" component={() => <ProtectedRoute component={Album} />} />
+            <Route path="/battle-ai" component={() => <ProtectedRoute component={BattleAi} />} />
 
             {/* Stream Tools — OBS/TikTok Studio overlays */}
             <Route path="/stream-tools" component={() => <ProtectedRoute component={StreamTools} />} />

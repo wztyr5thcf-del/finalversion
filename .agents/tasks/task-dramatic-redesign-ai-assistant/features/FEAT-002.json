@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Integrated AI Assistant: Full-stack implementation of an AI chat widget for all users with admin controls for personality/prompt configuration, plan-based message limits, support escalation, and creative overlay generation capabilities.",
+  "status": "completed",
+  "steps": [
+    "Step 1 - Create database schema for AI assistant in lib/db/src/schema/ai-assistant.ts: Tables needed: (a) ai_config - single-row config table with fields: id, system_prompt (text), personality_name (varchar), max_context_messages (int), enabled (boolean), support_escalation_enabled (boolean), creative_mode_enabled (boolean), allowed_topics (text array), blocked_topics (text array), updated_at. (b) ai_conversations - fields: id (uuid), user_id (references users), title (varchar), created_at, updated_at, status (active/archived/escalated). (c) ai_messages - fields: id (uuid), conversation_id (references ai_conversations), role (user/assistant/system), content (text), created_at, tokens_used (int). (d) ai_plan_limits - fields: id, plan_id (varchar), messages_per_month (int), creative_requests_per_month (int), priority (varchar: low/normal/high). Export all from lib/db/src/schema/index.ts.",
+    "Step 2 - Create backend API routes in artifacts/api-server/src/routes/ai-chat.ts: Endpoints: (a) POST /api/ai/chat - sends message, returns AI response (respects plan limits, uses system prompt from ai_config), (b) GET /api/ai/conversations - list user conversations, (c) GET /api/ai/conversations/:id/messages - get messages for a conversation, (d) DELETE /api/ai/conversations/:id - archive/delete conversation, (e) GET /api/ai/config - admin only, get AI config, (f) PUT /api/ai/config - admin only, update AI config (prompt, personality, limits), (g) GET /api/ai/limits - get current user's usage vs limits for their plan, (h) POST /api/ai/escalate/:conversationId - escalate to human support. Register routes in artifacts/api-server/src/routes/index.ts. For the AI response, create a mock response system that returns contextual help messages (since we cannot guarantee an actual LLM API key exists). Structure it so a real LLM can be plugged in later by replacing the response generation function.",
+    "Step 3 - Create the AI chat widget component at artifacts/creatools/src/components/ai-chat-widget.tsx: A floating button (bottom-right, above the existing support widget or replacing it) that expands into a chat panel. Features: (a) Floating action button with animated gradient ring and subtle bounce, (b) Slide-up chat panel with glassmorphism background, (c) Message bubbles - user messages on right (cyan accent), AI on left (subtle glass bg), (d) Typing indicator animation (three bouncing dots), (e) Message input with send button and character count, (f) Header with AI avatar (animated gradient), personality name, and close button, (g) Conversation history sidebar (slide from left within the panel), (h) Plan limit indicator (messages remaining this month), (i) Escalate to human button when AI cannot resolve. Animations: panel slide-up on open, messages fade-in, typing dots bounce. Use framer-motion for animations since it is already a dependency.",
+    "Step 4 - Add AI assistant management section to the admin panel at artifacts/creatools/src/pages/admin.tsx: Add a new tab/section called 'IA Assistente' with: (a) AI Config form: system prompt textarea, personality name input, toggle for enabled/disabled, toggle for support escalation, toggle for creative mode, allowed topics list, blocked topics list, (b) Plan Limits table: editable grid showing each plan's monthly message limit and creative request limit, (c) Conversation monitor: list of recent AI conversations with ability to view messages, see escalated ones, (d) Usage stats: total messages this month, messages per plan tier, escalation rate. Style everything with the new glassmorphism design system.",
+    "Step 5 - Integrate the AI chat widget into the app layout: Import and render AIChatWidget in artifacts/creatools/src/components/layout/app-layout.tsx (alongside or replacing the existing SupportWidget). The widget should appear for all logged-in users. Also update artifacts/creatools/src/App.tsx if needed to ensure the widget is available on all protected routes."
+  ],
+  "acceptance_criteria": [
+    "Running pnpm --filter @workspace/api-server run build succeeds without errors",
+    "Running pnpm --filter @workspace/creatools run build succeeds without errors",
+    "Database schema file exists at lib/db/src/schema/ai-assistant.ts and is exported from index.ts",
+    "API route file exists at artifacts/api-server/src/routes/ai-chat.ts with all specified endpoints",
+    "Chat widget component exists at artifacts/creatools/src/components/ai-chat-widget.tsx",
+    "Widget is rendered in the app layout for logged-in users",
+    "Admin panel has AI management section with config, plan limits, and conversation monitor",
+    "The chat widget has glassmorphism styling, animations, typing indicator, and escalation button"
+  ],
+  "verification": [
+    "pnpm --filter @workspace/api-server run build",
+    "pnpm --filter @workspace/creatools run build",
+    "pnpm run typecheck"
+  ],
+  "blocked_reason": null,
+  "findings": "All builds pass (api-server, creatools, typecheck). Express 5 params require casting (req.params as { id: string }) for TypeScript. Frontend build requires PORT=5173 BASE_PATH=/ env vars. SupportWidget was replaced by AiChatWidget in app-layout.tsx. The mock AI response system uses keyword matching to provide contextual responses - can be replaced with real LLM later by modifying generateMockAiResponse in ai-chat.ts."
+}

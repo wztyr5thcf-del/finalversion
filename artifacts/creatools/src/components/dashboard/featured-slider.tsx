@@ -107,14 +107,15 @@ export function FeaturedSlider() {
 
   return (
     <div
-      className="rounded-2xl border border-white/8 p-4"
-      style={{ background: "rgba(255,255,255,0.03)" }}
+      className="glass-card rounded-2xl p-4"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-purple-400" />
-          <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.4)" }}>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(167,139,250,0.1)" }}>
+            <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          </div>
+          <p className="text-xs font-semibold uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.4)" }}>
             Destaques
           </p>
         </div>

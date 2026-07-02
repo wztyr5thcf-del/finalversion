@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "DRAMATIC UI redesign: Complete overhaul of the design system, sidebar layout, dashboard, landing page, and login page. This is the core visual transformation inspired by bettertok.app and tik.tools aesthetics.",
+  "status": "completed",
+  "steps": [
+    "Step 1 - Overhaul artifacts/creatools/src/index.css: Keep background #0a0a0c. Enhance all glassmorphism utilities, add new animation keyframes for floating elements, pulse effects, gradient borders. Add utility classes for the new design system: .glass-panel (stronger glassmorphism with backdrop-blur-xl), .neon-glow-cyan, .neon-glow-green, .gradient-border (animated border gradient), .card-elevated (subtle elevation with glow), .stat-card (animated stat cards with hover effects). Make the design system feel premium and futuristic.",
+    "Step 2 - COMPLETELY REWRITE artifacts/creatools/src/components/layout/app-layout.tsx: The sidebar must be DRAMATICALLY different - slim (w-16 collapsed, w-56 expanded), with a frosted glass background (backdrop-blur-xl + rgba(255,255,255,0.02)), animated hover states on nav items with cyan glow, a floating pill-shaped active indicator, the logo area with subtle breathing animation, user avatar with gradient ring at the bottom. Nav items should have icon-only mode when collapsed with tooltip on hover. The top bar should be minimal - just breadcrumb/page-title on left and user actions on right. Keep ALL existing functionality (nav items, sections, mobile menu, dropdowns, announcement bell, etc.) but with completely new visual treatment. The sidebar should feel like a premium dark tool panel.",
+    "Step 3 - COMPLETELY REWRITE artifacts/creatools/src/pages/dashboard.tsx: New layout with: (a) Full-width animated stat cards row at top (4 cards with glassmorphism, animated counters, sparkline mini-charts, colored glow borders - viewers, gifts, followers, engagement), (b) Large 2/3 width 'Activity Feed' card with real-time event stream animation, (c) 1/3 width 'Quick Actions' grid with glassmorphism action buttons, (d) Overlays section as horizontal scrolling cards with preview thumbnails and hover zoom, (e) Tools section as bento grid with varying card sizes, (f) Keep the welcome header but make it a full-width banner with animated gradient background and floating particles effect. Remove the boring list-style layout. Everything should feel alive with subtle animations.",
+    "Step 4 - COMPLETELY REWRITE artifacts/creatools/src/pages/landing.tsx: New landing page with: (a) Hero section with large animated text (gradient text with shimmer), floating UI mockup cards around the edges, particle background using CSS, prominent CTA buttons with glow effect, (b) 'Trusted by' logo ticker strip, (c) Features section as a bento grid (3 cols, varying heights) with glassmorphism cards that have colored top borders and hover lift effect, (d) Stats section with animated counter numbers and radial progress rings, (e) Partners/testimonials as horizontal scrolling cards, (f) Pricing section with glassmorphism cards - highlighted plan has pulsing border, (g) Final CTA section with large gradient text and animated background. Keep all existing data-fetching logic (landing content from API, partners, plans) but completely new visual treatment.",
+    "Step 5 - COMPLETELY REWRITE artifacts/creatools/src/pages/login.tsx: Split-screen design: Left side is the auth form panel (dark glass panel, cyan/green accent borders, modern input fields with floating labels and glow focus states), Right side is a dynamic visual panel with animated gradient mesh background, floating stat cards, and product screenshots/mockups. The form should have smooth transitions between login/register modes with slide animations. Add particle/orb animations to the background. Keep all auth logic intact.",
+    "Step 6 - Update artifacts/creatools/src/components/dashboard/update-carousel.tsx and featured-slider.tsx to use the new glassmorphism card styles, gradient borders, and hover animations consistent with the new design system."
+  ],
+  "acceptance_criteria": [
+    "Running pnpm --filter @workspace/creatools run build succeeds without errors",
+    "The sidebar is visually COMPLETELY different - slim, frosted glass, animated active indicators, icon-only collapsed mode",
+    "The dashboard has animated stat cards with glassmorphism, bento grid layout, and no boring list-style sections",
+    "The landing page has a dramatic hero with animated gradient text, bento features grid, and particle effects",
+    "The login page has split-screen layout with animated visual panel",
+    "Background color is #0a0a0c throughout, accent colors are cyan #06b6d4 and green #22c55e",
+    "All existing navigation items and routing still work",
+    "All existing auth logic still functions"
+  ],
+  "verification": [
+    "pnpm --filter @workspace/creatools run build",
+    "pnpm run typecheck"
+  ],
+  "blocked_reason": null,
+  "findings": "Build requires PORT and BASE_PATH env vars (PORT=3000 BASE_PATH=/). Typecheck passes cleanly. Build produces sourcemap warnings for shadcn ui components (cosmetic only, not errors). The app-layout.tsx is written using heredoc approach because it exceeds 500 lines. The landing page CSS animations are inlined in a style tag within the component."
+}
