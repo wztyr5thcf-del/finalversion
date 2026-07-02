@@ -7,3 +7,4 @@ export * from "./ui_config";
 export * from "./event_rules";
 export * from "./layouts";
 export * from "./media";
+export * from "./alert-overlays";

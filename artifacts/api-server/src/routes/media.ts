@@ -24,6 +24,7 @@ const SAFE_EXTENSIONS: Record<string, string> = {
   "image/png": ".png",
   "image/gif": ".gif",
   "image/webp": ".webp",
+  "video/webm": ".webm",
 };
 
 export interface MediaItem {
@@ -99,6 +100,8 @@ function detectImageMime(buf: Buffer): string | undefined {
     buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 &&
     buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50
   ) return "image/webp";
+  // WebM files start with EBML header: 0x1A 0x45 0xDF 0xA3
+  if (buf[0] === 0x1a && buf[1] === 0x45 && buf[2] === 0xdf && buf[3] === 0xa3) return "video/webm";
   return undefined;
 }
 
@@ -118,7 +121,7 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (Object.keys(SAFE_EXTENSIONS).includes(file.mimetype)) cb(null, true);
-    else cb(new Error("Tipo de arquivo não suportado. Use PNG, JPG, GIF ou WebP."));
+    else cb(new Error("Tipo de arquivo não suportado. Use PNG, JPG, GIF, WebP ou WebM."));
   },
 });
 
@@ -193,7 +196,7 @@ router.post("/media/upload", requireAuth, async (req: Request, res: Response): P
   const detectedMime = detectImageMime(buf);
   const safeExt = detectedMime ? SAFE_EXTENSIONS[detectedMime] : undefined;
   if (!safeExt) {
-    res.status(400).json({ error: "Conteúdo do arquivo inválido. Apenas PNG, JPG, GIF e WebP são aceitos." });
+    res.status(400).json({ error: "Conteúdo do arquivo inválido. Apenas PNG, JPG, GIF, WebP e WebM são aceitos." });
     return;
   }
 

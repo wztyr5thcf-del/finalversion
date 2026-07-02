@@ -3917,22 +3917,343 @@ function SuporteSection() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// SECAO: ALERTAS OVERLAY (Admin)
+// ════════════════════════════════════════════════════════════════════════════
+interface AdminAlertOverlay {
+  id: string;
+  name: string;
+  description: string;
+  previewUrl: string;
+  overlayUrl: string;
+  thumbnailUrl: string | null;
+  category: string;
+  minPlan: string;
+  price: number;
+  isActive: boolean;
+  order: number;
+  createdAt: number;
+}
+
+function AlertOverlaysAdminSection() {
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [overlays, setOverlays] = useState<AdminAlertOverlay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const [form, setForm] = useState({
+    name: "", description: "", previewUrl: "", overlayUrl: "",
+    thumbnailUrl: "", category: "Geral", minPlan: "free", price: "0", order: "0",
+  });
+
+  const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+  const fetchOverlays = useCallback(async () => {
+    try {
+      const data = await authFetch("/alert-overlays/all", token!) as { items: AdminAlertOverlay[] };
+      setOverlays(data.items ?? []);
+    } catch { /* ignore */ }
+    setLoading(false);
+  }, [token]);
+
+  useEffect(() => { void fetchOverlays(); }, [fetchOverlays]);
+
+  const resetForm = () => {
+    setForm({ name: "", description: "", previewUrl: "", overlayUrl: "", thumbnailUrl: "", category: "Geral", minPlan: "free", price: "0", order: "0" });
+    setEditingId(null);
+    setShowForm(false);
+  };
+
+  const startEdit = (o: AdminAlertOverlay) => {
+    setForm({
+      name: o.name, description: o.description, previewUrl: o.previewUrl,
+      overlayUrl: o.overlayUrl, thumbnailUrl: o.thumbnailUrl ?? "",
+      category: o.category, minPlan: o.minPlan, price: String(o.price), order: String(o.order),
+    });
+    setEditingId(o.id);
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.name.trim() || !form.previewUrl.trim() || !form.overlayUrl.trim()) {
+      toast({ title: "Erro", description: "Nome, Preview URL e Overlay URL sao obrigatorios.", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const body = {
+        name: form.name.trim(),
+        description: form.description.trim(),
+        previewUrl: form.previewUrl.trim(),
+        overlayUrl: form.overlayUrl.trim(),
+        thumbnailUrl: form.thumbnailUrl.trim() || null,
+        category: form.category.trim() || "Geral",
+        minPlan: form.minPlan,
+        price: parseInt(form.price) || 0,
+        order: parseInt(form.order) || 0,
+      };
+
+      if (editingId) {
+        await authFetch(`/alert-overlays/${editingId}`, token!, { method: "PATCH", body: JSON.stringify(body) });
+        toast({ title: "Atualizado", description: "Overlay atualizado com sucesso." });
+      } else {
+        await authFetch("/alert-overlays", token!, { method: "POST", body: JSON.stringify(body) });
+        toast({ title: "Criado", description: "Overlay criado com sucesso." });
+      }
+      resetForm();
+      void fetchOverlays();
+    } catch (err: unknown) {
+      toast({ title: "Erro", description: (err as Error).message ?? "Falha ao salvar.", variant: "destructive" });
+    }
+    setSaving(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    try {
+      await authFetch(`/alert-overlays/${id}`, token!, { method: "DELETE" });
+      toast({ title: "Excluido", description: "Overlay excluido com sucesso." });
+      void fetchOverlays();
+    } catch (err: unknown) {
+      toast({ title: "Erro", description: (err as Error).message ?? "Falha ao excluir.", variant: "destructive" });
+    }
+    setDeletingId(null);
+  };
+
+  const handleToggleActive = async (o: AdminAlertOverlay) => {
+    try {
+      await authFetch(`/alert-overlays/${o.id}`, token!, {
+        method: "PATCH",
+        body: JSON.stringify({ isActive: !o.isActive }),
+      });
+      void fetchOverlays();
+    } catch { /* ignore */ }
+  };
+
+  const handleUploadWebm = async (e: React.ChangeEvent<HTMLInputElement>, field: "previewUrl" | "overlayUrl") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("category", "Geral");
+    try {
+      const res = await fetch(`${BASE}/api/media/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await res.json() as { url?: string; error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Upload falhou");
+      if (data.url) {
+        setForm((prev) => ({ ...prev, [field]: data.url }));
+        toast({ title: "Upload concluido", description: "Arquivo enviado com sucesso." });
+      }
+    } catch (err: unknown) {
+      toast({ title: "Erro no upload", description: (err as Error).message ?? "Falha no upload.", variant: "destructive" });
+    }
+  };
+
+  const PLAN_OPTIONS = [
+    { value: "free", label: "Gratuito" },
+    { value: "basic", label: "Basic" },
+    { value: "pro", label: "PRO" },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-white mb-1">Alertas Overlay</h2>
+          <p className="text-sm text-muted-foreground">Gerencie os overlays .webm disponiveis na plataforma.</p>
+        </div>
+        <Button onClick={() => { resetForm(); setShowForm(true); }} className="bg-purple-600 hover:bg-purple-700">
+          <Plus className="w-4 h-4 mr-2" />Novo Overlay
+        </Button>
+      </div>
+
+      {/* Create/Edit form */}
+      {showForm && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">{editingId ? "Editar Overlay" : "Novo Overlay"}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs">Nome *</Label>
+                <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Nome do overlay" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs">Categoria</Label>
+                <Input value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value }))} placeholder="Ex: Geral, Natal, etc" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs">Descricao</Label>
+              <Textarea value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} placeholder="Descricao breve do overlay" rows={2} />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs">Preview URL (video .webm) *</Label>
+                <Input value={form.previewUrl} onChange={(e) => setForm((p) => ({ ...p, previewUrl: e.target.value }))} placeholder="URL do video preview" />
+                <div className="flex items-center gap-2">
+                  <Label className="text-[10px] text-muted-foreground cursor-pointer px-2 py-1 rounded border border-dashed border-white/20 hover:border-purple-400 transition-colors">
+                    Upload .webm
+                    <input type="file" accept="video/webm" className="hidden" onChange={(e) => handleUploadWebm(e, "previewUrl")} />
+                  </Label>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs">Overlay URL (URL para OBS) *</Label>
+                <Input value={form.overlayUrl} onChange={(e) => setForm((p) => ({ ...p, overlayUrl: e.target.value }))} placeholder="URL que o usuario copia para OBS" />
+                <div className="flex items-center gap-2">
+                  <Label className="text-[10px] text-muted-foreground cursor-pointer px-2 py-1 rounded border border-dashed border-white/20 hover:border-purple-400 transition-colors">
+                    Upload .webm
+                    <input type="file" accept="video/webm" className="hidden" onChange={(e) => handleUploadWebm(e, "overlayUrl")} />
+                  </Label>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs">Plano Minimo</Label>
+                <Select value={form.minPlan} onValueChange={(v) => setForm((p) => ({ ...p, minPlan: v }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {PLAN_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs">Preco (centavos)</Label>
+                <Input type="number" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} placeholder="0 = incluso no plano" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs">Ordem</Label>
+                <Input type="number" value={form.order} onChange={(e) => setForm((p) => ({ ...p, order: e.target.value }))} placeholder="0" />
+              </div>
+            </div>
+
+            {/* Preview */}
+            {form.previewUrl && (
+              <div className="space-y-2">
+                <Label className="text-xs">Preview</Label>
+                <div className="rounded-xl overflow-hidden max-w-xs" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                  <video src={form.previewUrl} autoPlay loop muted playsInline className="w-full h-32 object-cover" />
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2 pt-2">
+              <Button onClick={handleSave} disabled={saving} className="bg-purple-600 hover:bg-purple-700">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                {editingId ? "Atualizar" : "Criar"}
+              </Button>
+              <Button variant="outline" onClick={resetForm}>Cancelar</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Overlays list */}
+      {loading ? (
+        <div className="py-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-400" /></div>
+      ) : overlays.length === 0 ? (
+        <div className="py-10 text-center text-muted-foreground text-sm">Nenhum overlay cadastrado.</div>
+      ) : (
+        <div className="space-y-3">
+          {overlays.map((o) => (
+            <div key={o.id} className="flex items-center gap-4 p-4 rounded-xl transition-all"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              {/* Preview thumbnail */}
+              <div className="w-20 h-14 rounded-lg overflow-hidden shrink-0" style={{ background: "rgba(0,0,0,0.3)" }}>
+                <video src={o.previewUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-white truncate">{o.name}</p>
+                  {!o.isActive && <Badge variant="secondary" className="text-[9px]">Inativo</Badge>}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full"
+                    style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>{o.category}</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full"
+                    style={{ background: o.minPlan === "pro" ? "rgba(249,115,22,0.15)" : o.minPlan === "basic" ? "rgba(34,211,238,0.15)" : "rgba(156,163,175,0.15)", color: o.minPlan === "pro" ? "#f97316" : o.minPlan === "basic" ? "#22d3ee" : "#9ca3af" }}>
+                    {o.minPlan === "free" ? "Gratuito" : o.minPlan === "basic" ? "Basic" : "PRO"}
+                  </span>
+                  {o.price > 0 && (
+                    <span className="text-[10px] text-green-400">R$ {(o.price / 100).toFixed(2)}</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                <Button size="sm" variant="ghost" onClick={() => handleToggleActive(o)} className="h-8 w-8 p-0">
+                  {o.isActive
+                    ? <ToggleRight className="w-4 h-4 text-green-400" />
+                    : <ToggleLeft className="w-4 h-4 text-muted-foreground" />
+                  }
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => startEdit(o)} className="h-8 w-8 p-0">
+                  <Edit2 className="w-4 h-4" />
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-red-400 hover:text-red-300">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Excluir overlay?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta acao nao pode ser desfeita. O overlay "{o.name}" sera removido permanentemente.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDelete(o.id)} className="bg-red-600 hover:bg-red-700">
+                        {deletingId === o.id ? "Excluindo..." : "Excluir"}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // MAIN ADMIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
-type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts";
+type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays";
 
 const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentType<{ className?: string }>; badge?: string }> = [
-  { id: "overview",      label: "Visão Geral",       icon: LayoutDashboard },
-  { id: "users",         label: "Usuários",           icon: Users2 },
-  { id: "roles",         label: "Funções",            icon: Star },
+  { id: "overview",      label: "Visao Geral",       icon: LayoutDashboard },
+  { id: "users",         label: "Usuarios",           icon: Users2 },
+  { id: "roles",         label: "Funcoes",            icon: Star },
   { id: "plans",         label: "Planos",             icon: CreditCard },
-  { id: "announcements", label: "Anúncios",           icon: Bell },
+  { id: "announcements", label: "Anuncios",           icon: Bell },
   { id: "support",       label: "Suporte",            icon: MessageSquare },
-  { id: "paginas",       label: "Páginas",            icon: FileText },
-  { id: "content",       label: "Conteúdo",           icon: BookOpen },
-  { id: "customization", label: "Customização",       icon: Palette },
+  { id: "paginas",       label: "Paginas",            icon: FileText },
+  { id: "content",       label: "Conteudo",           icon: BookOpen },
+  { id: "customization", label: "Customizacao",       icon: Palette },
   { id: "landing",       label: "Landing Page",       icon: Globe },
   { id: "gifts",         label: "Gifts TikTok",       icon: Diamond },
+  { id: "alert-overlays",label: "Alertas Overlay",    icon: Video },
   { id: "database",      label: "Banco de Dados",     icon: Database },
   { id: "sistema",       label: "Sistema",            icon: Server },
 ];
@@ -4032,6 +4353,7 @@ export default function Admin() {
         {activeSection === "customization" && <CustomizacaoSection />}
         {activeSection === "landing"       && <LandingPageTab allPlans={plans} />}
         {activeSection === "gifts"         && <GiftsSection />}
+        {activeSection === "alert-overlays" && <AlertOverlaysAdminSection />}
         {activeSection === "database"      && <BancoDadosSection />}
         {activeSection === "sistema"       && <SistemaSection />}
         {activeSection === "support"       && <SuporteSection />}

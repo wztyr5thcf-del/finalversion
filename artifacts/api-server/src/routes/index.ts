@@ -18,6 +18,7 @@ import mediaRouter from "./media";
 import profileRouter from "./profile";
 import giftsRouter from "./gifts";
 import layoutsRouter from "./layouts";
+import alertOverlaysRouter from "./alert-overlays";
 
 const router: IRouter = Router();
 
@@ -40,5 +41,6 @@ router.use(mediaRouter);
 router.use(profileRouter);
 router.use(giftsRouter);
 router.use(layoutsRouter);
+router.use(alertOverlaysRouter);
 
 export default router;
