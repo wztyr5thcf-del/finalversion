@@ -431,27 +431,38 @@ Resources:
           git clone ${GitRepoURL} creatools
           cd creatools
 
-          # Create .env file
-          cat > infra/.env <<EOF
-          NODE_ENV=production
-          PORT=3000
-          DATABASE_URL=postgresql://${DBUsername}:${DBPassword}@${RDSInstance.Endpoint.Address}:5432/creatools
-          JWT_SECRET=${JWTSecret}
-          FRONTEND_URL=https://creatools.co
-          APP_URL=https://creatools.co
-          STRIPE_SECRET_KEY=
-          STRIPE_WEBHOOK_SECRET=
-          STRIPE_PUBLISHABLE_KEY=
-          STRIPE_PRICE_ID_BASIC=
-          STRIPE_PRICE_ID_PRO=
-          TIKTOOLS_API_KEY=
-          TIKTOK_CLIENT_KEY=
-          TIKTOK_REDIRECT_URI=https://creatools.co/api/tiktok/callback
-          EOF
+          # Create .env file using echo statements (heredoc breaks after YAML processing)
+          echo "NODE_ENV=production" > infra/.env
+          echo "PORT=3000" >> infra/.env
+          echo "DATABASE_URL=postgresql://${DBUsername}:${DBPassword}@${RDSInstance.Endpoint.Address}:5432/creatools" >> infra/.env
+          echo "JWT_SECRET=${JWTSecret}" >> infra/.env
+          echo "FRONTEND_URL=https://creatools.co" >> infra/.env
+          echo "APP_URL=https://creatools.co" >> infra/.env
+          echo "STRIPE_SECRET_KEY=" >> infra/.env
+          echo "STRIPE_WEBHOOK_SECRET=" >> infra/.env
+          echo "STRIPE_PUBLISHABLE_KEY=" >> infra/.env
+          echo "STRIPE_PRICE_ID_BASIC=" >> infra/.env
+          echo "STRIPE_PRICE_ID_PRO=" >> infra/.env
+          echo "TIKTOOLS_API_KEY=" >> infra/.env
+          echo "TIKTOK_CLIENT_KEY=" >> infra/.env
+          echo "TIKTOK_REDIRECT_URI=https://creatools.co/api/tiktok/callback" >> infra/.env
 
           # Build and start with Docker Compose
           cd infra
           docker compose up -d --build
+
+          # Run database migrations using a one-off container
+          echo "=== Running database migrations ==="
+          cd /opt/creatools
+          docker run --rm \
+            --network infra_default \
+            --env-file infra/.env \
+            -v "$(pwd):/workspace" \
+            -w /workspace \
+            node:22-slim sh -c "\
+              npm install -g pnpm@9 && \
+              pnpm install --frozen-lockfile --config.confirmModulesPurge=false && \
+              npx drizzle-kit push" || echo "WARNING: drizzle-kit push failed, manual migration may be needed"
 
           # Health check loop
           echo "=== Waiting for application to be healthy ==="

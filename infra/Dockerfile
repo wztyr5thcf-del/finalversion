@@ -15,8 +15,7 @@ WORKDIR /app
 COPY . .
 
 # Install all dependencies (pnpm)
-RUN pnpm install --frozen-lockfile --config.confirmModulesPurge=false || \
-    pnpm install --no-frozen-lockfile --config.confirmModulesPurge=false
+RUN pnpm install --frozen-lockfile --config.confirmModulesPurge=false
 
 # Build the entire project (typecheck + all packages)
 ENV PORT=5173

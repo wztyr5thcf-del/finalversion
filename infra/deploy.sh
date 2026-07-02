@@ -153,6 +153,37 @@ start_app() {
 }
 
 # =============================================================================
+# Run database migrations
+# =============================================================================
+run_migrations() {
+    log "Running database migrations with drizzle-kit push..."
+
+    cd /opt/creatools
+
+    # Run drizzle-kit push inside a temporary container with the full source
+    # This uses the builder stage which has all dev dependencies and schema files
+    docker compose -f infra/docker-compose.yml exec -T api sh -c "\
+        cd /app && node -e \"
+            const { drizzle } = require('drizzle-orm/node-postgres');
+            const { migrate } = require('drizzle-orm/node-postgres/migrator');
+        \" 2>/dev/null" || true
+
+    # Use a one-off container from the builder stage to run drizzle-kit push
+    docker run --rm \
+        --network creatools_default \
+        --env-file infra/.env \
+        -v "$(pwd):/workspace" \
+        -w /workspace \
+        node:22-slim sh -c "\
+            npm install -g pnpm@9 && \
+            pnpm install --frozen-lockfile --config.confirmModulesPurge=false && \
+            npx drizzle-kit push" \
+        || warn "Migration via drizzle-kit push failed. You may need to run it manually."
+
+    log "Database migration step completed"
+}
+
+# =============================================================================
 # Health check
 # =============================================================================
 health_check() {
@@ -189,6 +220,7 @@ main() {
     setup_repo
     create_env
     start_app
+    run_migrations
     health_check
 
     log "========================================="
