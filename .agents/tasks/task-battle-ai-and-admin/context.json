@@ -1,0 +1,31 @@
+{
+  "project_type": "Full-stack monorepo: React SPA frontend (Vite + Tailwind v4 + shadcn/ui) with Express API backend, PostgreSQL via Drizzle ORM",
+  "language": "TypeScript",
+  "build_system": "pnpm workspaces monorepo. Root build: pnpm run build (typecheck + recursive build). Frontend: artifacts/creatools/ (Vite). Backend: artifacts/api-server/ (esbuild bundle). DB schema: lib/db/",
+  "test_framework": "No test framework configured - validation via typecheck and build",
+  "build_command": "pnpm run build",
+  "test_command": "pnpm run typecheck",
+  "verification_instructions": "1. Run pnpm run build from workspace root. 2. Verify frontend builds to artifacts/creatools/dist/public. 3. Verify backend builds to artifacts/api-server/dist/index.mjs. 4. Check docker-compose.yml has NODE_TLS_REJECT_UNAUTHORIZED=0 and no healthcheck.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "pnpm install from workspace root (node_modules already present)",
+  "environment_constraints": "OPEN_INTERNET network mode. pnpm 9 via corepack. Node 22. No Docker daemon available for building but docker-compose.yml must be correct.",
+  "contribution_requirements": "All frontend code in artifacts/creatools/src/. All backend routes in artifacts/api-server/src/routes/. DB schema in lib/db/src/schema/. Docker config in infra/.",
+  "key_patterns": "Frontend: wouter router, React Query, authFetch utility, lucide-react icons, shadcn/ui components in components/ui/, pages export default function. Backend: Express Router per feature file, requireAuth/requireAdminMiddleware guards, authFetch on frontend calls BASE_URL + /api/ prefix. Schema: Drizzle ORM pgTable definitions, text IDs, exported from schema/index.ts. CSS: Tailwind v4 with :root HSL vars, .dark class, glassmorphism utility classes (glass-card, neon-glow-cyan, gradient-text etc).",
+  "relevant_files": [
+    "artifacts/creatools/src/App.tsx",
+    "artifacts/creatools/src/index.css",
+    "artifacts/creatools/src/components/layout/app-layout.tsx",
+    "artifacts/creatools/src/pages/dashboard.tsx",
+    "artifacts/creatools/src/pages/landing.tsx",
+    "artifacts/creatools/src/pages/login.tsx",
+    "artifacts/creatools/src/pages/admin.tsx",
+    "artifacts/creatools/src/components/ai-chat-widget.tsx",
+    "artifacts/api-server/src/routes/index.ts",
+    "artifacts/api-server/src/routes/ai-chat.ts",
+    "lib/db/src/schema/index.ts",
+    "lib/db/src/schema/ai-assistant.ts",
+    "infra/docker-compose.yml",
+    "infra/Dockerfile"
+  ],
+  "directory_structure": "Root: pnpm workspace. artifacts/creatools/ = React frontend (pages/, components/, context/, hooks/). artifacts/api-server/ = Express backend (src/routes/, src/lib/). lib/db/ = Drizzle schema. infra/ = Docker/nginx."
+}
