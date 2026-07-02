@@ -19,13 +19,28 @@ router.get("/battle-ai/config", async (_req, res): Promise<void> => {
   if (!config) {
     config = await upsertBattleAiConfig({});
   }
+
+  let availableAvatars: unknown = [];
+  try {
+    availableAvatars = JSON.parse(config.availableAvatars);
+  } catch {
+    availableAvatars = [];
+  }
+
+  let planRestrictions: unknown = { free: false, basic: false, pro: true };
+  try {
+    planRestrictions = JSON.parse(config.planRestrictions);
+  } catch {
+    planRestrictions = { free: false, basic: false, pro: true };
+  }
+
   // Return public-facing config (exclude internal fields)
   res.json({
     enabled: config.enabled,
-    availableAvatars: JSON.parse(config.availableAvatars),
+    availableAvatars,
     pricePerSession: config.pricePerSession,
     maxSessionDuration: config.maxSessionDuration,
-    planRestrictions: JSON.parse(config.planRestrictions),
+    planRestrictions,
   });
 });
 
@@ -40,6 +55,11 @@ router.post("/battle-ai/sessions", requireAuth, async (req, res): Promise<void> 
 
   if (!avatarConfig || !tiktokUsername || !rtmpUrl) {
     res.status(400).json({ error: "avatarConfig, tiktokUsername and rtmpUrl are required" });
+    return;
+  }
+
+  if (!rtmpUrl.startsWith("rtmp://") && !rtmpUrl.startsWith("rtmps://")) {
+    res.status(400).json({ error: "rtmpUrl must start with rtmp:// or rtmps://" });
     return;
   }
 
@@ -160,6 +180,24 @@ router.put("/battle-ai/admin/config", requireAdminMiddleware, async (req, res): 
 router.get("/battle-ai/admin/sessions", requireAdminMiddleware, async (_req, res): Promise<void> => {
   const sessions = await getAllSessions();
   res.json({ sessions });
+});
+
+// ── POST /battle-ai/admin/sessions/:id/stop - Admin force-stop a session ──────
+router.post("/battle-ai/admin/sessions/:id/stop", requireAdminMiddleware, async (req, res): Promise<void> => {
+  const { id } = req.params as { id: string };
+
+  const session = await getSessionById(id);
+  if (!session) {
+    res.status(404).json({ error: "Session not found" });
+    return;
+  }
+
+  const updated = await updateSession(id, {
+    status: "stopped",
+    endedAt: new Date().toISOString(),
+  });
+
+  res.json({ session: updated });
 });
 
 export default router;

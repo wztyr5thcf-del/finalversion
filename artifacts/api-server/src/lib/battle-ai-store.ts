@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { db } from "@workspace/db";
 import {
   battleAiSessionsTable,
@@ -7,10 +8,6 @@ import { eq, desc } from "drizzle-orm";
 
 export type BattleAiConfig = typeof battleAiConfigTable.$inferSelect;
 export type BattleAiSession = typeof battleAiSessionsTable.$inferSelect;
-
-function makeId(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
 
 // ── Config ────────────────────────────────────────────────────────────────────
 export async function getBattleAiConfig(): Promise<BattleAiConfig | null> {
@@ -50,7 +47,7 @@ export async function createSession(data: {
 }): Promise<BattleAiSession> {
   const now = new Date().toISOString();
   const rows = await db.insert(battleAiSessionsTable).values({
-    id: makeId(),
+    id: crypto.randomUUID(),
     userId: data.userId,
     status: "idle",
     avatarConfig: data.avatarConfig,
