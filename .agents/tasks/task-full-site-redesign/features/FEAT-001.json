@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Fix infra/docker-compose.yml permanently: add NODE_TLS_REJECT_UNAUTHORIZED=0 environment to the api service, remove the healthcheck block from api, and simplify depends_on for nginx to just '- api' without condition: service_healthy.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Edit infra/docker-compose.yml: Add environment section to 'api' service with NODE_TLS_REJECT_UNAUTHORIZED=0",
     "Remove the entire healthcheck block from the 'api' service",
@@ -17,5 +17,5 @@
     "Run: docker compose -f infra/docker-compose.yml config 2>&1 to validate YAML syntax"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "docker compose CLI not available in sandbox so validated YAML with Python yaml.safe_load and assertions instead. All three changes verified: environment added, healthcheck removed, depends_on simplified."
 }
