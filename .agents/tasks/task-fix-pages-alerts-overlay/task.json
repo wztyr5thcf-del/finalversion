@@ -1,0 +1,14 @@
+{
+  "task_id": "task-fix-pages-alerts-overlay",
+  "task_description": "Fix broken/outdated pages (minigames nav, overlay stats vertical default, profile username change field), and add new Overlay Alerts Library feature with .webm video previews, plan-based access control, individual purchase option, admin management, and download protection.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "skipped",
+    "docker_build": "skipped",
+    "summary": "All TypeScript typechecks pass. API server builds successfully. Frontend builds successfully. Review issues (minPlan validation, isActive filter, purchase preservation, DB index) all addressed in FEAT-003."
+  }
+}

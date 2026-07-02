@@ -72,6 +72,18 @@ if (dbUrl) {
       created_at BIGINT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS media_items_user_id_idx ON media_items(user_id);
+    CREATE TABLE IF NOT EXISTS app_versions (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      version TEXT NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      released_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      created_by TEXT NOT NULL
+    );
+    INSERT INTO app_versions (version, title, description, created_by)
+      SELECT '1.0.0', 'Lancamento Inicial', 'Primeira versao da plataforma.', 'system'
+      WHERE NOT EXISTS (SELECT 1 FROM app_versions WHERE version = '1.0.0');
   `).catch(() => { /* ignore — table may not exist yet on first boot */ })
     .finally(() => pool.end());
 }

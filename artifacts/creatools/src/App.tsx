@@ -68,6 +68,7 @@ import MinigamesWordBomb from "./pages/minigames-word-bomb";
 import MinigamesSentido from "./pages/minigames-sentido";
 import MinigamesDefender from "./pages/minigames-defender";
 import MinigamesBau from "./pages/minigames-bau";
+import AlertOverlaysLibrary from "./pages/alert-overlays-library";
 import AppLayout from "./components/layout/app-layout";
 import { AuthProvider, useAuth } from "./context/auth-context";
 import { UIConfigProvider } from "./context/ui-config-context";
@@ -217,6 +218,7 @@ function Router() {
 
             {/* Tools */}
             <Route path="/events" component={() => <ProtectedRoute component={Events} />} />
+            <Route path="/alert-overlays" component={() => <ProtectedRoute component={AlertOverlaysLibrary} />} />
             <Route path="/sound-alerts" component={() => <ProtectedRoute component={SoundAlerts} />} />
             <Route path="/layout" component={() => <ProtectedRoute component={LayoutEditor} />} />
             <Route path="/effect-battle" component={() => <ProtectedRoute component={EffectBattle} />} />

@@ -161,7 +161,7 @@ export default function Overlays() {
   }
 
   // ── Stats config ───────────────────────────────────────────────────────────
-  const [statsLayout,  setStatsLayout]  = useState("horizontal");
+  const [statsLayout,  setStatsLayout]  = useState("vertical");
   const [statsViewers, setStatsViewers] = useState(true);
   const [statsLikes,   setStatsLikes]   = useState(true);
   const [statsFoll,    setStatsFoll]    = useState(true);
@@ -169,7 +169,7 @@ export default function Overlays() {
 
   function buildStatsUrl() {
     const p = new URLSearchParams();
-    if (statsLayout !== "horizontal") p.set("layout", statsLayout);
+    if (statsLayout !== "vertical") p.set("layout", statsLayout);
     if (!statsViewers) p.set("viewers", "0");
     if (!statsLikes)   p.set("likes", "0");
     if (!statsFoll)    p.set("followers", "0");

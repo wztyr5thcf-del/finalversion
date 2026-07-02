@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Create a complete Overlay Alerts Library system - a library of .webm video alerts that the platform provides to creators. Features: real-time animated previews, plan-based access control (admin defines minimum plan per alert), individual purchase option for non-qualifying plans, admin management panel for uploading/managing alerts, download protection (prevent users from saving .webm files while still allowing OBS/TikTok Studio to render them).",
+  "status": "completed",
+  "steps": [
+    "1. Create a new DB schema table 'alert_overlays' in lib/db/src/schema/ with fields: id (text PK), name (text), description (text), previewUrl (text - URL to .webm file for preview), overlayUrl (text - the actual overlay URL), thumbnailUrl (text - static image thumbnail), category (text), minPlan (text - 'free'|'basic'|'pro'), price (integer - price in cents for individual purchase, 0 if included in plan), isActive (boolean), order (integer), createdAt (bigint). Export from lib/db/src/schema/index.ts.",
+    "2. Create a new DB schema table 'alert_overlay_purchases' in lib/db/src/schema/ with fields: id (text PK), userId (text), alertOverlayId (text), purchasedAt (bigint), paymentMethod (text). Export from index.ts.",
+    "3. Create backend route artifacts/api-server/src/routes/alert-overlays.ts with: GET /api/alert-overlays (list all active alerts, public), GET /api/alert-overlays/:id (single alert detail), POST /api/alert-overlays (admin - create alert), PATCH /api/alert-overlays/:id (admin - update alert), DELETE /api/alert-overlays/:id (admin - delete alert), POST /api/alert-overlays/:id/purchase (user - purchase individual alert), GET /api/alert-overlays/my-purchases (user - list purchased alerts). The GET endpoints should include a 'hasAccess' field computed from user plan + purchases.",
+    "4. Add .webm support to media uploads: Update artifacts/api-server/src/routes/media.ts to allow video/webm MIME type uploads (add to SAFE_EXTENSIONS and detectImageMime/detectVideoMime). Add a magic-byte check for WebM files (starts with 0x1A 0x45 0xDF 0xA3). Set a higher size limit for video files (100MB).",
+    "5. Create the frontend page artifacts/creatools/src/pages/alert-overlays-library.tsx: A beautiful library/gallery page showing all available alert overlays. Each item shows: an animated preview (playing the .webm in a loop, NOT ugly rectangles - use a <video> element with autoplay, loop, muted), the alert name, category badge, plan requirement badge. If the user's plan qualifies OR they purchased it, show the overlay URL (copiable). If not, show a lock icon with option to purchase individually or upgrade plan. Include category filter tabs. Apply download protection: use CSS pointer-events:none on video, disable right-click via onContextMenu, add controlsList='nodownload' to video elements.",
+    "6. Add the admin section for managing alert overlays in artifacts/creatools/src/pages/admin.tsx: Add a new tab 'Alertas Overlay' in the admin panel. Show a table/grid of all alerts with ability to: upload new .webm files (using the media upload endpoint), set name/description/category, set minimum plan (free/basic/pro), set individual purchase price, toggle active/inactive, reorder. Include a preview of the .webm in the admin view.",
+    "7. Register the new route in artifacts/api-server/src/routes/index.ts and add the new page route in artifacts/creatools/src/App.tsx. Add navigation entry in app-layout.tsx DEFAULT_SECTIONS under the 'main' section overlays children or as a new item in FERRAMENTAS.",
+    "8. Add CSS-based download protection in the overlay pages: When the .webm is served in OBS/TikTok Studio as a browser source it works normally (transparent background, autoplay). But in the regular browser context, add: no right-click on video elements, no download attribute, Content-Disposition: inline header from the API, disable drag, use blob URLs where possible to make direct download harder."
+  ],
+  "acceptance_criteria": [
+    "New DB tables alert_overlays and alert_overlay_purchases are defined and exported",
+    "Backend CRUD routes for alert overlays work (admin create/update/delete, user list/purchase)",
+    "Frontend library page shows .webm previews as actual animated video elements (not rectangles)",
+    "Plan-based access control: locked alerts show preview but not the overlay URL",
+    "Individual purchase option available for locked alerts when user has an active paid plan",
+    "Admin can upload and manage alert overlays from the admin panel",
+    "Download protection applied (no right-click, no download button, inline disposition)",
+    "Build passes: pnpm run build"
+  ],
+  "verification": [
+    "pnpm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "Build passes successfully (typecheck + vite build for creatools, esbuild for api-server). The mockup-sandbox build fails due to missing PORT env var but that is pre-existing and unrelated. The admin.tsx file is very large (4000+ lines) so the new AlertOverlaysAdminSection was added near the bottom before the main Admin component. WebM magic byte detection (0x1A 0x45 0xDF 0xA3) was added to detectImageMime in media.ts."
+}

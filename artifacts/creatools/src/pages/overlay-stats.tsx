@@ -23,7 +23,7 @@ export default function OverlayStats() {
   const search = useSearch();
   const p = new URLSearchParams(search);
 
-  const layout    = p.get("layout") ?? "horizontal"; // horizontal | vertical | compact
+  const layout    = p.get("layout") ?? "vertical"; // horizontal | vertical | compact
   const showV     = p.get("viewers")   !== "0";
   const showL     = p.get("likes")     !== "0";
   const showF     = p.get("followers") !== "0";

@@ -252,7 +252,7 @@ function TikTokSection() {
   const changesThisWeek = user?.tiktokUsernameChangesThisWeek ?? 0;
 
   // Plan limits (mirrors backend plans.json)
-  const weekLimit: Record<string, number> = { free: 1, basic: 1, pro: -1 };
+  const weekLimit: Record<string, number> = { free: 0, basic: 1, pro: -1 };
   const limit = weekLimit[plan] ?? 1;
   const canDirectChange = limit === -1 || changesThisWeek < limit;
   const pendingTicket = tickets.find((t) => t.status === "pending" && t.type === "tiktok_username_change");
@@ -397,10 +397,14 @@ function TikTokSection() {
             <div className="space-y-3 p-3 rounded-lg bg-amber-400/10 border border-amber-400/20">
               <p className="text-sm text-amber-300 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                Você atingiu o limite de {limit} alteração(ões) por semana do seu plano {plan.toUpperCase()}.
+                {limit === 0
+                  ? "Seu plano gratuito nao permite alteracao direta do username."
+                  : `Voce atingiu o limite de ${limit} alteracao(oes) por semana do seu plano ${plan.toUpperCase()}.`}
               </p>
               <p className="text-xs text-muted-foreground">
-                Faça upgrade para Pro (trocas ilimitadas) ou solicite uma alteração especial via suporte.
+                {limit === 0
+                  ? "Faca upgrade para Basic ou Pro para alterar diretamente, ou solicite via suporte."
+                  : "Faca upgrade para Pro (trocas ilimitadas) ou solicite uma alteracao especial via suporte."}
               </p>
               <div className="flex gap-2">
                 <Link href="/pricing">
@@ -408,7 +412,7 @@ function TikTokSection() {
                 </Link>
                 <Button size="sm" variant="outline" onClick={() => setShowRequestModal(true)}>
                   <TicketCheck className="w-4 h-4 mr-1.5" />
-                  Solicitar alteração
+                  Solicitar alteracao
                 </Button>
               </div>
             </div>

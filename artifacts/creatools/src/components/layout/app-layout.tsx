@@ -22,6 +22,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAppVersion } from "@/hooks/use-app-version";
 
 type PlanLevel = "free" | "basic" | "pro";
 
@@ -83,6 +84,7 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
       { id: "effect-battle", label: "Effect Battle",  href: "/effect-battle", icon: "Sparkles",matchPrefix: "/effect-battle", visible: true, badge: "PRO", badgeColor: "#f97316" },
       { id: "troll-gift",    label: "Troll Gift",     href: "/troll-gift",    icon: "Zap",     matchPrefix: "/troll-gift",    visible: true, badge: "APP", badgeColor: "#22d3ee" },
       { id: "album",         label: "Álbum",          href: "/album",         icon: "Layers",  matchPrefix: "/album",         visible: true },
+      { id: "alert-overlays", label: "Alertas Overlay", href: "/alert-overlays", icon: "Sparkles", matchPrefix: "/alert-overlays", visible: true },
     ],
   },
   {
@@ -773,6 +775,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     try { return localStorage.getItem("sidebar_collapsed") === "true"; } catch { return false; }
   });
   const { liveCount } = useWatchlist();
+  const { currentVersion: appVersionData } = useAppVersion();
+  const appVersion = appVersionData?.version ?? null;
 
   const userPlan: PlanLevel = user?.plan ?? "free";
   const planCfg = PLAN_CONFIG[userPlan];
@@ -957,6 +961,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        )}
+
+        {/* Version display */}
+        {!sidebarCollapsed && appVersion && (
+          <div className="px-3 mt-2">
+            <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.2)" }}>v{appVersion}</span>
+          </div>
         )}
 
         {/* Collapse button */}

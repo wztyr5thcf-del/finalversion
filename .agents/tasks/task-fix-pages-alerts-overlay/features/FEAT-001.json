@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Fix minigames main page to include navigation links to all sub-games (roleta, word-bomb, sentido, defender, bau). Fix overlay stats/live format default to VERTICAL (not horizontal), with option to switch to horizontal. Fix profile.tsx username change field to be properly disabled/hidden when user has reached their plan's change limit.",
+  "status": "completed",
+  "steps": [
+    "1. In artifacts/creatools/src/pages/minigames.tsx: Add a navigation section (cards/grid) at the top or as a new tab linking to each sub-game page (/minigames/roleta, /minigames/word-bomb, /minigames/sentido, /minigames/defender, /minigames/bau). Each card should show the game name, a brief description, and an icon/emoji. The existing wheel/picker/race tabs remain but the sub-games should be prominently accessible.",
+    "2. In artifacts/creatools/src/pages/overlays.tsx: Change the statsLayout default from 'horizontal' to 'vertical'. Update buildStatsUrl() so it only appends the layout param if it differs from 'vertical' (since vertical is now default). The dropdown should still offer both horizontal and vertical options.",
+    "3. In artifacts/creatools/src/pages/overlay-stats.tsx: Change the default layout from 'horizontal' to 'vertical' (line: const layout = p.get('layout') ?? 'horizontal' should become 'vertical').",
+    "4. In artifacts/creatools/src/pages/profile.tsx: In the TikTokSection component, the direct change input is currently shown when canDirectChange is true AND there's no pending ticket. But the logic for canDirectChange uses weekLimit which hardcodes {free:1, basic:1, pro:-1}. The plans-store shows free has 0 changes per week, not 1. Fix the frontend weekLimit to match the backend: free=0, basic=1, pro=-1. Also, even when canDirectChange is false, ensure the input field is truly hidden (not just disabled) so free-plan users cannot attempt a change at all.",
+    "5. Verify that the frontend correctly hides the username change input for free users (limit=0 means they can never directly change, must always use support tickets) and shows 'Limite atingido' for basic users who have used their 1 change."
+  ],
+  "acceptance_criteria": [
+    "minigames.tsx page shows clear navigation cards/links to all 5 sub-games",
+    "overlays.tsx stats layout defaults to 'vertical'",
+    "overlay-stats.tsx uses 'vertical' as default layout",
+    "profile.tsx hides the direct change input for free-plan users (limit=0)",
+    "profile.tsx weekLimit matches backend: free=0, basic=1, pro=-1",
+    "Build passes: pnpm --filter @workspace/creatools run build"
+  ],
+  "verification": [
+    "pnpm --filter @workspace/creatools run build"
+  ],
+  "blocked_reason": null,
+  "findings": "Pre-existing typecheck errors (44) in unrelated files due to lib/api-client-react/dist not being built. None in our modified files. Build requires PORT and BASE_PATH env vars for vite config. Used pnpm approve-builds for esbuild."
+}

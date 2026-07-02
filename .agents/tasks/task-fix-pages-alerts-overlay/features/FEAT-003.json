@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-003",
+  "type": "fix",
+  "description": "Address code review issues for alert-overlays: (1) Add minPlan validation on POST/PATCH to only accept 'free'|'basic'|'pro', (2) Add isActive filter on single-overlay GET for non-admin users, (3) Remove cascading purchase deletion from DELETE endpoint, (4) Add composite DB index on (userId, alertOverlayId) in purchases table.",
+  "status": "completed",
+  "steps": [
+    "1. In artifacts/api-server/src/routes/alert-overlays.ts POST route: Add validation that minPlan is one of ['free', 'basic', 'pro'], return 400 if not.",
+    "2. In artifacts/api-server/src/routes/alert-overlays.ts PATCH route: Add validation that minPlan (if provided) is one of ['free', 'basic', 'pro'], return 400 if not.",
+    "3. In artifacts/api-server/src/routes/alert-overlays.ts GET /:id route: For non-admin users, add isActive: true filter. Admin users should still see inactive overlays.",
+    "4. In artifacts/api-server/src/routes/alert-overlays.ts DELETE route: Remove the line that deletes purchase records (keep purchases as historical facts).",
+    "5. In lib/db/src/schema/alert-overlays.ts: Add a composite index on (userId, alertOverlayId) to the alertOverlayPurchasesTable."
+  ],
+  "acceptance_criteria": [
+    "POST /alert-overlays rejects minPlan values not in ['free', 'basic', 'pro'] with 400",
+    "PATCH /alert-overlays/:id rejects minPlan values not in ['free', 'basic', 'pro'] with 400",
+    "GET /alert-overlays/:id returns 404 for inactive overlays when requested by non-admin users",
+    "GET /alert-overlays/:id returns inactive overlays for admin users",
+    "DELETE /alert-overlays/:id does NOT delete purchase records",
+    "Purchases table has an index on (userId, alertOverlayId)",
+    "Build passes: pnpm --filter @workspace/api-server run build"
+  ],
+  "verification": [
+    "pnpm --filter @workspace/api-server run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 4 review fixes implemented: (1) minPlan validation on POST/PATCH rejects non-allowlisted values, (2) GET /:id filters by isActive for non-admin users while admins can still see inactive overlays, (3) DELETE no longer cascades to purchase records, (4) Composite index on (userId, alertOverlayId) added to purchases table. Build and typecheck pass cleanly."
+}
