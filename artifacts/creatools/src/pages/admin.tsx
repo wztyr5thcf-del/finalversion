@@ -5286,12 +5286,477 @@ function PlanLimitRow({ planId, msgs, creative, priority, onSave }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: ANALYTICS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function AnalyticsSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <BarChart2 className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Analytics</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Painel de analytics em desenvolvimento.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: WEBHOOKS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function WebhooksSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Link2 className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Webhooks</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Gerenciamento de webhooks em desenvolvimento.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: RATE LIMITS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function RateLimitsSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Zap className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Rate Limits</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Configuracao de rate limits em desenvolvimento.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: DEV TOOLS (stub)
+// ════════════════════════════════════════════════════════════════════════════
+function DevToolsSection() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Code2 className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-xl font-bold text-white">Dev Tools</h2>
+      </div>
+      <div className="glass-card rounded-2xl p-6">
+        <p className="text-sm text-muted-foreground">Ferramentas de desenvolvimento em construcao.</p>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: BATTLE AI ADMIN
+// ════════════════════════════════════════════════════════════════════════════
+interface BattleAiAvatar {
+  name: string;
+  previewUrl: string;
+  voiceId: string;
+  gender: string;
+  description: string;
+}
+
+interface BattleAiConfig {
+  id: string;
+  availableAvatars: string;
+  pricePerSession: number;
+  planRestrictions: string;
+  maxSessionDuration: number;
+  enabled: boolean;
+  updatedAt: string;
+}
+
+interface BattleAiSession {
+  id: string;
+  userId: string;
+  status: string;
+  avatarConfig: string;
+  tiktokUsername: string;
+  rtmpUrl: string;
+  heygenSessionId: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+function BattleAiAdminSection() {
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [enabled, setEnabled] = useState(false);
+  const [avatars, setAvatars] = useState<BattleAiAvatar[]>([]);
+  const [pricePerSession, setPricePerSession] = useState(0);
+  const [planRestrictions, setPlanRestrictions] = useState({ free: false, basic: true, pro: true });
+  const [maxSessionDuration, setMaxSessionDuration] = useState(60);
+  const [sessions, setSessions] = useState<BattleAiSession[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [showAvatarDialog, setShowAvatarDialog] = useState(false);
+  const [editingAvatarIdx, setEditingAvatarIdx] = useState<number | null>(null);
+  const [avatarForm, setAvatarForm] = useState<BattleAiAvatar>({ name: "", previewUrl: "", voiceId: "", gender: "female", description: "" });
+
+  const fetchConfig = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await authFetch("/battle-ai/admin/config", token!) as BattleAiConfig;
+      setEnabled(data.enabled);
+      setPricePerSession(data.pricePerSession);
+      setMaxSessionDuration(data.maxSessionDuration);
+      try { setAvatars(JSON.parse(data.availableAvatars) as BattleAiAvatar[]); } catch { setAvatars([]); }
+      try { setPlanRestrictions(JSON.parse(data.planRestrictions) as { free: boolean; basic: boolean; pro: boolean }); } catch { /* keep defaults */ }
+    } catch {
+      toast({ title: "Erro", description: "Falha ao carregar config Battle AI", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  }, [token, toast]);
+
+  const fetchSessions = useCallback(async () => {
+    try {
+      setSessionsLoading(true);
+      const data = await authFetch("/battle-ai/admin/sessions", token!) as { sessions: BattleAiSession[] };
+      setSessions(data.sessions ?? []);
+    } catch {
+      /* ignore */
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { void fetchConfig(); void fetchSessions(); }, [fetchConfig, fetchSessions]);
+
+  const saveConfig = async () => {
+    try {
+      setSaving(true);
+      await authFetch("/battle-ai/admin/config", token!, {
+        method: "PUT",
+        body: JSON.stringify({
+          enabled,
+          availableAvatars: JSON.stringify(avatars),
+          pricePerSession,
+          planRestrictions: JSON.stringify(planRestrictions),
+          maxSessionDuration,
+        }),
+      });
+      toast({ title: "Salvo", description: "Configuracao Battle AI atualizada com sucesso." });
+    } catch {
+      toast({ title: "Erro", description: "Falha ao salvar configuracao", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const openAddAvatar = () => {
+    setEditingAvatarIdx(null);
+    setAvatarForm({ name: "", previewUrl: "", voiceId: "", gender: "female", description: "" });
+    setShowAvatarDialog(true);
+  };
+
+  const openEditAvatar = (idx: number) => {
+    setEditingAvatarIdx(idx);
+    setAvatarForm({ ...avatars[idx] });
+    setShowAvatarDialog(true);
+  };
+
+  const saveAvatar = () => {
+    if (!avatarForm.name.trim()) return;
+    if (editingAvatarIdx !== null) {
+      const updated = [...avatars];
+      updated[editingAvatarIdx] = { ...avatarForm };
+      setAvatars(updated);
+    } else {
+      setAvatars([...avatars, { ...avatarForm }]);
+    }
+    setShowAvatarDialog(false);
+  };
+
+  const removeAvatar = (idx: number) => {
+    setAvatars(avatars.filter((_, i) => i !== idx));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Sparkles className="w-5 h-5 text-cyan-400" />
+          <h2 className="text-xl font-bold text-white">Battle AI</h2>
+          <Badge variant="outline" className="text-cyan-400 border-cyan-400/50 text-xs">BETA</Badge>
+        </div>
+        <Button onClick={() => void saveConfig()} disabled={saving} className="gap-2">
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Salvar Configuracao
+        </Button>
+      </div>
+
+      {/* Enable/Disable Toggle */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-white">Status do Recurso</CardTitle>
+          <CardDescription>Ativar ou desativar o Battle AI para todos os usuarios.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-3">
+            <Switch checked={enabled} onCheckedChange={setEnabled} />
+            <span className={`text-sm font-medium ${enabled ? "text-green-400" : "text-muted-foreground"}`}>
+              {enabled ? "Ativo" : "Desativado"}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pricing & Duration */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="glass-card border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-white">Preco por Sessao</CardTitle>
+            <CardDescription>Valor cobrado por cada sessao de Battle AI.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={0}
+                step={0.01}
+                value={pricePerSession}
+                onChange={(e) => setPricePerSession(Number(e.target.value))}
+                className="w-32 bg-background border-white/10"
+              />
+              <span className="text-sm text-muted-foreground">BRL</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-card border-white/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-white">Duracao Maxima</CardTitle>
+            <CardDescription>Tempo maximo por sessao em minutos.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={1}
+                max={480}
+                value={maxSessionDuration}
+                onChange={(e) => setMaxSessionDuration(Number(e.target.value))}
+                className="w-32 bg-background border-white/10"
+              />
+              <span className="text-sm text-muted-foreground">minutos</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Plan Restrictions */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-white">Restricoes de Plano</CardTitle>
+          <CardDescription>Quais planos podem acessar o Battle AI.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={planRestrictions.free}
+                onCheckedChange={(v) => setPlanRestrictions({ ...planRestrictions, free: !!v })}
+              />
+              <span className="text-sm text-white">Free</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={planRestrictions.basic}
+                onCheckedChange={(v) => setPlanRestrictions({ ...planRestrictions, basic: !!v })}
+              />
+              <span className="text-sm text-white">Basic</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={planRestrictions.pro}
+                onCheckedChange={(v) => setPlanRestrictions({ ...planRestrictions, pro: !!v })}
+              />
+              <span className="text-sm text-white">Pro</span>
+            </label>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Avatars Management */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base text-white">Avatares Disponiveis</CardTitle>
+              <CardDescription>Gerencie os avatares que os usuarios podem escolher.</CardDescription>
+            </div>
+            <Button size="sm" variant="outline" onClick={openAddAvatar} className="gap-1 border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10">
+              <Plus className="w-3 h-3" /> Adicionar
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {avatars.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">Nenhum avatar configurado.</p>
+          ) : (
+            <div className="space-y-3">
+              {avatars.map((avatar, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/8">
+                  {avatar.previewUrl ? (
+                    <img src={avatar.previewUrl} alt={avatar.name} className="w-10 h-10 rounded-full object-cover border border-white/10" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-cyan-400/20 flex items-center justify-center">
+                      <Users2 className="w-5 h-5 text-cyan-400" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{avatar.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{avatar.gender} &middot; Voice: {avatar.voiceId || "N/A"}</p>
+                  </div>
+                  <Button size="sm" variant="ghost" onClick={() => openEditAvatar(idx)} className="h-7 w-7 p-0 text-muted-foreground hover:text-white">
+                    <Edit2 className="w-3 h-3" />
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => removeAvatar(idx)} className="h-7 w-7 p-0 text-muted-foreground hover:text-red-400">
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Sessions Table */}
+      <Card className="glass-card border-white/10">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base text-white">Sessoes</CardTitle>
+              <CardDescription>Todas as sessoes de Battle AI.</CardDescription>
+            </div>
+            <Button size="sm" variant="ghost" onClick={() => void fetchSessions()} disabled={sessionsLoading} className="gap-1 text-cyan-400">
+              <RefreshCw className={`w-3 h-3 ${sessionsLoading ? "animate-spin" : ""}`} /> Atualizar
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {sessions.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">Nenhuma sessao encontrada.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-white/8">
+                    <TableHead className="text-xs">ID</TableHead>
+                    <TableHead className="text-xs">Usuario</TableHead>
+                    <TableHead className="text-xs">Status</TableHead>
+                    <TableHead className="text-xs">TikTok</TableHead>
+                    <TableHead className="text-xs">Inicio</TableHead>
+                    <TableHead className="text-xs">Fim</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sessions.map((session) => (
+                    <TableRow key={session.id} className="border-white/5">
+                      <TableCell className="text-xs font-mono text-muted-foreground">{session.id.slice(0, 8)}...</TableCell>
+                      <TableCell className="text-xs">{session.userId.slice(0, 8)}...</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={`text-xs ${
+                          session.status === "streaming" ? "text-green-400 border-green-400/50" :
+                          session.status === "error" ? "text-red-400 border-red-400/50" :
+                          session.status === "stopped" ? "text-yellow-400 border-yellow-400/50" :
+                          "text-muted-foreground border-white/20"
+                        }`}>
+                          {session.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs">{session.tiktokUsername || "-"}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {session.startedAt ? new Date(session.startedAt).toLocaleString("pt-BR") : "-"}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {session.endedAt ? new Date(session.endedAt).toLocaleString("pt-BR") : "-"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Avatar Dialog */}
+      <Dialog open={showAvatarDialog} onOpenChange={setShowAvatarDialog}>
+        <DialogContent className="bg-background border-white/10">
+          <DialogHeader>
+            <DialogTitle>{editingAvatarIdx !== null ? "Editar Avatar" : "Adicionar Avatar"}</DialogTitle>
+            <DialogDescription>Preencha as informacoes do avatar.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-xs text-muted-foreground">Nome</Label>
+              <Input value={avatarForm.name} onChange={(e) => setAvatarForm({ ...avatarForm, name: e.target.value })} className="mt-1 bg-background border-white/10" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Preview URL</Label>
+              <Input value={avatarForm.previewUrl} onChange={(e) => setAvatarForm({ ...avatarForm, previewUrl: e.target.value })} className="mt-1 bg-background border-white/10" placeholder="https://..." />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Voice ID</Label>
+              <Input value={avatarForm.voiceId} onChange={(e) => setAvatarForm({ ...avatarForm, voiceId: e.target.value })} className="mt-1 bg-background border-white/10" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Genero</Label>
+              <Select value={avatarForm.gender} onValueChange={(v) => setAvatarForm({ ...avatarForm, gender: v })}>
+                <SelectTrigger className="mt-1 bg-background border-white/10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="female">Feminino</SelectItem>
+                  <SelectItem value="male">Masculino</SelectItem>
+                  <SelectItem value="non-binary">Nao-binario</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Descricao</Label>
+              <Textarea value={avatarForm.description} onChange={(e) => setAvatarForm({ ...avatarForm, description: e.target.value })} className="mt-1 bg-background border-white/10" rows={3} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowAvatarDialog(false)}>Cancelar</Button>
+            <Button onClick={saveAvatar} className="gap-1"><Check className="w-3 h-3" /> Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // MAIN ADMIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
-type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions" | "live-monitor" | "ai-assistant";
+type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions" | "live-monitor" | "ai-assistant" | "analytics" | "webhooks" | "dev-tools" | "rate-limits" | "battle-ai";
 
 const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentType<{ className?: string }>; badge?: string }> = [
   { id: "overview",      label: "Visao Geral",       icon: LayoutDashboard },
+  { id: "analytics",     label: "Analytics",          icon: BarChart2, badge: "NEW" },
   { id: "live-monitor",  label: "Lives / Monitoramento", icon: Radio },
   { id: "users",         label: "Usuarios",           icon: Users2 },
   { id: "roles",         label: "Funcoes",            icon: Star },
@@ -5299,12 +5764,16 @@ const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentT
   { id: "announcements", label: "Anuncios",           icon: Bell },
   { id: "support",       label: "Suporte",            icon: MessageSquare },
   { id: "ai-assistant",  label: "IA Assistente",      icon: Sparkles, badge: "AI" },
+  { id: "battle-ai",     label: "Battle AI",          icon: Gamepad2, badge: "BETA" },
   { id: "paginas",       label: "Paginas",            icon: FileText },
   { id: "content",       label: "Conteudo",           icon: BookOpen },
   { id: "customization", label: "Customizacao",       icon: Palette },
   { id: "landing",       label: "Landing Page",       icon: Globe },
   { id: "gifts",         label: "Gifts TikTok",       icon: Diamond },
   { id: "alert-overlays",label: "Alertas Overlay",    icon: Video },
+  { id: "webhooks",      label: "Webhooks",           icon: Link2, badge: "NEW" },
+  { id: "rate-limits",   label: "Rate Limits",        icon: Zap, badge: "NEW" },
+  { id: "dev-tools",     label: "Dev Tools",          icon: Code2, badge: "NEW" },
   { id: "versions",     label: "Versoes",             icon: Tag },
   { id: "database",      label: "Banco de Dados",     icon: Database },
   { id: "sistema",       label: "Sistema",            icon: Server },
@@ -5396,6 +5865,7 @@ export default function Admin() {
       {/* Content */}
       <div className="flex-1 min-w-0 p-6 overflow-y-auto">
         {activeSection === "overview"      && <VisaoGeralSection />}
+        {activeSection === "analytics"      && <AnalyticsSection />}
         {activeSection === "live-monitor"   && <LiveMonitorSection />}
         {activeSection === "users"         && <UsuariosSection roles={roles} />}
         {activeSection === "roles"         && <FuncoesSection roles={roles} permissions={permissions} onRefresh={fetchRoles} />}
@@ -5407,11 +5877,15 @@ export default function Admin() {
         {activeSection === "landing"       && <LandingPageTab allPlans={plans} />}
         {activeSection === "gifts"         && <GiftsSection />}
         {activeSection === "alert-overlays" && <AlertOverlaysAdminSection />}
+        {activeSection === "webhooks"      && <WebhooksSection />}
+        {activeSection === "rate-limits"   && <RateLimitsSection />}
+        {activeSection === "dev-tools"     && <DevToolsSection />}
         {activeSection === "versions"       && <VersoesSection />}
         {activeSection === "database"      && <BancoDadosSection />}
         {activeSection === "sistema"       && <SistemaSection />}
         {activeSection === "support"       && <SuporteSection />}
         {activeSection === "ai-assistant"   && <AIAssistantSection />}
+        {activeSection === "battle-ai"      && <BattleAiAdminSection />}
       </div>
     </div>
   );
