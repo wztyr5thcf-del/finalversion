@@ -22,6 +22,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAppVersion } from "@/hooks/use-app-version";
 
 type PlanLevel = "free" | "basic" | "pro";
 
@@ -774,6 +775,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     try { return localStorage.getItem("sidebar_collapsed") === "true"; } catch { return false; }
   });
   const { liveCount } = useWatchlist();
+  const { currentVersion: appVersionData } = useAppVersion();
+  const appVersion = appVersionData?.version ?? null;
 
   const userPlan: PlanLevel = user?.plan ?? "free";
   const planCfg = PLAN_CONFIG[userPlan];
@@ -958,6 +961,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        )}
+
+        {/* Version display */}
+        {!sidebarCollapsed && appVersion && (
+          <div className="px-3 mt-2">
+            <span className="text-[10px] font-mono" style={{ color: "rgba(255,255,255,0.2)" }}>v{appVersion}</span>
+          </div>
         )}
 
         {/* Collapse button */}

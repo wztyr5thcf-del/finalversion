@@ -4237,9 +4237,237 @@ function AlertOverlaysAdminSection() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// SEÇÃO: VERSÕES
+// ════════════════════════════════════════════════════════════════════════════
+interface AppVersion {
+  id: string;
+  version: string;
+  title: string;
+  description: string;
+  releasedAt: string;
+  createdAt: string;
+  createdBy: string;
+}
+
+function VersoesSection() {
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [versions, setVersions] = useState<AppVersion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ version: "", title: "", description: "", releasedAt: "" });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const d = await authFetch("/versions", token!) as { versions: AppVersion[] };
+      setVersions(d.versions ?? []);
+    } catch { /* ignore */ }
+    setLoading(false);
+  }, [token]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const resetForm = () => {
+    setForm({ version: "", title: "", description: "", releasedAt: "" });
+    setEditingId(null);
+    setShowForm(false);
+  };
+
+  const startEdit = (v: AppVersion) => {
+    setForm({
+      version: v.version,
+      title: v.title,
+      description: v.description,
+      releasedAt: v.releasedAt ? new Date(v.releasedAt).toISOString().slice(0, 16) : "",
+    });
+    setEditingId(v.id);
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.version.trim() || !form.title.trim()) {
+      toast({ title: "Versao e titulo sao obrigatorios", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const body: Record<string, string> = {
+        version: form.version.trim(),
+        title: form.title.trim(),
+        description: form.description.trim(),
+      };
+      if (form.releasedAt) body.releasedAt = new Date(form.releasedAt).toISOString();
+
+      if (editingId) {
+        await authFetch(`/versions/${editingId}`, token!, { method: "PUT", body: JSON.stringify(body) });
+        toast({ title: "Versao atualizada!" });
+      } else {
+        await authFetch("/versions", token!, { method: "POST", body: JSON.stringify(body) });
+        toast({ title: "Versao criada!" });
+      }
+      resetForm();
+      void load();
+    } catch (err) {
+      toast({ title: err instanceof Error ? err.message : "Erro ao salvar", variant: "destructive" });
+    }
+    setSaving(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await authFetch(`/versions/${id}`, token!, { method: "DELETE" });
+      toast({ title: "Versao removida" });
+      void load();
+    } catch {
+      toast({ title: "Erro ao remover", variant: "destructive" });
+    }
+  };
+
+  const currentVersion = versions[0];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
+            <Tag className="w-5 h-5 text-cyan-400" />Versoes do App
+          </h2>
+          <p className="text-sm text-muted-foreground">Gerencie o changelog e as versoes da plataforma.</p>
+        </div>
+        <Button onClick={() => { resetForm(); setShowForm(true); }} className="bg-purple-600 hover:bg-purple-700">
+          <Plus className="w-4 h-4 mr-2" />Nova Versao
+        </Button>
+      </div>
+
+      {/* Current version badge */}
+      {currentVersion && (
+        <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: "rgba(34,211,238,0.06)", border: "1px solid rgba(34,211,238,0.2)" }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(34,211,238,0.15)" }}>
+            <Tag className="w-5 h-5 text-cyan-400" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">Versao atual: <span className="text-cyan-400">v{currentVersion.version}</span></p>
+            <p className="text-xs text-muted-foreground">{currentVersion.title} - {new Date(currentVersion.releasedAt).toLocaleDateString("pt-BR")}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Create/Edit form */}
+      {showForm && (
+        <Card className="border-purple-500/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">{editingId ? "Editar Versao" : "Nova Versao"}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs">Numero da versao *</Label>
+                <Input value={form.version} onChange={(e) => setForm((p) => ({ ...p, version: e.target.value }))} placeholder="Ex: 1.0.0, 1.1.0, 2.0.0" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs">Titulo *</Label>
+                <Input value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} placeholder="Ex: Lancamento Inicial" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Descricao (changelog)</Label>
+              <Textarea
+                value={form.description}
+                onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Descreva as mudancas desta versao..."
+                rows={5}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Data do release</Label>
+              <Input
+                type="datetime-local"
+                value={form.releasedAt}
+                onChange={(e) => setForm((p) => ({ ...p, releasedAt: e.target.value }))}
+              />
+              <p className="text-[10px] text-muted-foreground">Deixe vazio para usar a data atual.</p>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleSave} disabled={saving} className="bg-purple-600 hover:bg-purple-700">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                {editingId ? "Atualizar" : "Criar"}
+              </Button>
+              <Button variant="outline" onClick={resetForm}>Cancelar</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Versions list */}
+      {loading ? (
+        <div className="py-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-400" /></div>
+      ) : versions.length === 0 ? (
+        <Card>
+          <CardContent className="py-10 text-center text-muted-foreground">
+            <Tag className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p className="text-sm">Nenhuma versao registrada.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {versions.map((v, idx) => (
+            <Card key={v.id} className={idx === 0 ? "border-cyan-500/20" : ""}>
+              <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-bold text-cyan-400">v{v.version}</span>
+                      <span className="text-sm font-semibold text-white">{v.title}</span>
+                      {idx === 0 && (
+                        <Badge className="text-[9px] bg-cyan-500/10 text-cyan-400 border-cyan-500/20">Atual</Badge>
+                      )}
+                    </div>
+                    {v.description && (
+                      <p className="text-xs text-muted-foreground whitespace-pre-wrap mt-1">{v.description}</p>
+                    )}
+                    <p className="text-[10px] text-muted-foreground mt-2">
+                      Publicado em {new Date(v.releasedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => startEdit(v)}>
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Remover versao v{v.version}?</AlertDialogTitle>
+                          <AlertDialogDescription>Esta versao sera removida permanentemente do historico.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction className="bg-destructive hover:bg-destructive/80" onClick={() => void handleDelete(v.id)}>Remover</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // MAIN ADMIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
-type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays";
+type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions";
 
 const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentType<{ className?: string }>; badge?: string }> = [
   { id: "overview",      label: "Visao Geral",       icon: LayoutDashboard },
@@ -4254,6 +4482,7 @@ const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentT
   { id: "landing",       label: "Landing Page",       icon: Globe },
   { id: "gifts",         label: "Gifts TikTok",       icon: Diamond },
   { id: "alert-overlays",label: "Alertas Overlay",    icon: Video },
+  { id: "versions",     label: "Versoes",             icon: Tag },
   { id: "database",      label: "Banco de Dados",     icon: Database },
   { id: "sistema",       label: "Sistema",            icon: Server },
 ];
@@ -4354,6 +4583,7 @@ export default function Admin() {
         {activeSection === "landing"       && <LandingPageTab allPlans={plans} />}
         {activeSection === "gifts"         && <GiftsSection />}
         {activeSection === "alert-overlays" && <AlertOverlaysAdminSection />}
+        {activeSection === "versions"       && <VersoesSection />}
         {activeSection === "database"      && <BancoDadosSection />}
         {activeSection === "sistema"       && <SistemaSection />}
         {activeSection === "support"       && <SuporteSection />}

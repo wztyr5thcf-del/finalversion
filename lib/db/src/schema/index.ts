@@ -8,3 +8,4 @@ export * from "./event_rules";
 export * from "./layouts";
 export * from "./media";
 export * from "./alert-overlays";
+export * from "./app-versions";

@@ -19,6 +19,7 @@ import profileRouter from "./profile";
 import giftsRouter from "./gifts";
 import layoutsRouter from "./layouts";
 import alertOverlaysRouter from "./alert-overlays";
+import versionsRouter from "./versions";
 
 const router: IRouter = Router();
 
@@ -42,5 +43,6 @@ router.use(profileRouter);
 router.use(giftsRouter);
 router.use(layoutsRouter);
 router.use(alertOverlaysRouter);
+router.use(versionsRouter);
 
 export default router;
