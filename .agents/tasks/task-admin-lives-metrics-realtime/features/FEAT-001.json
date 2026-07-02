@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Create live_sessions metrics table in the database schema and a background monitoring service that detects when a registered user goes live on TikTok and automatically records session metrics in real-time (viewers, gifts, likes, comments, duration, etc.). This enables leaderboards and analytics to form even when the user has not opened the app. Also fix the TikTok profile data fetching issue - when a user registers or links their TikTok, the system must properly fetch and save their profile picture, display name, and follower count from the tik.tools API.",
+  "status": "in_progress",
+  "steps": [
+    "1. Create new schema file lib/db/src/schema/live-sessions.ts with a liveSessionsTable (id, userId, tiktokUsername, roomId, startedAt, endedAt, peakViewers, totalViewers, totalGifts, totalDiamonds, totalLikes, totalComments, totalShares, totalFollows, totalNewSubscribers, duration in seconds, status: 'active'|'ended'). Also create a liveSessionEventsTable for granular time-series data (id, sessionId, timestamp, viewerCount, likesInWindow, giftsInWindow, diamondsInWindow, commentsInWindow). Export from lib/db/src/schema/index.ts.",
+    "2. Create artifacts/api-server/src/lib/live-monitor.ts - a background service that polls tik.tools /webcast/live_status for all registered users with a tiktokUsername every 60 seconds. When a user is detected live: create a session record, start monitoring via WebSocket or periodic polling (webcast/fetch endpoint), accumulate metrics. When stream ends: mark session as ended, calculate duration. Store periodic snapshots (every 30s) in liveSessionEventsTable for time-series analytics.",
+    "3. Initialize the live-monitor service on server startup in artifacts/api-server/src/app.ts (non-blocking, similar to plans seed pattern).",
+    "4. Fix the TikTok profile data fetching: In artifacts/api-server/src/routes/auth.ts registration flow, after saving the user, make an API call to tik.tools /api/user/profile to fetch profilePicture, displayName, followerCount and update the user record. Also create a periodic profile sync (e.g., every 6 hours) in the live-monitor service that refreshes tiktokProfilePicture, tiktokDisplayName, tiktokFollowerCount for all users.",
+    "5. Create API routes in a new file artifacts/api-server/src/routes/metrics.ts: GET /api/metrics/sessions (list user's sessions with pagination), GET /api/metrics/sessions/:id (session detail with time-series), GET /api/metrics/leaderboard (global leaderboard - top users by diamonds, viewers, hours live), GET /api/metrics/stats (user's aggregate stats). Register in routes/index.ts.",
+    "6. Enforce that the user's TikTok username (@) is their mandatory profile identifier - it must be automatically used as their display handle unless they have remaining username changes available in their plan. Update the profile endpoint in artifacts/api-server/src/routes/profile.ts to always show tiktokUsername as the primary identifier."
+  ],
+  "acceptance_criteria": [
+    "pnpm run build succeeds with the new schema, monitor service, and routes",
+    "liveSessionsTable and liveSessionEventsTable are defined with proper columns and exported from schema/index.ts",
+    "live-monitor.ts exports a startLiveMonitor() function that is called on app startup",
+    "The monitor polls all users' tiktokUsername for live status and creates/updates session records automatically",
+    "Profile data (photo, name, followers) is fetched from tik.tools on registration and periodically refreshed",
+    "Metrics API endpoints exist and return proper typed responses",
+    "The tiktokUsername is enforced as the primary profile identifier"
+  ],
+  "verification": [
+    "Run pnpm run build and confirm no type errors",
+    "Verify lib/db/src/schema/live-sessions.ts exports liveSessionsTable and liveSessionEventsTable",
+    "Verify artifacts/api-server/src/lib/live-monitor.ts exists and exports startLiveMonitor",
+    "Verify the monitor is initialized in app.ts",
+    "Verify artifacts/api-server/src/routes/metrics.ts has the required endpoints"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
