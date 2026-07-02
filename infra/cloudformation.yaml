@@ -362,7 +362,7 @@ Resources:
       DBInstanceIdentifier: creatools-db
       DBInstanceClass: !Ref DBInstanceClass
       Engine: postgres
-      EngineVersion: '16.4'
+      EngineVersion: '16.3'
       MasterUsername: !Ref DBUsername
       MasterUserPassword: !Ref DBPassword
       DBName: creatools
