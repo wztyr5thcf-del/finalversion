@@ -71,6 +71,8 @@ Resources:
       Tags:
         - Key: Name
           Value: creatools-vpc
+        - Key: AppManagerCFNStackKey
+          Value: !Ref AWS::StackName
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -299,6 +301,8 @@ Resources:
       Tags:
         - Key: Name
           Value: creatools-alb
+        - Key: AppManagerCFNStackKey
+          Value: !Ref AWS::StackName
 
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -380,6 +384,8 @@ Resources:
       Tags:
         - Key: Name
           Value: creatools-rds
+        - Key: AppManagerCFNStackKey
+          Value: !Ref AWS::StackName
 
   # =============================================================================
   # EC2 Instance
@@ -404,6 +410,8 @@ Resources:
       Tags:
         - Key: Name
           Value: creatools-server
+        - Key: AppManagerCFNStackKey
+          Value: !Ref AWS::StackName
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash

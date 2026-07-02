@@ -1,0 +1,27 @@
+[Unit]
+Description=GitHub Webhook Auto-Deploy Listener
+Documentation=https://github.com/your-org/creatools
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/creatools/infra/webhook
+ExecStart=/usr/bin/node /opt/creatools/infra/webhook/webhook-server.js
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=webhook-deploy
+
+# Environment variables
+EnvironmentFile=/opt/creatools/infra/webhook/.env
+
+# Security hardening
+NoNewPrivileges=false
+ProtectSystem=false
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target

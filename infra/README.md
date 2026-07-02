@@ -358,6 +358,123 @@ Atualmente o aplicativo usa Replit Object Storage para arquivos. Na AWS, isso pr
 - ALB health check (ja configurado)
 - Logs centralizados com CloudWatch Logs
 
+## Auto-Deploy via GitHub Webhook
+
+O sistema de auto-deploy permite que o servidor EC2 faca automaticamente `git pull` e rebuild quando um push e feito no repositorio GitHub.
+
+### Como Funciona
+
+1. Voce faz push para a branch `main` no GitHub
+2. O GitHub envia um POST para o webhook listener na EC2 (porta 9000)
+3. O listener valida o secret, executa `git pull` e `docker compose up -d --build`
+4. O deploy acontece automaticamente sem intervencao manual
+
+### Configurar o Webhook na EC2
+
+```bash
+ssh -i creatools-key.pem ec2-user@IP_DA_INSTANCIA
+
+# Executar o script de setup (como root)
+cd /opt/creatools/infra/webhook
+sudo bash setup-webhook.sh
+```
+
+O script vai:
+- Instalar Node.js (se necessario)
+- Gerar um WEBHOOK_SECRET aleatorio (anote-o!)
+- Configurar o servico systemd
+- Iniciar o listener na porta 9000
+
+### Abrir Porta 9000 no Security Group
+
+Adicione uma regra de entrada no Security Group da EC2:
+
+```bash
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-XXXXXXXXX \
+  --protocol tcp \
+  --port 9000 \
+  --cidr 0.0.0.0/0
+```
+
+> **Nota:** Para maior seguranca, voce pode restringir o acesso aos [IPs do GitHub](https://api.github.com/meta) (campo `hooks`).
+
+### Configurar o Webhook no GitHub
+
+1. Acesse o repositorio no GitHub
+2. Va em **Settings** > **Webhooks** > **Add webhook**
+3. Configure:
+   - **Payload URL:** `http://IP_DA_INSTANCIA:9000/webhook`
+   - **Content type:** `application/json`
+   - **Secret:** O valor do `WEBHOOK_SECRET` gerado no setup (esta em `/opt/creatools/infra/webhook/.env`)
+   - **Which events:** Selecione "Just the push event"
+   - **Active:** Marcado
+4. Clique em **Add webhook**
+
+### Verificar o Webhook
+
+Apos configurar, o GitHub envia um evento `ping` automaticamente. Verifique:
+
+```bash
+# Na EC2, verificar se o servico esta rodando
+systemctl status webhook-deploy.service
+
+# Verificar os logs
+journalctl -u webhook-deploy.service -f
+
+# Testar o health check
+curl http://localhost:9000/health
+```
+
+### Variaveis de Ambiente do Webhook
+
+O arquivo `/opt/creatools/infra/webhook/.env` contem:
+
+| Variavel | Padrao | Descricao |
+|----------|--------|-----------|
+| `WEBHOOK_SECRET` | - | Secret compartilhado com o GitHub (obrigatorio para seguranca) |
+| `WEBHOOK_PORT` | 9000 | Porta do listener |
+| `DEPLOY_BRANCH` | main | Branch que aciona o deploy |
+| `WEBHOOK_LOG` | /var/log/webhook-deploy.log | Arquivo de log |
+
+### Comandos Uteis
+
+```bash
+# Ver logs do webhook em tempo real
+journalctl -u webhook-deploy.service -f
+
+# Ver log de deploys
+tail -f /var/log/webhook-deploy.log
+
+# Reiniciar o webhook
+sudo systemctl restart webhook-deploy.service
+
+# Parar o webhook
+sudo systemctl stop webhook-deploy.service
+
+# Alterar o secret ou branch
+sudo nano /opt/creatools/infra/webhook/.env
+sudo systemctl restart webhook-deploy.service
+```
+
+### Troubleshooting do Webhook
+
+**Webhook nao recebe eventos:**
+- Verifique se a porta 9000 esta aberta no Security Group
+- Verifique se o servico esta rodando: `systemctl status webhook-deploy.service`
+- No GitHub, va em Settings > Webhooks e verifique "Recent Deliveries" para ver erros
+
+**Erro 401 (Invalid signature):**
+- O secret configurado no GitHub deve ser identico ao valor em `/opt/creatools/infra/webhook/.env`
+- Reconfigure o secret em ambos os lados se necessario
+
+**Deploy falha:**
+- Verifique os logs: `journalctl -u webhook-deploy.service -f`
+- Verifique permissoes: o servico roda como root para ter acesso ao Docker
+- Verifique espaco em disco: `df -h`
+
+---
+
 ## Destruir a Stack
 
 Para remover todos os recursos:
