@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Integrated AI Assistant: Full-stack implementation of an AI chat widget for all users with admin controls for personality/prompt configuration, plan-based message limits, support escalation, and creative overlay generation capabilities.",
-  "status": "pending",
+  "status": "completed",
   "steps": [
     "Step 1 - Create database schema for AI assistant in lib/db/src/schema/ai-assistant.ts: Tables needed: (a) ai_config - single-row config table with fields: id, system_prompt (text), personality_name (varchar), max_context_messages (int), enabled (boolean), support_escalation_enabled (boolean), creative_mode_enabled (boolean), allowed_topics (text array), blocked_topics (text array), updated_at. (b) ai_conversations - fields: id (uuid), user_id (references users), title (varchar), created_at, updated_at, status (active/archived/escalated). (c) ai_messages - fields: id (uuid), conversation_id (references ai_conversations), role (user/assistant/system), content (text), created_at, tokens_used (int). (d) ai_plan_limits - fields: id, plan_id (varchar), messages_per_month (int), creative_requests_per_month (int), priority (varchar: low/normal/high). Export all from lib/db/src/schema/index.ts.",
     "Step 2 - Create backend API routes in artifacts/api-server/src/routes/ai-chat.ts: Endpoints: (a) POST /api/ai/chat - sends message, returns AI response (respects plan limits, uses system prompt from ai_config), (b) GET /api/ai/conversations - list user conversations, (c) GET /api/ai/conversations/:id/messages - get messages for a conversation, (d) DELETE /api/ai/conversations/:id - archive/delete conversation, (e) GET /api/ai/config - admin only, get AI config, (f) PUT /api/ai/config - admin only, update AI config (prompt, personality, limits), (g) GET /api/ai/limits - get current user's usage vs limits for their plan, (h) POST /api/ai/escalate/:conversationId - escalate to human support. Register routes in artifacts/api-server/src/routes/index.ts. For the AI response, create a mock response system that returns contextual help messages (since we cannot guarantee an actual LLM API key exists). Structure it so a real LLM can be plugged in later by replacing the response generation function.",
@@ -26,5 +26,5 @@
     "pnpm run typecheck"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All builds pass (api-server, creatools, typecheck). Express 5 params require casting (req.params as { id: string }) for TypeScript. Frontend build requires PORT=5173 BASE_PATH=/ env vars. SupportWidget was replaced by AiChatWidget in app-layout.tsx. The mock AI response system uses keyword matching to provide contextual responses - can be replaced with real LLM later by modifying generateMockAiResponse in ai-chat.ts."
 }

@@ -4844,9 +4844,451 @@ function LiveMonitorSection() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// AI ASSISTANT ADMIN SECTION
+// ════════════════════════════════════════════════════════════════════════════
+interface AiConfigData {
+  systemPrompt: string;
+  personalityName: string;
+  maxContextMessages: number;
+  enabled: boolean;
+  supportEscalationEnabled: boolean;
+  creativeModeEnabled: boolean;
+  allowedTopics: string[] | null;
+  blockedTopics: string[] | null;
+}
+
+interface AiPlanLimitData {
+  id: string;
+  planId: string;
+  messagesPerMonth: number;
+  creativeRequestsPerMonth: number;
+  priority: string;
+}
+
+interface AiConvData {
+  id: string;
+  userId: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface AiMsgData {
+  id: string;
+  conversationId: string;
+  role: string;
+  content: string;
+  createdAt: string;
+  tokensUsed: number;
+}
+
+function AIAssistantSection() {
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [config, setConfig] = useState<AiConfigData>({
+    systemPrompt: "",
+    personalityName: "Crea AI",
+    maxContextMessages: 10,
+    enabled: true,
+    supportEscalationEnabled: true,
+    creativeModeEnabled: false,
+    allowedTopics: null,
+    blockedTopics: null,
+  });
+  const [planLimits, setPlanLimits] = useState<AiPlanLimitData[]>([]);
+  const [conversations, setConversations] = useState<AiConvData[]>([]);
+  const [selectedConv, setSelectedConv] = useState<AiConvData | null>(null);
+  const [convMessages, setConvMessages] = useState<AiMsgData[]>([]);
+  const [activeTab, setActiveTab] = useState<"config" | "limits" | "conversations">("config");
+  const [topicsInput, setTopicsInput] = useState("");
+  const [blockedInput, setBlockedInput] = useState("");
+
+  const fetchConfig = useCallback(async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const data = await authFetch("/ai/config", token) as { config: AiConfigData; planLimits: AiPlanLimitData[] };
+      if (data.config) {
+        setConfig(data.config);
+        setTopicsInput((data.config.allowedTopics ?? []).join(", "));
+        setBlockedInput((data.config.blockedTopics ?? []).join(", "));
+      }
+      setPlanLimits(data.planLimits ?? []);
+    } catch { /* ignore */ }
+    finally { setLoading(false); }
+  }, [token]);
+
+  const fetchConversations = useCallback(async () => {
+    if (!token) return;
+    try {
+      const data = await authFetch("/ai/admin/conversations?limit=50", token) as { conversations: AiConvData[] };
+      setConversations(data.conversations ?? []);
+    } catch { /* ignore */ }
+  }, [token]);
+
+  useEffect(() => { void fetchConfig(); void fetchConversations(); }, [fetchConfig, fetchConversations]);
+
+  async function saveConfig() {
+    if (!token) return;
+    setSaving(true);
+    try {
+      const payload = {
+        ...config,
+        allowedTopics: topicsInput.trim() ? topicsInput.split(",").map(s => s.trim()).filter(Boolean) : null,
+        blockedTopics: blockedInput.trim() ? blockedInput.split(",").map(s => s.trim()).filter(Boolean) : null,
+      };
+      await authFetch("/ai/config", token, { method: "PUT", body: JSON.stringify(payload) });
+      toast({ title: "Configuracao salva", description: "Configuracao da IA atualizada com sucesso." });
+    } catch {
+      toast({ title: "Erro", description: "Erro ao salvar configuracao.", variant: "destructive" });
+    } finally { setSaving(false); }
+  }
+
+  async function savePlanLimit(planId: string, data: { messagesPerMonth: number; creativeRequestsPerMonth: number; priority: string }) {
+    if (!token) return;
+    try {
+      await authFetch(`/ai/plan-limits/${planId}`, token, { method: "PUT", body: JSON.stringify(data) });
+      toast({ title: "Limite atualizado", description: `Limites do plano ${planId} atualizados.` });
+      void fetchConfig();
+    } catch {
+      toast({ title: "Erro", description: "Erro ao salvar limite.", variant: "destructive" });
+    }
+  }
+
+  async function viewConversation(conv: AiConvData) {
+    if (!token) return;
+    setSelectedConv(conv);
+    try {
+      const data = await authFetch(`/ai/admin/conversations/${conv.id}/messages`, token) as { messages: AiMsgData[] };
+      setConvMessages(data.messages ?? []);
+    } catch { /* ignore */ }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #06b6d4, #22c55e)", boxShadow: "0 0 16px rgba(6,182,212,0.3)" }}>
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-white">IA Assistente</h2>
+            <p className="text-xs text-muted-foreground">Configuracao, limites e monitoramento</p>
+          </div>
+        </div>
+        <Badge className={`text-xs px-3 py-1 ${config.enabled ? "bg-green-500/10 text-green-400 border-green-400/30" : "bg-red-500/10 text-red-400 border-red-400/30"}`}>
+          {config.enabled ? "Ativa" : "Desativada"}
+        </Badge>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        {([
+          { id: "config", label: "Configuracao", icon: Settings2 },
+          { id: "limits", label: "Limites por Plano", icon: CreditCard },
+          { id: "conversations", label: "Conversas", icon: MessageSquare },
+        ] as const).map(({ id, label, icon: Icon }) => (
+          <button key={id} onClick={() => setActiveTab(id)}
+            className={`flex-1 flex items-center justify-center gap-2 text-xs px-3 py-2 rounded-lg transition-all font-medium ${
+              activeTab === id ? "text-white" : "text-muted-foreground hover:text-white"
+            }`}
+            style={{
+              background: activeTab === id ? "rgba(6,182,212,0.15)" : "transparent",
+              border: activeTab === id ? "1px solid rgba(6,182,212,0.25)" : "1px solid transparent",
+            }}>
+            <Icon className="w-3.5 h-3.5" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Config Tab */}
+      {activeTab === "config" && (
+        <div className="space-y-4">
+          <Card className="border-white/8 bg-white/[0.02]">
+            <CardHeader>
+              <CardTitle className="text-base text-white">Personalidade e Prompt</CardTitle>
+              <CardDescription>Defina como a IA se comporta e responde</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Nome da personalidade</Label>
+                  <Input
+                    value={config.personalityName}
+                    onChange={(e) => setConfig({ ...config, personalityName: e.target.value })}
+                    placeholder="Crea AI"
+                    className="bg-background border-white/10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Max mensagens de contexto</Label>
+                  <Input
+                    type="number"
+                    value={config.maxContextMessages}
+                    onChange={(e) => setConfig({ ...config, maxContextMessages: Number(e.target.value) })}
+                    className="bg-background border-white/10"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">System Prompt</Label>
+                <Textarea
+                  value={config.systemPrompt}
+                  onChange={(e) => setConfig({ ...config, systemPrompt: e.target.value })}
+                  placeholder="Voce e um assistente virtual..."
+                  className="bg-background border-white/10 min-h-[120px] resize-y"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Topicos permitidos (separados por virgula)</Label>
+                  <Input
+                    value={topicsInput}
+                    onChange={(e) => setTopicsInput(e.target.value)}
+                    placeholder="overlays, planos, configuracoes..."
+                    className="bg-background border-white/10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Topicos bloqueados (separados por virgula)</Label>
+                  <Input
+                    value={blockedInput}
+                    onChange={(e) => setBlockedInput(e.target.value)}
+                    placeholder="politica, religiao..."
+                    className="bg-background border-white/10"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/8 bg-white/[0.02]">
+            <CardHeader>
+              <CardTitle className="text-base text-white">Funcionalidades</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between py-2 px-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div>
+                  <p className="text-sm font-medium text-white">IA Habilitada</p>
+                  <p className="text-xs text-muted-foreground">Liga/desliga o assistente para todos os usuarios</p>
+                </div>
+                <Switch checked={config.enabled} onCheckedChange={(v) => setConfig({ ...config, enabled: v })} />
+              </div>
+              <div className="flex items-center justify-between py-2 px-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div>
+                  <p className="text-sm font-medium text-white">Escalacao para suporte</p>
+                  <p className="text-xs text-muted-foreground">Permite escalar conversas para atendimento humano</p>
+                </div>
+                <Switch checked={config.supportEscalationEnabled} onCheckedChange={(v) => setConfig({ ...config, supportEscalationEnabled: v })} />
+              </div>
+              <div className="flex items-center justify-between py-2 px-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div>
+                  <p className="text-sm font-medium text-white">Modo criativo</p>
+                  <p className="text-xs text-muted-foreground">Permite sugestoes criativas de overlays e configuracoes</p>
+                </div>
+                <Switch checked={config.creativeModeEnabled} onCheckedChange={(v) => setConfig({ ...config, creativeModeEnabled: v })} />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Button onClick={() => void saveConfig()} disabled={saving} className="w-full">
+            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+            Salvar Configuracao
+          </Button>
+        </div>
+      )}
+
+      {/* Limits Tab */}
+      {activeTab === "limits" && (
+        <Card className="border-white/8 bg-white/[0.02]">
+          <CardHeader>
+            <CardTitle className="text-base text-white">Limites por Plano</CardTitle>
+            <CardDescription>Defina quantas mensagens cada plano pode enviar por mes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-white/8">
+                  <TableHead className="text-white/60">Plano</TableHead>
+                  <TableHead className="text-white/60">Msgs/mes</TableHead>
+                  <TableHead className="text-white/60">Criativos/mes</TableHead>
+                  <TableHead className="text-white/60">Prioridade</TableHead>
+                  <TableHead className="text-white/60"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(["free", "basic", "pro"] as const).map((planId) => {
+                  const limit = planLimits.find((l) => l.planId === planId);
+                  const msgs = limit?.messagesPerMonth ?? (planId === "free" ? 20 : planId === "basic" ? 100 : -1);
+                  const creative = limit?.creativeRequestsPerMonth ?? (planId === "pro" ? 50 : 0);
+                  const priority = limit?.priority ?? (planId === "pro" ? "high" : planId === "basic" ? "normal" : "low");
+                  return (
+                    <PlanLimitRow key={planId} planId={planId} msgs={msgs} creative={creative} priority={priority} onSave={savePlanLimit} />
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <p className="text-[10px] text-muted-foreground mt-3">Use -1 para ilimitado. Use 0 para bloquear.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Conversations Tab */}
+      {activeTab === "conversations" && (
+        <div className="space-y-4">
+          {selectedConv ? (
+            <Card className="border-white/8 bg-white/[0.02]">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => { setSelectedConv(null); setConvMessages([]); }}
+                    className="p-1.5 rounded-lg hover:bg-white/5 transition-colors text-muted-foreground hover:text-white">
+                    <ChevronRight className="w-4 h-4 rotate-180" />
+                  </button>
+                  <div>
+                    <CardTitle className="text-base text-white">{selectedConv.title}</CardTitle>
+                    <CardDescription>
+                      ID: {selectedConv.userId} | Status: {selectedConv.status} | {new Date(selectedConv.createdAt).toLocaleString("pt-BR")}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {convMessages.map((msg) => (
+                    <div key={msg.id} className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                      <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm`}
+                        style={{
+                          background: msg.role === "user" ? "rgba(6,182,212,0.1)" : msg.role === "system" ? "rgba(249,115,22,0.08)" : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${msg.role === "user" ? "rgba(6,182,212,0.2)" : msg.role === "system" ? "rgba(249,115,22,0.2)" : "rgba(255,255,255,0.06)"}`,
+                        }}>
+                        <p className="text-[10px] font-semibold mb-0.5" style={{ color: msg.role === "user" ? "#06b6d4" : msg.role === "system" ? "#f97316" : "#22c55e" }}>
+                          {msg.role === "user" ? "Usuario" : msg.role === "system" ? "Sistema" : "IA"}
+                        </p>
+                        <p className="text-white/80">{msg.content}</p>
+                        <p className="text-[9px] text-muted-foreground mt-1">{new Date(msg.createdAt).toLocaleString("pt-BR")}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {convMessages.length === 0 && (
+                    <p className="text-center text-sm text-muted-foreground py-8">Nenhuma mensagem</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-white/8 bg-white/[0.02]">
+              <CardHeader>
+                <CardTitle className="text-base text-white">Conversas Recentes</CardTitle>
+                <CardDescription>{conversations.length} conversas encontradas</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-1">
+                  {conversations.length === 0 ? (
+                    <p className="text-center text-sm text-muted-foreground py-8">Nenhuma conversa ainda</p>
+                  ) : (
+                    conversations.map((conv) => (
+                      <button key={conv.id} onClick={() => void viewConversation(conv)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all hover:bg-white/[0.04]"
+                        style={{ border: "1px solid rgba(255,255,255,0.04)" }}>
+                        <MessageSquare className="w-4 h-4 shrink-0" style={{ color: conv.status === "escalated" ? "#f97316" : "#06b6d4" }} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white truncate">{conv.title}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            User: {conv.userId.slice(0, 8)}... | {new Date(conv.updatedAt).toLocaleString("pt-BR")}
+                          </p>
+                        </div>
+                        <Badge className={`text-[9px] ${
+                          conv.status === "escalated" ? "bg-orange-500/10 text-orange-400 border-orange-400/30" :
+                          conv.status === "archived" ? "bg-muted/20 text-muted-foreground border-muted" :
+                          "bg-green-500/10 text-green-400 border-green-400/30"
+                        }`}>
+                          {conv.status === "escalated" ? "Escalada" : conv.status === "archived" ? "Arquivada" : "Ativa"}
+                        </Badge>
+                        <ChevronRight className="w-4 h-4 text-white/20" />
+                      </button>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PlanLimitRow({ planId, msgs, creative, priority, onSave }: {
+  planId: string; msgs: number; creative: number; priority: string;
+  onSave: (planId: string, data: { messagesPerMonth: number; creativeRequestsPerMonth: number; priority: string }) => Promise<void>;
+}) {
+  const [editMsgs, setEditMsgs] = useState(msgs);
+  const [editCreative, setEditCreative] = useState(creative);
+  const [editPriority, setEditPriority] = useState(priority);
+  const [saving, setSaving] = useState(false);
+
+  const changed = editMsgs !== msgs || editCreative !== creative || editPriority !== priority;
+
+  async function save() {
+    setSaving(true);
+    await onSave(planId, { messagesPerMonth: editMsgs, creativeRequestsPerMonth: editCreative, priority: editPriority });
+    setSaving(false);
+  }
+
+  return (
+    <TableRow className="border-white/6">
+      <TableCell>
+        <span className="text-sm font-semibold capitalize" style={{ color: planId === "free" ? "#9ca3af" : planId === "basic" ? "#06b6d4" : "#22c55e" }}>
+          {planId}
+        </span>
+      </TableCell>
+      <TableCell>
+        <Input type="number" value={editMsgs} onChange={(e) => setEditMsgs(Number(e.target.value))} className="w-20 h-8 text-xs bg-background border-white/10" />
+      </TableCell>
+      <TableCell>
+        <Input type="number" value={editCreative} onChange={(e) => setEditCreative(Number(e.target.value))} className="w-20 h-8 text-xs bg-background border-white/10" />
+      </TableCell>
+      <TableCell>
+        <Select value={editPriority} onValueChange={setEditPriority}>
+          <SelectTrigger className="w-24 h-8 text-xs bg-background border-white/10">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">Baixa</SelectItem>
+            <SelectItem value="normal">Normal</SelectItem>
+            <SelectItem value="high">Alta</SelectItem>
+          </SelectContent>
+        </Select>
+      </TableCell>
+      <TableCell>
+        {changed && (
+          <Button size="sm" variant="ghost" onClick={() => void save()} disabled={saving} className="h-7 text-xs text-cyan-400">
+            {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+          </Button>
+        )}
+      </TableCell>
+    </TableRow>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // MAIN ADMIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
-type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions" | "live-monitor";
+type AdminSection = "overview" | "users" | "roles" | "plans" | "announcements" | "content" | "customization" | "landing" | "sistema" | "paginas" | "database" | "support" | "gifts" | "alert-overlays" | "versions" | "live-monitor" | "ai-assistant";
 
 const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentType<{ className?: string }>; badge?: string }> = [
   { id: "overview",      label: "Visao Geral",       icon: LayoutDashboard },
@@ -4856,6 +5298,7 @@ const ADMIN_NAV: Array<{ id: AdminSection; label: string; icon: React.ComponentT
   { id: "plans",         label: "Planos",             icon: CreditCard },
   { id: "announcements", label: "Anuncios",           icon: Bell },
   { id: "support",       label: "Suporte",            icon: MessageSquare },
+  { id: "ai-assistant",  label: "IA Assistente",      icon: Sparkles, badge: "AI" },
   { id: "paginas",       label: "Paginas",            icon: FileText },
   { id: "content",       label: "Conteudo",           icon: BookOpen },
   { id: "customization", label: "Customizacao",       icon: Palette },
@@ -4968,6 +5411,7 @@ export default function Admin() {
         {activeSection === "database"      && <BancoDadosSection />}
         {activeSection === "sistema"       && <SistemaSection />}
         {activeSection === "support"       && <SuporteSection />}
+        {activeSection === "ai-assistant"   && <AIAssistantSection />}
       </div>
     </div>
   );

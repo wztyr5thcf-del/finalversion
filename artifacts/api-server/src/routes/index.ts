@@ -21,6 +21,7 @@ import layoutsRouter from "./layouts";
 import alertOverlaysRouter from "./alert-overlays";
 import versionsRouter from "./versions";
 import metricsRouter from "./metrics";
+import aiChatRouter from "./ai-chat";
 import { metricsAdminRouter } from "./metrics";
 
 const router: IRouter = Router();
@@ -48,5 +49,6 @@ router.use(alertOverlaysRouter);
 router.use(versionsRouter);
 router.use(metricsRouter);
 router.use(metricsAdminRouter);
+router.use(aiChatRouter);
 
 export default router;

@@ -1,4 +1,4 @@
-import SupportWidget from "@/components/support-widget";
+import AiChatWidget from "@/components/ai-chat-widget";
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard, Activity, Settings, Diamond,
@@ -1011,8 +1011,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </main>
       </div>
 
-      {/* Floating support widget */}
-      <SupportWidget />
+      {/* Floating AI chat widget (replaces support widget) */}
+      <AiChatWidget />
     </div>
   );
 }

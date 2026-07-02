@@ -10,3 +10,4 @@ export * from "./media";
 export * from "./alert-overlays";
 export * from "./app-versions";
 export * from "./live-sessions";
+export * from "./ai-assistant";
