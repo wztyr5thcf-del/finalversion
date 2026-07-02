@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import {
   Gamepad2, RotateCcw, Play, Square, Plus, Trash2,
-  Wifi, WifiOff, User, Shuffle, Gift, Zap, X,
+  Wifi, WifiOff, User, Shuffle, Gift, Zap, X, ChevronRight,
 } from "lucide-react";
 
 // ── Wheel Spin ────────────────────────────────────────────────────────────────
@@ -523,6 +524,35 @@ export default function Minigames() {
           <p className="text-muted-foreground mt-1 text-sm">Engaje sua audiência com jogos interativos durante a LIVE</p>
         </div>
       </div>
+
+      {/* Sub-games navigation */}
+      <div className="space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Jogos interativos</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[
+            { href: "/minigames/roleta",    emoji: "🎰", title: "Roleta",          desc: "Roda personalizavel com desafios e premios para a live" },
+            { href: "/minigames/word-bomb",  emoji: "💣", title: "Word Bomb",       desc: "Jogo de palavras com temporizador para o chat participar" },
+            { href: "/minigames/sentido",    emoji: "🧠", title: "Verdade ou Mito", desc: "Afirmacoes para a galera votar se e verdade ou mentira" },
+            { href: "/minigames/defender",   emoji: "🛡️", title: "Defender",        desc: "Defenda a base dos invasores com presentes do chat" },
+            { href: "/minigames/bau",        emoji: "🎁", title: "Bau",             desc: "Caixa de premios com probabilidades customizaveis" },
+          ].map((game) => (
+            <Link key={game.href} href={game.href}>
+              <Card className="border-border bg-card hover:bg-accent/50 hover:border-primary/30 transition-all cursor-pointer group">
+                <CardContent className="p-4 flex items-center gap-3">
+                  <span className="text-2xl shrink-0">{game.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm group-hover:text-primary transition-colors">{game.title}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1">{game.desc}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <Separator />
 
       <Tabs defaultValue="wheel">
         <TabsList className="bg-card border border-border">
