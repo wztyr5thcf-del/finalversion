@@ -268,10 +268,10 @@ export default function Overlays() {
   return (
     <div className="space-y-6 max-w-5xl">
       {/* ── Header ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600/20 via-cyan-500/10 to-pink-500/20 border border-white/10 p-6">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,92,246,0.15),transparent_60%)] pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-600/15 via-green-500/8 to-cyan-500/10 border border-white/10 p-6">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.12),transparent_60%)] pointer-events-none" />
         <div className="relative flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/30">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-green-500 flex items-center justify-center shrink-0 shadow-lg shadow-cyan-500/30">
             <Monitor className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
@@ -385,7 +385,7 @@ export default function Overlays() {
         <TabsContent value="combo" className="space-y-4">
           <Card>
             <CardContent className="pt-5 space-y-5">
-              <SectionHeader icon={Gamepad2} title="Combos & Tap-Tap" color="bg-gradient-to-br from-pink-500 to-purple-600"
+              <SectionHeader icon={Gamepad2} title="Combos & Tap-Tap" color="bg-gradient-to-br from-cyan-500 to-teal-600"
                 desc="Animação central na tela quando um gift é repetido (2x, 3x, LUVA!) ou muitos likes chegam ao mesmo tempo." />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -556,7 +556,7 @@ export default function Overlays() {
         <TabsContent value="subscribe" className="space-y-4">
           <Card>
             <CardContent className="pt-5 space-y-5">
-              <SectionHeader icon={Star} title="Alerta de Membros / Subscribe" color="bg-gradient-to-br from-violet-500 to-indigo-600"
+              <SectionHeader icon={Star} title="Alerta de Membros / Subscribe" color="bg-gradient-to-br from-cyan-500 to-blue-600"
                 desc="Animação exclusiva quando um viewer assina (se torna membro) da sua live. Aparece automaticamente." />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -691,7 +691,7 @@ export default function Overlays() {
         <TabsContent value="basic" className="space-y-4">
           <Card>
             <CardContent className="pt-5 space-y-5">
-              <SectionHeader icon={Monitor} title="Chat + Eventos" color="bg-gradient-to-br from-violet-500 to-fuchsia-600"
+              <SectionHeader icon={Monitor} title="Chat + Eventos" color="bg-gradient-to-br from-cyan-500 to-green-600"
                 desc="Overlay clássico com chat ao vivo, alertas de gift e barra de stats no canto. O mais completo." />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
