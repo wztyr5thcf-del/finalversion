@@ -81,15 +81,20 @@ router.get("/alert-overlays/:id", requireAuth, async (req: Request, res: Respons
   const userId = (req as Request & { userId: string }).userId;
   const { id } = req.params as { id: string };
 
+  const user = await getUserById(userId);
+  const userPlan = (user?.plan ?? "free") as PlanLevel;
+  const isAdmin = user?.isAdmin === true;
+
   const [overlay] = await db
     .select()
     .from(alertOverlaysTable)
-    .where(eq(alertOverlaysTable.id, id));
+    .where(
+      isAdmin
+        ? eq(alertOverlaysTable.id, id)
+        : and(eq(alertOverlaysTable.id, id), eq(alertOverlaysTable.isActive, true))
+    );
 
   if (!overlay) { res.status(404).json({ error: "Overlay nao encontrado." }); return; }
-
-  const user = await getUserById(userId);
-  const userPlan = (user?.plan ?? "free") as PlanLevel;
 
   const [purchase] = await db
     .select()
@@ -122,6 +127,12 @@ router.post("/alert-overlays", requireAdminMiddleware, async (req: Request, res:
     res.status(400).json({ error: "Nome, previewUrl e overlayUrl sao obrigatorios." }); return;
   }
 
+  const validPlans = ["free", "basic", "pro"];
+  const resolvedMinPlan = minPlan || "free";
+  if (!validPlans.includes(resolvedMinPlan)) {
+    res.status(400).json({ error: "minPlan invalido. Valores aceitos: free, basic, pro." }); return;
+  }
+
   const id = crypto.randomUUID();
   const now = Date.now();
 
@@ -133,7 +144,7 @@ router.post("/alert-overlays", requireAdminMiddleware, async (req: Request, res:
     overlayUrl: overlayUrl.trim(),
     thumbnailUrl: thumbnailUrl?.trim() || null,
     category: category?.trim() || "Geral",
-    minPlan: minPlan || "free",
+    minPlan: resolvedMinPlan,
     price: price ?? 0,
     isActive: true,
     order: order ?? 0,
@@ -163,7 +174,13 @@ router.patch("/alert-overlays/:id", requireAdminMiddleware, async (req: Request,
   if (typeof body.overlayUrl === "string") updates.overlayUrl = body.overlayUrl.trim();
   if (typeof body.thumbnailUrl === "string") updates.thumbnailUrl = body.thumbnailUrl.trim() || null;
   if (typeof body.category === "string") updates.category = body.category.trim();
-  if (typeof body.minPlan === "string") updates.minPlan = body.minPlan;
+  if (typeof body.minPlan === "string") {
+    const validPlans = ["free", "basic", "pro"];
+    if (!validPlans.includes(body.minPlan)) {
+      res.status(400).json({ error: "minPlan invalido. Valores aceitos: free, basic, pro." }); return;
+    }
+    updates.minPlan = body.minPlan;
+  }
   if (typeof body.price === "number") updates.price = body.price;
   if (typeof body.isActive === "boolean") updates.isActive = body.isActive;
   if (typeof body.order === "number") updates.order = body.order;
@@ -192,7 +209,6 @@ router.delete("/alert-overlays/:id", requireAdminMiddleware, async (req: Request
 
   if (!existing) { res.status(404).json({ error: "Overlay nao encontrado." }); return; }
 
-  await db.delete(alertOverlayPurchasesTable).where(eq(alertOverlayPurchasesTable.alertOverlayId, id));
   await db.delete(alertOverlaysTable).where(eq(alertOverlaysTable.id, id));
 
   res.json({ ok: true });

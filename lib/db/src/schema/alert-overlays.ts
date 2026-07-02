@@ -1,4 +1,4 @@
-import { pgTable, text, integer, bigint, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, bigint, boolean, index } from "drizzle-orm/pg-core";
 
 export const alertOverlaysTable = pgTable("alert_overlays", {
   id: text("id").primaryKey(),
@@ -20,4 +20,6 @@ export const alertOverlayPurchasesTable = pgTable("alert_overlay_purchases", {
   userId: text("user_id").notNull(),
   alertOverlayId: text("alert_overlay_id").notNull(),
   purchasedAt: bigint("purchased_at", { mode: "number" }).notNull(),
-});
+}, (table) => [
+  index("idx_purchases_user_overlay").on(table.userId, table.alertOverlayId),
+]);
