@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Fix minigames main page to include navigation links to all sub-games (roleta, word-bomb, sentido, defender, bau). Fix overlay stats/live format default to VERTICAL (not horizontal), with option to switch to horizontal. Fix profile.tsx username change field to be properly disabled/hidden when user has reached their plan's change limit.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. In artifacts/creatools/src/pages/minigames.tsx: Add a navigation section (cards/grid) at the top or as a new tab linking to each sub-game page (/minigames/roleta, /minigames/word-bomb, /minigames/sentido, /minigames/defender, /minigames/bau). Each card should show the game name, a brief description, and an icon/emoji. The existing wheel/picker/race tabs remain but the sub-games should be prominently accessible.",
     "2. In artifacts/creatools/src/pages/overlays.tsx: Change the statsLayout default from 'horizontal' to 'vertical'. Update buildStatsUrl() so it only appends the layout param if it differs from 'vertical' (since vertical is now default). The dropdown should still offer both horizontal and vertical options.",
@@ -22,5 +22,5 @@
     "pnpm --filter @workspace/creatools run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Pre-existing typecheck errors (44) in unrelated files due to lib/api-client-react/dist not being built. None in our modified files. Build requires PORT and BASE_PATH env vars for vite config. Used pnpm approve-builds for esbuild."
 }
