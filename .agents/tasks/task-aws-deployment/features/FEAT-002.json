@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Address review feedback: fix PM2 env_file, add health check to deploy script, fix certbot mode, add git ref param to deploy, restrict SSH CIDR in provisioning script",
+  "status": "completed",
+  "steps": [
+    "Remove env_file from ecosystem.config.cjs (not a real PM2 option) and document that deploy.sh is the supported startup method",
+    "Add --ssh-cidr option to aws-provision.sh (defaults to auto-detecting caller IP via curl ifconfig.me)",
+    "Add optional git ref parameter to deploy.sh (deploy a specific tag/commit instead of always pulling main)",
+    "Add health check after pm2 reload in deploy.sh (curl retry loop on localhost:8080/api/health)",
+    "Fix certbot mode in ssl-setup.sh to use --webroot -w /var/www/html instead of --nginx (matches nginx config)"
+  ],
+  "acceptance_criteria": [
+    "ecosystem.config.cjs has no env_file property",
+    "aws-provision.sh accepts --ssh-cidr flag or auto-detects caller IP",
+    "deploy.sh accepts optional ref argument to deploy a specific commit/tag",
+    "deploy.sh includes a health check after PM2 reload",
+    "ssl-setup.sh uses --webroot mode consistently",
+    "All shell scripts pass bash -n syntax check",
+    "ecosystem.config.cjs passes node -c syntax check"
+  ],
+  "verification": [
+    "Run bash -n on all .sh files in deploy/",
+    "Run node -c deploy/ecosystem.config.cjs",
+    "Verify no env_file in ecosystem.config.cjs",
+    "Verify --ssh-cidr or auto-detect in aws-provision.sh",
+    "Verify health check in deploy.sh",
+    "Verify --webroot in ssl-setup.sh"
+  ],
+  "blocked_reason": null,
+  "findings": "All 5 review issues (critical ones) fixed: PM2 env_file removed, SSH CIDR auto-detect added, deploy ref param added, health check added, certbot --webroot mode applied. All .sh files pass bash -n. ecosystem.config.cjs passes node -c. Lower-priority issues (nginx duplication, frontend build env coupling) left as-is per orchestrator guidance."
+}

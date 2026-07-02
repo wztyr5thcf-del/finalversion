@@ -1,0 +1,26 @@
+{
+  "project_type": "pnpm monorepo - Express 5 API server + React Vite SPA",
+  "language": "TypeScript",
+  "build_system": "pnpm workspaces with esbuild (API) and vite (frontend)",
+  "test_framework": "No test framework found in the project",
+  "build_command": "pnpm run build (root level, runs typecheck then builds all packages)",
+  "test_command": "N/A - no tests defined",
+  "verification_instructions": "Verify all deployment files are syntactically valid and reference the correct paths. No runtime tests available.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "pnpm install --frozen-lockfile from project root",
+  "environment_constraints": "OPEN_INTERNET network mode. Node.js 24 and pnpm available on sandbox.",
+  "contribution_requirements": "Use pnpm only (preinstall script blocks npm/yarn). Build with esbuild for API, vite for frontend.",
+  "key_patterns": "API serves on /api path (Express router). Frontend is a SPA built to artifacts/creatools/dist/public/. API requires PORT and DATABASE_URL env vars. Frontend requires PORT and BASE_PATH env vars at build time. Startup.ts runs additive migrations automatically. API uses pino logger. Domains: creatools.co (main), creatools.stream (overlay links), creatools.live (profile pages) - all same app, routing handled by frontend based on hostname.",
+  "relevant_files": [
+    "artifacts/api-server/build.mjs",
+    "artifacts/api-server/src/index.ts",
+    "artifacts/api-server/src/startup.ts",
+    "artifacts/api-server/src/app.ts",
+    "artifacts/creatools/vite.config.ts",
+    "lib/db/drizzle.config.ts",
+    "scripts/post-merge.sh",
+    "pnpm-workspace.yaml",
+    "package.json"
+  ],
+  "directory_structure": "Root: pnpm monorepo. artifacts/api-server/ = Express API (builds to dist/index.mjs). artifacts/creatools/ = React SPA (builds to dist/public/). lib/db/ = Drizzle ORM schemas. lib/api-zod/ and lib/api-client-react/ = shared API types. scripts/ = maintenance scripts. CNAME = app.creatools.co."
+}

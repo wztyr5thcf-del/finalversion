@@ -1,0 +1,37 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Create complete AWS deployment infrastructure: all scripts, configs, and documentation needed to deploy the Creatools app to EC2 + RDS PostgreSQL with Nginx + SSL for 3 domains. This includes AWS provisioning instructions, server setup script, Nginx config, PM2 ecosystem config, deploy script, env example, and DNS/security group documentation.",
+  "status": "completed",
+  "steps": [
+    "Create deploy/ directory at project root with all deployment files",
+    "Create deploy/README.md with complete step-by-step deployment guide covering: AWS provisioning (EC2 c6i.large + RDS db.t3.small), security groups, DNS configuration for all 3 domains",
+    "Create deploy/aws-provision.sh - AWS CLI script to provision EC2 c6i.large instance and RDS PostgreSQL db.t3.small, configure security groups (SSH 22, HTTP 80, HTTPS 443 inbound on EC2; PostgreSQL 5432 from EC2 SG only on RDS), create key pair, allocate Elastic IP",
+    "Create deploy/server-setup.sh - Script to run on EC2 to install Node.js 20 LTS, pnpm, PM2, Nginx, Certbot with all dependencies. Also configure firewall (ufw) and create app directory structure at /opt/creatools",
+    "Create deploy/nginx/creatools.conf - Nginx server blocks for all 3 domains (creatools.co, creatools.stream, creatools.live) with: SSL via Let's Encrypt (certbot), HTTP to HTTPS redirect, reverse proxy to localhost:8080 for /api, serve static frontend files from /opt/creatools/frontend for all other paths, SPA fallback (try_files), gzip compression, security headers, websocket support if needed",
+    "Create deploy/nginx/ssl-setup.sh - Script to obtain SSL certificates using certbot for all 3 domains (certbot --nginx -d creatools.co -d www.creatools.co -d creatools.stream -d www.creatools.stream -d creatools.live -d www.creatools.live), set up auto-renewal cron",
+    "Create deploy/ecosystem.config.cjs - PM2 ecosystem config for the API server in cluster mode (using max available CPUs on c6i.large = 2), with proper env vars (PORT=8080, NODE_ENV=production, DATABASE_URL from env), log rotation settings, restart policy",
+    "Create deploy/deploy.sh - Automated deploy script that: pulls latest code from git, installs dependencies (pnpm install --frozen-lockfile), builds API (pnpm --filter @workspace/api-server build), builds frontend (PORT=3000 BASE_PATH=/ pnpm --filter @workspace/creatools build), copies frontend dist to Nginx serve dir (/opt/creatools/frontend), restarts PM2 processes, runs schema push if DATABASE_URL available",
+    "Create deploy/.env.example - Example env file with all required variables: DATABASE_URL (postgres://user:pass@rds-endpoint:5432/creatools), PORT=8080, NODE_ENV=production, JWT_SECRET, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, TIKTOOLS_API_KEY, GOOGLE_CLOUD_STORAGE creds (GCS_PROJECT_ID, GCS_BUCKET_NAME, GCS_KEY_FILE_PATH or GOOGLE_APPLICATION_CREDENTIALS)",
+    "Create deploy/dns-setup.md - Documentation for DNS A records: creatools.co -> EC2 Elastic IP, creatools.stream -> EC2 Elastic IP, creatools.live -> EC2 Elastic IP, plus www subdomains as CNAME to root",
+    "Create deploy/security-groups.md - Documentation for AWS security groups with exact rules for EC2 and RDS instances",
+    "Create deploy/backup.sh - Script for automated PostgreSQL backups via pg_dump to local file + optional S3 upload, with cron setup instructions"
+  ],
+  "acceptance_criteria": [
+    "deploy/ directory exists with all files mentioned in steps",
+    "All shell scripts are syntactically valid (pass bash -n check)",
+    "Nginx config is syntactically valid (can be checked with nginx -t pattern)",
+    "PM2 ecosystem config is valid JavaScript that exports proper config",
+    "deploy.sh properly builds both API and frontend with correct env vars",
+    ".env.example contains all environment variables the app needs",
+    "README.md provides a complete end-to-end deployment guide"
+  ],
+  "verification": [
+    "Run bash -n on all .sh files in deploy/ to verify syntax",
+    "Run node -c deploy/ecosystem.config.cjs to verify JS syntax",
+    "Confirm all 3 domains are configured in Nginx conf",
+    "Confirm PM2 config uses cluster mode with 2 instances"
+  ],
+  "blocked_reason": null,
+  "findings": "All 11 deployment files created and verified. All .sh files pass bash -n syntax check. ecosystem.config.cjs passes node -c syntax check. Node.js is available via nvm (v20.20.2) at /root/.nvm/versions/node/v20.20.2/bin/node but not on default PATH - need to source nvm.sh first."
+}
