@@ -270,10 +270,14 @@ async function pollLiveStatus(): Promise<void> {
   if (!apiKey) return;
 
   try {
-    // Get all users with a tiktokUsername AND monitoringEnabled = true
+    // Get only platform users with:
+    // 1. A tiktokUsername linked
+    // 2. monitoringEnabled = true
+    // 3. A paid plan (basic or pro) - free users don't get monitoring
     const users = await db.select({
       id: usersTable.id,
       tiktokUsername: usersTable.tiktokUsername,
+      plan: usersTable.plan,
     }).from(usersTable).where(
       and(
         isNotNull(usersTable.tiktokUsername),
@@ -281,15 +285,20 @@ async function pollLiveStatus(): Promise<void> {
       )
     );
 
-    const usersWithTiktok = users.filter((u) => u.tiktokUsername && u.tiktokUsername.trim().length > 0);
+    // Filter: only users with paid plans get automatic monitoring
+    const eligibleUsers = users.filter((u) => 
+      u.tiktokUsername && 
+      u.tiktokUsername.trim().length > 0 &&
+      (u.plan === "basic" || u.plan === "pro")
+    );
 
     // Process in batches of BATCH_SIZE with a delay between batches
-    for (let i = 0; i < usersWithTiktok.length; i += BATCH_SIZE) {
-      const batch = usersWithTiktok.slice(i, i + BATCH_SIZE);
+    for (let i = 0; i < eligibleUsers.length; i += BATCH_SIZE) {
+      const batch = eligibleUsers.slice(i, i + BATCH_SIZE);
       await processBatch(apiKey, batch);
 
       // Add delay between batches to avoid rate-limiting (skip delay after last batch)
-      if (i + BATCH_SIZE < usersWithTiktok.length) {
+      if (i + BATCH_SIZE < eligibleUsers.length) {
         await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS));
       }
     }
@@ -393,10 +402,11 @@ async function recoverOrphanedSessions(): Promise<void> {
 /**
  * Start the live monitoring service.
  * Should be called once on server startup.
- * NOTE: Automatic polling is DISABLED. Monitoring only activates when users explicitly request it.
+ * Polls ONLY platform users whose plan allows monitoring.
+ * Syncs profiles ONLY of platform users.
  */
 export async function startLiveMonitor(): Promise<void> {
-  logger.info("Starting live monitor service (on-demand mode - no automatic polling)");
+  logger.info("Starting live monitor service");
 
   // Warn if API key is not configured
   const apiKey = getApiKey();
@@ -407,13 +417,25 @@ export async function startLiveMonitor(): Promise<void> {
   // Recover any orphaned sessions from previous server instance
   await recoverOrphanedSessions();
 
-  // NO automatic polling - users must explicitly request monitoring
-  // pollTimer = setInterval(() => { void pollLiveStatus(); }, POLL_INTERVAL_MS);
+  // Start polling for live status (only users with monitoringEnabled AND paid plan)
+  pollTimer = setInterval(() => {
+    void pollLiveStatus();
+  }, POLL_INTERVAL_MS);
 
-  // NO automatic profile sync - profiles update on login/request only
-  // profileSyncTimer = setInterval(() => { void syncAllProfiles(); }, PROFILE_SYNC_INTERVAL_MS);
+  // Run first poll immediately
+  void pollLiveStatus();
 
-  logger.info("Live monitor service started successfully (on-demand mode)");
+  // Start periodic profile sync (only platform users with tiktok linked)
+  profileSyncTimer = setInterval(() => {
+    void syncAllProfiles();
+  }, PROFILE_SYNC_INTERVAL_MS);
+
+  // Run initial profile sync after a short delay
+  setTimeout(() => {
+    void syncAllProfiles();
+  }, 30_000);
+
+  logger.info("Live monitor service started successfully");
 }
 
 /**
