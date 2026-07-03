@@ -393,9 +393,10 @@ async function recoverOrphanedSessions(): Promise<void> {
 /**
  * Start the live monitoring service.
  * Should be called once on server startup.
+ * NOTE: Automatic polling is DISABLED. Monitoring only activates when users explicitly request it.
  */
 export async function startLiveMonitor(): Promise<void> {
-  logger.info("Starting live monitor service");
+  logger.info("Starting live monitor service (on-demand mode - no automatic polling)");
 
   // Warn if API key is not configured
   const apiKey = getApiKey();
@@ -406,25 +407,13 @@ export async function startLiveMonitor(): Promise<void> {
   // Recover any orphaned sessions from previous server instance
   await recoverOrphanedSessions();
 
-  // Start polling for live status
-  pollTimer = setInterval(() => {
-    void pollLiveStatus();
-  }, POLL_INTERVAL_MS);
+  // NO automatic polling - users must explicitly request monitoring
+  // pollTimer = setInterval(() => { void pollLiveStatus(); }, POLL_INTERVAL_MS);
 
-  // Run first poll immediately
-  void pollLiveStatus();
+  // NO automatic profile sync - profiles update on login/request only
+  // profileSyncTimer = setInterval(() => { void syncAllProfiles(); }, PROFILE_SYNC_INTERVAL_MS);
 
-  // Start periodic profile sync
-  profileSyncTimer = setInterval(() => {
-    void syncAllProfiles();
-  }, PROFILE_SYNC_INTERVAL_MS);
-
-  // Run initial profile sync after a short delay (give server time to fully start)
-  setTimeout(() => {
-    void syncAllProfiles();
-  }, 30_000);
-
-  logger.info("Live monitor service started successfully");
+  logger.info("Live monitor service started successfully (on-demand mode)");
 }
 
 /**
