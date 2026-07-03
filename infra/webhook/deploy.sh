@@ -1,93 +1,71 @@
 #!/bin/bash
-# =============================================================================
-# Smart Auto-Deploy Script
-# Called by the webhook server when a push event is received.
-# Detects whether dependencies changed and uses Docker layer cache accordingly.
-# If only source code changed, the cached pnpm install layer is reused (~30s).
-# If package.json or pnpm-lock.yaml changed, a full rebuild is triggered.
-# =============================================================================
 set -e
 
-APP_DIR="/opt/creatools"
-LOG_FILE="/var/log/webhook-deploy.log"
+REPO_DIR="/opt/creatools"
+FRONTEND_DIR="/var/www/creatools"
+LOG_PREFIX="[DEPLOY]"
 
-log() {
-    echo "[$(date -Iseconds)] [DEPLOY] $1" | tee -a "$LOG_FILE"
-}
+echo "$LOG_PREFIX ======================================="
+echo "$LOG_PREFIX Smart deploy started (native mode)"
+echo "$LOG_PREFIX ======================================="
 
-error() {
-    echo "[$(date -Iseconds)] [ERROR] $1" | tee -a "$LOG_FILE"
-}
+cd "$REPO_DIR"
 
-log "========================================="
-log "Starting smart auto-deploy..."
-log "========================================="
+# Record current commit
+BEFORE=$(git rev-parse HEAD)
 
-# Navigate to project root
-cd "$APP_DIR"
+# Pull latest
+git fetch origin
+git reset --hard origin/feat/aws-infra-deployment
 
-# Record current commit before pull
-BEFORE_SHA=$(git rev-parse HEAD)
+AFTER=$(git rev-parse HEAD)
 
-# Pull latest changes
-log "Pulling latest changes from git..."
-if ! git pull origin main 2>&1 | tee -a "$LOG_FILE"; then
-    error "git pull failed!"
-    exit 1
+# Skip if no changes
+if [ "$BEFORE" = "$AFTER" ]; then
+  echo "$LOG_PREFIX No new commits. Skipping deploy."
+  exit 0
 fi
 
-AFTER_SHA=$(git rev-parse HEAD)
+echo "$LOG_PREFIX New commits detected: $BEFORE -> $AFTER"
 
-if [ "$BEFORE_SHA" = "$AFTER_SHA" ]; then
-    log "No new commits - nothing to deploy"
-    exit 0
+# Check if dependencies changed
+DEPS_CHANGED=$(git diff --name-only "$BEFORE" "$AFTER" | grep -E "pnpm-lock|package\.json|pnpm-workspace" || true)
+
+if [ -n "$DEPS_CHANGED" ]; then
+  echo "$LOG_PREFIX Dependencies changed. Running pnpm install..."
+  pnpm install --no-frozen-lockfile --config.confirmModulesPurge=false
 fi
 
-log "Git pull completed successfully ($BEFORE_SHA -> $AFTER_SHA)"
+# Check what changed
+BACKEND_CHANGED=$(git diff --name-only "$BEFORE" "$AFTER" | grep -E "^artifacts/api-server/|^lib/" || true)
+FRONTEND_CHANGED=$(git diff --name-only "$BEFORE" "$AFTER" | grep -E "^artifacts/creatools/" || true)
 
-# Detect if dependency files changed between the two commits
-DEPS_CHANGED=false
-CHANGED_FILES=$(git diff --name-only "$BEFORE_SHA" "$AFTER_SHA")
+# Rebuild backend if changed
+if [ -n "$BACKEND_CHANGED" ] || [ -n "$DEPS_CHANGED" ]; then
+  echo "$LOG_PREFIX Rebuilding backend..."
+  cd "$REPO_DIR/artifacts/api-server"
+  node build.mjs
+  cd "$REPO_DIR"
 
-if echo "$CHANGED_FILES" | grep -qE '(^|/)package\.json$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$'; then
-    DEPS_CHANGED=true
-    log "Dependency files changed - full rebuild required"
-else
-    log "Only source code changed - using cached dependencies (fast rebuild)"
+  # Load env and restart
+  set -a
+  source "$REPO_DIR/infra/.env"
+  set +a
+  export NODE_TLS_REJECT_UNAUTHORIZED=0
+
+  pm2 restart creatools-api --update-env
+  echo "$LOG_PREFIX Backend restarted."
 fi
 
-# Enable BuildKit for better layer caching
-export DOCKER_BUILDKIT=1
-export COMPOSE_DOCKER_CLI_BUILD=1
-
-# Rebuild and restart containers with BuildKit cache
-log "Rebuilding Docker containers (BuildKit enabled, deps_changed=$DEPS_CHANGED)..."
-cd "$APP_DIR/infra"
-
-if ! docker compose build 2>&1 | tee -a "$LOG_FILE"; then
-    error "Docker compose build failed!"
-    exit 1
+# Rebuild frontend if changed
+if [ -n "$FRONTEND_CHANGED" ] || [ -n "$DEPS_CHANGED" ]; then
+  echo "$LOG_PREFIX Rebuilding frontend..."
+  cd "$REPO_DIR"
+  PORT=5173 BASE_PATH=/ pnpm --filter @workspace/creatools run build
+  sudo cp -r artifacts/creatools/dist/public/* "$FRONTEND_DIR/"
+  echo "$LOG_PREFIX Frontend deployed."
 fi
 
-log "Build completed, restarting containers..."
-
-if ! docker compose up -d 2>&1 | tee -a "$LOG_FILE"; then
-    error "Docker compose up failed!"
-    exit 1
-fi
-
-log "Docker containers rebuilt and restarted successfully"
-
-# Wait a moment and check health
-log "Waiting for health check..."
-sleep 10
-
-if curl -sf http://localhost:3000/api/health > /dev/null 2>&1; then
-    log "Health check passed - deploy successful!"
-else
-    log "Health check failed - containers may still be starting up"
-fi
-
-log "========================================="
-log "Smart auto-deploy finished"
-log "========================================="
+echo "$LOG_PREFIX ======================================="
+echo "$LOG_PREFIX Deploy complete! $(date)"
+echo "$LOG_PREFIX ======================================="
