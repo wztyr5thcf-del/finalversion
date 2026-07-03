@@ -29,11 +29,13 @@ RUN pnpm install --no-frozen-lockfile --config.confirmModulesPurge=false
 # Now copy the rest of the source code
 COPY . .
 
-# Build the entire project (typecheck + all packages)
+# Build only the packages we need (skip mockup-sandbox)
 ENV PORT=5173
 ENV BASE_PATH=/
 ENV NODE_ENV=production
-RUN pnpm run build
+RUN pnpm run typecheck:libs && \
+    pnpm --filter @workspace/api-server run build && \
+    pnpm --filter @workspace/creatools run build
 
 # =============================================================================
 # Stage 2: Runtime deps - Install externalized packages with npm (flat layout)
