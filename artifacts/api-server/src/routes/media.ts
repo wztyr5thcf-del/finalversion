@@ -8,7 +8,6 @@ import { getUserById } from "../lib/users-store";
 import { db } from "@workspace/db";
 import { mediaItemsTable } from "@workspace/db/schema";
 import { eq, and, desc } from "drizzle-orm";
-import { objectStorageClient } from "../lib/objectStorage";
 
 const router = Router();
 
@@ -39,54 +38,56 @@ export interface MediaItem {
   createdAt: string;
 }
 
-// ── GCS helpers ───────────────────────────────────────────────────────────────
+// ── Local filesystem helpers ──────────────────────────────────────────────────
 
-function parseGCSPath(fullPath: string): { bucketName: string; objectName: string } {
-  const p = fullPath.startsWith("/") ? fullPath : `/${fullPath}`;
-  const parts = p.split("/").filter((_, i) => i > 0);
-  return { bucketName: parts[0], objectName: parts.slice(1).join("/") };
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.resolve(process.cwd(), "uploads");
+
+// Ensure upload directory exists
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
-function getPrivateDir(): string {
-  const dir = process.env.PRIVATE_OBJECT_DIR;
-  if (!dir) throw new Error("PRIVATE_OBJECT_DIR not set — run setupObjectStorage()");
+function userUploadDir(userId: string): string {
+  const dir = path.join(UPLOAD_DIR, userId);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
 
 function mediaObjectPath(userId: string, filename: string): string {
-  return `${getPrivateDir()}/media/${userId}/${filename}`;
+  return `${userId}/${filename}`;
 }
 
-async function uploadToGCS(
-  buffer: Buffer,
-  objectFullPath: string,
-  contentType: string
-): Promise<void> {
-  const { bucketName, objectName } = parseGCSPath(objectFullPath);
-  const bucket = objectStorageClient.bucket(bucketName);
-  await bucket.file(objectName).save(buffer, {
-    contentType,
-    metadata: { cacheControl: "public, max-age=31536000" },
-  });
+async function saveLocally(buffer: Buffer, userId: string, filename: string): Promise<void> {
+  const dir = userUploadDir(userId);
+  const filePath = path.join(dir, filename);
+  fs.writeFileSync(filePath, buffer);
 }
 
-async function deleteFromGCS(objectFullPath: string): Promise<void> {
+async function deleteLocally(userId: string, filename: string): Promise<void> {
   try {
-    const { bucketName, objectName } = parseGCSPath(objectFullPath);
-    await objectStorageClient.bucket(bucketName).file(objectName).delete({ ignoreNotFound: true });
+    const filePath = path.join(UPLOAD_DIR, userId, filename);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
   } catch { /* best-effort */ }
 }
 
-async function streamFromGCS(objectFullPath: string, res: Response): Promise<void> {
-  const { bucketName, objectName } = parseGCSPath(objectFullPath);
-  const file = objectStorageClient.bucket(bucketName).file(objectName);
-  const [metadata] = await file.getMetadata();
-  res.setHeader("Content-Type", (metadata.contentType as string) || "application/octet-stream");
+function streamLocally(userId: string, filename: string, res: Response): void {
+  const filePath = path.join(UPLOAD_DIR, userId, filename);
+  if (!fs.existsSync(filePath)) { res.status(404).json({ error: "Arquivo não encontrado." }); return; }
+
+  const ext = path.extname(filename).toLowerCase();
+  const mimeMap: Record<string, string> = {
+    ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+    ".gif": "image/gif", ".webp": "image/webp", ".webm": "video/webm",
+  };
+  const contentType = mimeMap[ext] || "application/octet-stream";
+  const stat = fs.statSync(filePath);
+
+  res.setHeader("Content-Type", contentType);
   res.setHeader("Cache-Control", "public, max-age=31536000");
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Content-Disposition", "inline");
-  if (metadata.size) res.setHeader("Content-Length", String(metadata.size));
-  file.createReadStream().pipe(res);
+  res.setHeader("Content-Length", String(stat.size));
+  fs.createReadStream(filePath).pipe(res);
 }
 
 // ── Magic-byte validation ─────────────────────────────────────────────────────
@@ -132,7 +133,7 @@ router.get("/media/files/:userId/:filename", async (req: Request, res: Response)
   const { userId, filename } = req.params as { userId: string; filename: string };
   if (!userId || !filename || filename.includes("..")) { res.status(400).end(); return; }
   try {
-    await streamFromGCS(mediaObjectPath(userId, filename), res);
+    streamLocally(userId, filename, res);
   } catch {
     res.status(404).json({ error: "Arquivo não encontrado." });
   }
@@ -214,7 +215,7 @@ router.post("/media/upload", requireAuth, async (req: Request, res: Response): P
   const safeFilename = `${uuid}${safeExt}`;
   const objectPath = mediaObjectPath(userId, safeFilename);
 
-  await uploadToGCS(buf, objectPath, detectedMime as string);
+  await saveLocally(buf, userId, safeFilename);
 
   const { width, height } = extractDimensions(buf);
   const category = CATEGORIES.includes(req.body.category as string) ? (req.body.category as string) : "Geral";
@@ -308,7 +309,7 @@ router.delete("/media/:id", requireAuth, async (req: Request, res: Response): Pr
     .where(and(eq(mediaItemsTable.id, id), eq(mediaItemsTable.userId, userId)));
   if (!existing) { res.status(404).json({ error: "Item não encontrado." }); return; }
 
-  await deleteFromGCS(existing.objectPath);
+  await deleteLocally(userId, existing.filename);
   await db.delete(mediaItemsTable).where(and(eq(mediaItemsTable.id, id), eq(mediaItemsTable.userId, userId)));
 
   res.json({ ok: true });
