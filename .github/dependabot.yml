@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # npm/pnpm updates
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "03:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps):"
+      include: "scope"
+    reviewers:
+      - wztyr5thcf-del
+    labels:
+      - dependencies
+      - auto-merge
+
+  # GitHub Actions updates
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "04:00"
+    commit-message:
+      prefix: "ci:"
+      include: "scope"
+    labels:
+      - ci
+      - auto-merge
